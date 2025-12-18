@@ -8,6 +8,7 @@ import { runOnJS } from "react-native-worklets";
 import { View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { STATUSES } from "../../constants/status";
+import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 export default function StatusGalleryCard({ status }) {
 
 
@@ -15,6 +16,9 @@ export default function StatusGalleryCard({ status }) {
     const [isTimerRunning, setIsTimerRunning] = useState(true);
     const { index } = useLocalSearchParams();
     const router = useRouter();
+
+    const translateX = useSharedValue(0);
+
 
     useEffect(() => {
         setStatusIndex(0);
@@ -61,6 +65,10 @@ export default function StatusGalleryCard({ status }) {
         }
     };
 
+    const handleRoute = () => {
+        router.back();
+    };
+
     const tapLeft = Gesture.Tap()
         .onEnd((e) => {
             if (e.x < 170 && e.y > 100 && e.y < 500) {
@@ -79,11 +87,30 @@ export default function StatusGalleryCard({ status }) {
             runOnJS(handleTimer)("end");
         });
 
-    const composedGesture = Gesture.Simultaneous(tapLeft, longPress);
+    const handleBack = Gesture.Pan()
+        .onUpdate((e) => {
+            translateX.value = e.translationX;
+            if (translateX.value > 100) {
+                runOnJS(handleRoute)();
+            } else {
+                translateX.value = withSpring(0);
+            }
+        })
+        .onFinalize(() => {
+            translateX.value = withSpring(0);
+        });
+
+    const composedGesture = Gesture.Simultaneous(tapLeft, longPress, handleBack);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        transform: [
+            { translateX: translateX.value },
+        ]
+    }));
 
     return (
         <GestureDetector style={{ flex: 1 }} gesture={composedGesture}>
-            <View style={{ flex: 1, width: "100%", flexDirection: "column" }}>
+            <Animated.View style={[{ flex: 1, width: "100%", flexDirection: "column" }, animatedStyle]}>
                 <StatusGalleryHeader
                     status={status}
                     statusIndex={statusIndex}
@@ -105,7 +132,7 @@ export default function StatusGalleryCard({ status }) {
 
                 </View>
                 <StatusGalleryFooter />
-            </View>
+            </Animated.View>
         </GestureDetector>
     );
 }
