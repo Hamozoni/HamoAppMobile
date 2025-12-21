@@ -1,6 +1,5 @@
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { ProfileInfo } from "../../../components/settings/profileInfo";
-import { SearchInput } from "../../../components/ui/searchInput";
 import { SettingsCard } from "../../../components/cards/settingsCard";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -26,26 +25,27 @@ const settingsData3 = [
 
 const Settings = () => {
     return (
-        <SafeAreaView style={{ flex: 1 }} edges={["top"]} >
-            <ScrollView style={{ padding: 10 }}>
-                <Text style={{ fontSize: 30, fontWeight: "bold", marginBottom: 10 }}>Settings</Text>
-                <SearchInput placeholder="Search" />
-                <ProfileInfo />
+        <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
+            <ScrollView style={{ padding: 10, paddingTop: 140 }}>
+                <View style={{ flex: 1 }}>
+                    <ProfileInfo />
 
-                <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 20 }}>
-                    {settingsData1.map((item) => (
-                        <SettingsCard key={item.id} iconName={item.iconName} title={item.title} />
-                    ))}
-                </View>
-                <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 20, marginVertical: 20 }}>
-                    {settingsData2.map((item) => (
-                        <SettingsCard key={item.id} iconName={item.iconName} title={item.title} />
-                    ))}
-                </View>
-                <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 20, marginBottom: 20 }}>
-                    {settingsData3.map((item) => (
-                        <SettingsCard key={item.id} iconName={item.iconName} title={item.title} />
-                    ))}
+                    <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 20 }}>
+                        {settingsData1.map((item) => (
+                            <SettingsCard key={item.id} iconName={item.iconName} title={item.title} />
+                        ))}
+                    </View>
+                    <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 20, marginVertical: 20 }}>
+                        {settingsData2.map((item) => (
+                            <SettingsCard key={item.id} iconName={item.iconName} title={item.title} />
+                        ))}
+                    </View>
+                    <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 20, marginBottom: 20 }}>
+                        {settingsData3.map((item) => (
+                            <SettingsCard key={item.id} iconName={item.iconName} title={item.title} />
+                        ))}
+                    </View>
+
                 </View>
             </ScrollView>
         </SafeAreaView>

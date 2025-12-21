@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { TouchableOpacity, View } from "react-native";
 
 const RootLayout = () => {
     return (
@@ -43,7 +44,8 @@ const RootLayout = () => {
             />
 
             <Tabs.Screen
-                name="index"
+                index={0}
+                name="chats"
                 options={{
                     headerShown: false,
                     title: "Chats",
