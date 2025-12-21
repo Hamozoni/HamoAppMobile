@@ -38,7 +38,6 @@ export default function SettingLayout() {
             />
             <Stack.Screen
                 name="[id]"
-                tabBarStyle={{ display: "none" }}
                 options={
                     ({ route }) => {
                         const { id } = route.params;

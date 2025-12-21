@@ -1,8 +1,10 @@
-import { Tabs } from "expo-router";
+import { Tabs, useSegments } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { TouchableOpacity, View } from "react-native";
 
 const RootLayout = () => {
+
+    const segments = useSegments();
+
     return (
         <Tabs
             screenOptions={{
@@ -47,6 +49,7 @@ const RootLayout = () => {
                 name="chats"
                 options={{
                     headerShown: false,
+                    tabBarStyle: { display: segments.length === 2 ? "flex" : "none" },
 
                     title: "Chats",
                     tabBarIcon: ({ focused, size, color }) => (
