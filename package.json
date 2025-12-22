@@ -13,6 +13,7 @@
     "expo": "54.0.29",
     "expo-audio": "~1.1.0",
     "expo-constants": "~18.0.12",
+    "expo-contacts": "~15.0.11",
     "expo-linking": "~8.0.10",
     "expo-router": "~6.0.19",
     "expo-status-bar": "~3.0.9",
