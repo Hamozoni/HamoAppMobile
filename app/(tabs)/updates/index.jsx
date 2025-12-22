@@ -1,8 +1,5 @@
 import { Text, TouchableOpacity, View } from "react-native";
-import { SearchInput } from "../../../components/ui/searchInput";
-import { RoundedBtn } from "../../../components/ui/roundedBtn";
 import { StatusPanel } from "../../../components/status/statusPanel";
-import ChannelsList from "../../../components/channels/channelsList";
 import { CHATS } from "../../../constants/chats";
 import { ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";

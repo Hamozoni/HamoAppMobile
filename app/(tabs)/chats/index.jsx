@@ -4,30 +4,33 @@ import { CHATS } from "../../../constants/chats";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FlatList } from "react-native-gesture-handler";
 import { ChatCard } from "../../../components/cards/chatCard";
+import { useState } from "react";
 
 
-const Button = ({ title, active = false }) => {
+const Button = ({ title, active, setActive }) => {
     return (
         <TouchableOpacity
+            onPress={() => setActive(title)}
             style={{
                 paddingHorizontal: 15,
                 borderRadius: 15,
-                backgroundColor: active ? "rgba(156, 240, 240, 1)" : "transparent",
+                backgroundColor: active === title ? "rgba(14, 218, 133, 1)" : "transparent",
                 borderColor: "#eee",
                 borderWidth: 2,
                 paddingHorizontal: 10,
                 paddingVertical: 5,
                 marginRight: 5,
-                height: 40,
                 justifyContent: "center",
                 alignItems: "center"
             }}>
-            <Text style={{ color: active ? "#000000ff" : "gray", fontSize: 18, fontWeight: "medium" }}>{title}</Text>
+            <Text style={{ color: active === title ? "#eee" : "gray", fontSize: 14, fontWeight: "600" }}>{title}</Text>
         </TouchableOpacity>
     );
 }
 
 const Chats = () => {
+
+    const [activeButton, setActiveButton] = useState("All");
     return (
         <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
             <ScrollView contentInsetAdjustmentBehavior="automatic" contentContainerStyle={{ flex: 1, backgroundColor: "#fff", paddingHorizontal: 10 }}>
@@ -35,7 +38,7 @@ const Chats = () => {
                     <View style={{ paddingVertical: 20 }}>
                         <FlatList
                             data={["All", "Unread", "Favorite", "Groups", "Communities"]}
-                            renderItem={({ item }) => <Button title={item} />}
+                            renderItem={({ item }) => <Button title={item} active={activeButton} setActive={setActiveButton} />}
                             keyExtractor={(item) => item}
                             horizontal
                             showsHorizontalScrollIndicator={false}
