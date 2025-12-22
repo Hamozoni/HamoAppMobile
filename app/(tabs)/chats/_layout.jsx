@@ -1,11 +1,12 @@
 
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { TouchableOpacity } from "react-native";
 import { View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ChatHeaderLeft, ChatHeaderRight, ChatHeaderMiddle } from "../../../components/chats/chatHeader";
 
 export default function SettingLayout() {
+    const router = useRouter();
     return (
         <Stack  >
             <Stack.Screen
@@ -28,7 +29,11 @@ export default function SettingLayout() {
                             <TouchableOpacity >
                                 <Ionicons name="camera" size={26} />
                             </TouchableOpacity>
-                            <TouchableOpacity style={{ marginLeft: 10, width: "auto", height: "auto", borderRadius: "50%", backgroundColor: "green", justifyContent: "center", alignItems: "center" }}>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    router.push("/chats/contacts");
+                                }}
+                                style={{ marginLeft: 10, width: "auto", height: "auto", borderRadius: "50%", backgroundColor: "green", justifyContent: "center", alignItems: "center" }}>
                                 <Ionicons name="add" size={26} color="white" />
                             </TouchableOpacity>
 
@@ -57,6 +62,26 @@ export default function SettingLayout() {
                     headerShown: false,
                     gestureEnabled: false,
                     tabBarVisible: false,
+                }}
+            />
+            <Stack.Screen
+                name="contacts"
+                options={{
+                    title: "New Chat",
+                    headerShown: true,
+                    gestureEnabled: false,
+                    tabBarVisible: false,
+                    presentation: "modal",
+                    modalPresentationStyle: "formSheet",
+                    headerRight: () => (
+                        <TouchableOpacity onPress={() => router.back()}>
+                            <Ionicons name="close" size={26} />
+                        </TouchableOpacity>
+                    ),
+                    headerSearchBarOptions: {
+                        placeholder: "Search name or number",
+                    },
+
                 }}
             />
         </Stack>
