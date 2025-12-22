@@ -17,6 +17,7 @@ const RootLayout = () => {
                 options={{
                     headerShown: false,
                     title: "Updates",
+                    tabBarStyle: { display: segments.length === 2 ? "flex" : "none" },
                     tabBarIcon: ({ focused, color, size }) => (
                         // <Image source={require("../../assets/application.png")} style={{ width: 24, height: 24 }} />
                         <Ionicons name={focused ? "notifications" : "notifications-outline"} size={size} color={color} />

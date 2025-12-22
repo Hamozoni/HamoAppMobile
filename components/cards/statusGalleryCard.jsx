@@ -8,7 +8,7 @@ import { runOnJS } from "react-native-worklets";
 import { View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { STATUSES } from "../../constants/status";
-import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 export default function StatusGalleryCard({ status }) {
 
 
@@ -31,7 +31,7 @@ export default function StatusGalleryCard({ status }) {
             if (Number.parseInt(index) === 0) {
                 router.back();
             } else {
-                router.replace(`/status/${Number.parseInt(index) - 1}`);
+                router.replace(`/updates/${Number.parseInt(index) - 1}`);
             }
         }
     }
@@ -44,7 +44,7 @@ export default function StatusGalleryCard({ status }) {
                 router.back();
             } else {
 
-                router.replace(`/status/${Number.parseInt(index) + 1}`);
+                router.replace(`/updates/${Number.parseInt(index) + 1}`);
             }
         }
     };
@@ -65,11 +65,23 @@ export default function StatusGalleryCard({ status }) {
         }
     };
 
-    const handleRoute = () => {
-        router.back();
+    const handleRoute = (type) => {
+        if (type === "left") {
+            if (Number.parseInt(index) > 0) {
+                router.replace(`/updates/${Number.parseInt(index) - 1}`);
+            } else {
+                router.replace(`/updates`);
+            }
+        } else {
+            if (Number.parseInt(index) < STATUSES?.length - 1) {
+                router.replace(`/updates/${Number.parseInt(index) + 1}`);
+            } else {
+                router.replace(`/updates`);
+            }
+        }
     };
 
-    const tapLeft = Gesture.Tap()
+    const handleNextPrevSatatus = Gesture.Tap()
         .onEnd((e) => {
             if (e.x < 170 && e.y > 100 && e.y < 500) {
                 runOnJS(handlePrev)()
@@ -79,7 +91,7 @@ export default function StatusGalleryCard({ status }) {
             }
         });
 
-    const longPress = Gesture.Pan()
+    const handlePausePlay = Gesture.Pan()
         .onBegin(() => {
             runOnJS(handleTimer)("start");
         })
@@ -87,11 +99,13 @@ export default function StatusGalleryCard({ status }) {
             runOnJS(handleTimer)("end");
         });
 
-    const handleBack = Gesture.Pan()
+    const handleRouting = Gesture.Pan()
         .onUpdate((e) => {
             translateX.value = e.translationX;
-            if (translateX.value > 100) {
-                runOnJS(handleRoute)();
+            if (translateX.value > 50) {
+                runOnJS(handleRoute)("left");
+            } else if (translateX.value < -50) {
+                runOnJS(handleRoute)("right");
             } else {
                 translateX.value = withSpring(0);
             }
@@ -100,7 +114,7 @@ export default function StatusGalleryCard({ status }) {
             translateX.value = withSpring(0);
         });
 
-    const composedGesture = Gesture.Simultaneous(tapLeft, longPress, handleBack);
+    const composedGesture = Gesture.Simultaneous(handleNextPrevSatatus, handlePausePlay, handleRouting);
 
     const animatedStyle = useAnimatedStyle(() => ({
         transform: [
