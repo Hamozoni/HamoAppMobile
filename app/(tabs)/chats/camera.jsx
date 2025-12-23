@@ -1,13 +1,10 @@
-import {
-    CameraMode,
-    CameraType,
-    CameraView,
-    useCameraPermissions,
-} from "expo-camera";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import { useRef, useState } from "react";
 import { Button, Pressable, StyleSheet, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { AntDesign, Feather, FontAwesome6 } from "@expo/vector-icons";
+import { RoundedBtn } from "../../../components/ui/roundedBtn";
+import { useRouter } from "expo-router";
 
 export default function CameraScreen() {
 
@@ -17,6 +14,7 @@ export default function CameraScreen() {
     const [mode, setMode] = useState("picture");
     const [facing, setFacing] = useState("back");
     const [recording, setRecording] = useState(false);
+    const router = useRouter();
 
     if (!permission) {
         return null;
@@ -53,10 +51,6 @@ export default function CameraScreen() {
         setMode((prev) => (prev === "picture" ? "video" : "picture"));
     };
 
-    const toggleFacing = () => {
-        setFacing((prev) => (prev === "back" ? "front" : "back"));
-    };
-
     const renderPicture = (uri) => {
         return (
             <View>
@@ -73,6 +67,10 @@ export default function CameraScreen() {
     const renderCamera = () => {
         return (
             <View style={styles.cameraContainer}>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", position: "absolute", top: 40, left: 0, right: 0, height: 50, zIndex: 1, paddingHorizontal: 20 }}>
+                    <RoundedBtn iconName="close" large={true} onPress={() => router.back()} />
+                    <RoundedBtn iconName="flash" large={true} />
+                </View>
                 <CameraView
                     style={styles.camera}
                     ref={ref}
@@ -82,37 +80,45 @@ export default function CameraScreen() {
                     responsiveOrientationWhenOrientationLocked
                 />
                 <View style={styles.shutterContainer}>
-                    <Pressable onPress={toggleMode}>
-                        {mode === "picture" ? (
-                            <AntDesign name="picture" size={32} color="white" />
-                        ) : (
-                            <Feather name="video" size={32} color="white" />
-                        )}
-                    </Pressable>
-                    <Pressable onPress={mode === "picture" ? takePicture : recordVideo}>
-                        {({ pressed }) => (
-                            <View
-                                style={[
-                                    styles.shutterBtn,
-                                    {
-                                        opacity: pressed ? 0.5 : 1,
-                                    },
-                                ]}
-                            >
+                    <View>
+                        <Pressable onPress={toggleMode}>
+                            {mode === "picture" ? (
+                                <AntDesign name="picture" size={32} color="white" />
+                            ) : (
+                                <Feather name="video" size={32} color="white" />
+                            )}
+                        </Pressable>
+                        <Pressable onPress={mode === "picture" ? takePicture : recordVideo}>
+                            {({ pressed }) => (
                                 <View
                                     style={[
-                                        styles.shutterBtnInner,
+                                        styles.shutterBtn,
                                         {
-                                            backgroundColor: mode === "picture" ? "white" : "red",
+                                            opacity: pressed ? 0.5 : 1,
                                         },
                                     ]}
-                                />
-                            </View>
-                        )}
-                    </Pressable>
-                    <Pressable onPress={toggleFacing}>
-                        <FontAwesome6 name="rotate-left" size={32} color="white" />
-                    </Pressable>
+                                >
+                                    <View
+                                        style={[
+                                            styles.shutterBtnInner,
+                                            {
+                                                backgroundColor: mode === "picture" ? "white" : "red",
+                                            },
+                                        ]}
+                                    />
+                                </View>
+                            )}
+                        </Pressable>
+
+                    </View>
+                    <View>
+                        <TouchableOpacity onPress={() => setMode("picture")}>
+                            <Text>Picture</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setMode("video")}>
+                            <Text>Video</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
         );
