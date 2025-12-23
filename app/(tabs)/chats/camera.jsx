@@ -1,6 +1,6 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useRef, useState } from "react";
-import { Button, Pressable, StyleSheet, Text, View } from "react-native";
+import { Button, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Image } from "expo-image";
 import { AntDesign, Feather, FontAwesome6 } from "@expo/vector-icons";
 import { RoundedBtn } from "../../../components/ui/roundedBtn";
@@ -81,13 +81,6 @@ export default function CameraScreen() {
                 />
                 <View style={styles.shutterContainer}>
                     <View>
-                        <Pressable onPress={toggleMode}>
-                            {mode === "picture" ? (
-                                <AntDesign name="picture" size={32} color="white" />
-                            ) : (
-                                <Feather name="video" size={32} color="white" />
-                            )}
-                        </Pressable>
                         <Pressable onPress={mode === "picture" ? takePicture : recordVideo}>
                             {({ pressed }) => (
                                 <View
@@ -111,12 +104,12 @@ export default function CameraScreen() {
                         </Pressable>
 
                     </View>
-                    <View>
+                    <View style={{ flexDirection: "row", alignItems: "center", width: "100%", gap: 10 }}>
                         <TouchableOpacity onPress={() => setMode("picture")}>
-                            <Text>Picture</Text>
+                            <Text style={{ color: mode === "picture" ? "white" : "black" }}>Picture</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => setMode("video")}>
-                            <Text>Video</Text>
+                            <Text style={{ color: mode === "video" ? "white" : "black" }}>Video</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -145,9 +138,6 @@ const styles = StyleSheet.create({
         bottom: 44,
         left: 0,
         width: "100%",
-        alignItems: "center",
-        flexDirection: "row",
-        justifyContent: "space-between",
         paddingHorizontal: 30,
     },
     shutterBtn: {
