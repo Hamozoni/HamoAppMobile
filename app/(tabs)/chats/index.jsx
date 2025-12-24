@@ -5,11 +5,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { FlatList } from "react-native-gesture-handler";
 import { ChatCard } from "../../../components/cards/chatCard";
 import { useState } from "react";
-import { RoundedBtn } from "../../../components/ui/roundedBtn";
 import { Stack } from "expo-router";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import Animated, { useAnimatedStyle, withTiming } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { Dimensions } from "react-native";
 const width = Dimensions.get("window").width;
 
@@ -43,20 +42,33 @@ const Chats = () => {
     const [selectedChats, setSelectedChats] = useState([]);
 
     const handleEdit = () => {
-        setIsEdit(prev => !prev);
+        setIsEdit(prev => {
+            router.setParams({ isEdit: !prev });
+            return !prev;
+        });
     };
 
     const animChatCard = useAnimatedStyle(() => {
         return {
-            transform: [{ translateX: isEdit ? withTiming(0) : withTiming(-40) }],
+            transform: [{ translateX: isEdit ? withSpring(0) : withSpring(-40) }],
         };
     });
 
     const animTimeLine = useAnimatedStyle(() => {
         return {
-            width: isEdit ? withTiming(width - 60) : "100%",
+            width: isEdit ? withSpring(width - 60) : withSpring(width - 20),
         };
     });
+
+    const handleSelectChat = (chat) => {
+
+        if (selectedChats.includes(chat)) {
+            setSelectedChats(prev => prev.filter(item => item.id !== chat.id));
+        } else {
+            setSelectedChats(prev => [...prev, chat]);
+        }
+    };
+
 
 
     return (
@@ -85,7 +97,14 @@ const Chats = () => {
                     ),
                 }}
             />
-            <ScrollView contentInsetAdjustmentBehavior="automatic" contentContainerStyle={{ flex: 1, backgroundColor: "#fff", paddingHorizontal: 10 }}>
+            <ScrollView
+                contentInsetAdjustmentBehavior="automatic"
+                contentContainerStyle={{
+                    flex: 1,
+                    backgroundColor: "#fff",
+                    paddingHorizontal: 10
+                }}
+            >
                 <View style={{ flex: 1 }}>
                     <View style={{ paddingVertical: 20 }}>
                         <FlatList
@@ -102,7 +121,23 @@ const Chats = () => {
                             data={CHATS}
                             renderItem={({ item }) => (
                                 <Animated.View style={[animChatCard, { flexDirection: "row", alignItems: "center", gap: 10 }]}>
-                                    <TouchableOpacity style={{ width: 30, height: 30, borderRadius: "50%", justifyContent: "center", alignItems: "center", borderWidth: 3, borderColor: "#d4d2d2ff" }}>
+                                    <TouchableOpacity
+                                        onPress={() => handleSelectChat(item)}
+                                        style={{
+                                            width: 30,
+                                            height: 30,
+                                            borderRadius: "50%",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            borderWidth: selectedChats.includes(item) ? 0 : 3,
+                                            borderColor: "#d4d2d2ff",
+                                            backgroundColor: selectedChats.includes(item) ? "#12729eff" : "transparent"
+                                        }}>
+                                        {
+                                            selectedChats.includes(item) && (
+                                                <Ionicons name="checkmark" size={26} color="white" />
+                                            )
+                                        }
                                     </TouchableOpacity>
                                     <Animated.View style={animTimeLine}>
                                         <ChatCard key={item.id} chat={item} />
@@ -120,6 +155,31 @@ const Chats = () => {
 
 
             </ScrollView>
+            <View
+                style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: 20,
+                    position: "absolute",
+                    zIndex: 99999999999,
+                    bottom: -50,
+                    left: 0,
+                    right: 0,
+                    width: "100%",
+                    backgroundColor: "#fff"
+                }}
+            >
+                <TouchableOpacity style={{ padding: 10 }}>
+                    <Text>Archive</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{ padding: 10 }}>
+                    <Text>Read all</Text>
+                </TouchableOpacity>
+                <TouchableOpacity >
+                    <Text>Delete</Text>
+                </TouchableOpacity>
+            </View>
         </SafeAreaView>
     );
 };

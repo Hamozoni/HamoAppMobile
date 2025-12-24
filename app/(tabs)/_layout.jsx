@@ -1,9 +1,10 @@
-import { Tabs, useSegments } from "expo-router";
+import { Tabs, useLocalSearchParams, useSegments } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 const RootLayout = () => {
 
     const segments = useSegments();
+    const params = useLocalSearchParams();
 
     return (
         <Tabs
@@ -48,14 +49,18 @@ const RootLayout = () => {
 
             <Tabs.Screen
                 name="chats"
-                options={{
-                    headerShown: false,
-                    tabBarStyle: { display: segments.length === 2 ? "flex" : "none" },
+                options={({ route }) => {
+                    // const { isEdit } = route.params;
+                    console.log(params);
+                    return {
+                        headerShown: false,
+                        tabBarStyle: { display: segments.length === 2 ? "flex" : "none" },
 
-                    title: "Chats",
-                    tabBarIcon: ({ focused, size, color }) => (
-                        <Ionicons name={focused ? "chatbubbles" : "chatbubbles-outline"} size={size} color={color} />
-                    )
+                        title: "Chats",
+                        tabBarIcon: ({ focused, size, color }) => (
+                            <Ionicons name={focused ? "chatbubbles" : "chatbubbles-outline"} size={size} color={color} />
+                        )
+                    }
                 }}
             />
             <Tabs.Screen
