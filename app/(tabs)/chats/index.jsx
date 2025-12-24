@@ -4,12 +4,13 @@ import { CHATS } from "../../../constants/chats";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FlatList } from "react-native-gesture-handler";
 import { ChatCard } from "../../../components/cards/chatCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Stack } from "expo-router";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import Animated, { useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { Dimensions } from "react-native";
+
 const width = Dimensions.get("window").width;
 
 const Button = ({ title, active, setActive }) => {
@@ -42,11 +43,12 @@ const Chats = () => {
     const [selectedChats, setSelectedChats] = useState([]);
 
     const handleEdit = () => {
-        setIsEdit(prev => {
-            router.setParams({ isEdit: !prev });
-            return !prev;
-        });
+        setIsEdit(prev => !prev);
     };
+
+    useEffect(() => {
+        router.setParams({ isEdit });
+    }, [isEdit]);
 
     const animChatCard = useAnimatedStyle(() => {
         return {
@@ -95,6 +97,7 @@ const Chats = () => {
 
                         </View>
                     ),
+                    tabBarStyle: { display: "none" }
                 }}
             />
             <ScrollView
@@ -106,16 +109,21 @@ const Chats = () => {
                 }}
             >
                 <View style={{ flex: 1 }}>
-                    <View style={{ paddingVertical: 20 }}>
-                        <FlatList
-                            data={["All", "Unread", "Favorite", "Groups", "Communities"]}
-                            renderItem={({ item }) => <Button title={item} active={activeButton} setActive={setActiveButton} />}
-                            keyExtractor={(item) => item}
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                        />
+                    {
+                        !isEdit && (
+                            <View style={{ paddingVertical: 20 }}>
+                                <ScrollView horizontal>
 
-                    </View>
+                                    {
+                                        ["All", "Unread", "Favorite", "Groups", "Communities"].map((item) => (
+                                            <Button title={item} active={activeButton} setActive={setActiveButton} />
+                                        ))
+                                    }
+                                </ScrollView>
+                            </View>
+
+                        )
+                    }
                     <View style={{ flex: 1 }}>
                         <FlatList
                             data={CHATS}
@@ -155,31 +163,33 @@ const Chats = () => {
 
 
             </ScrollView>
-            <View
-                style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    padding: 20,
-                    position: "absolute",
-                    zIndex: 99999999999,
-                    bottom: -50,
-                    left: 0,
-                    right: 0,
-                    width: "100%",
-                    backgroundColor: "#fff"
-                }}
-            >
-                <TouchableOpacity style={{ padding: 10 }}>
-                    <Text>Archive</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={{ padding: 10 }}>
-                    <Text>Read all</Text>
-                </TouchableOpacity>
-                <TouchableOpacity >
-                    <Text>Delete</Text>
-                </TouchableOpacity>
-            </View>
+            {
+                isEdit && (
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            padding: 10,
+                            position: "absolute",
+                            zIndex: 99999999999,
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            width: "100%",
+                            backgroundColor: "#ada0a0ff"
+                        }}
+                    >
+                        <TouchableOpacity style={{ padding: 10 }}>
+                            <Text>Archive</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{ padding: 10 }}>
+                            <Text>Read all</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity >
+                            <Text>Delete</Text>
+                        </TouchableOpacity>
+                    </View>)}
         </SafeAreaView>
     );
 };
