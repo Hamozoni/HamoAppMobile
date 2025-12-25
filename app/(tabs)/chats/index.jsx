@@ -13,26 +13,6 @@ import { Dimensions } from "react-native";
 
 const width = Dimensions.get("window").width;
 
-const Button = ({ title, active, setActive }) => {
-    return (
-        <TouchableOpacity
-            onPress={() => setActive(title)}
-            style={{
-                paddingHorizontal: 15,
-                borderRadius: 15,
-                backgroundColor: active === title ? "rgba(14, 218, 133, 1)" : "transparent",
-                borderColor: "#eee",
-                borderWidth: 2,
-                paddingHorizontal: 10,
-                paddingVertical: 5,
-                marginRight: 5,
-                justifyContent: "center",
-                alignItems: "center"
-            }}>
-            <Text style={{ color: active === title ? "#eee" : "gray", fontSize: 14, fontWeight: "600" }}>{title}</Text>
-        </TouchableOpacity>
-    );
-}
 
 const Chats = () => {
 
@@ -45,6 +25,27 @@ const Chats = () => {
     const handleEdit = () => {
         setIsEdit(prev => !prev);
     };
+    const Button = ({ title, active, setActive }) => {
+        return (
+            <TouchableOpacity
+                onPress={() => setActive(title)}
+                disabled={isEdit}
+                style={{
+                    paddingHorizontal: 15,
+                    borderRadius: 15,
+                    backgroundColor: isEdit ? "transparent" : active === title ? "rgba(14, 218, 133, 1)" : "transparent",
+                    borderColor: "#eee",
+                    borderWidth: 2,
+                    paddingHorizontal: 10,
+                    paddingVertical: 5,
+                    marginRight: 5,
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}>
+                <Text style={{ color: active === title ? "#eee" : "gray", fontSize: 14, fontWeight: "600" }}>{title}</Text>
+            </TouchableOpacity>
+        );
+    }
 
     useEffect(() => {
         router.setParams({ isEdit });
@@ -74,7 +75,7 @@ const Chats = () => {
 
 
     return (
-        <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
+        <SafeAreaView style={{ flex: 1 }} edges={["top"]} aria-modal>
             <Stack.Screen
                 options={{
                     headerLeft: () => (
@@ -109,21 +110,17 @@ const Chats = () => {
                 }}
             >
                 <View style={{ flex: 1 }}>
-                    {
-                        !isEdit && (
-                            <View style={{ paddingVertical: 20 }}>
-                                <ScrollView horizontal>
 
-                                    {
-                                        ["All", "Unread", "Favorite", "Groups", "Communities"].map((item) => (
-                                            <Button title={item} active={activeButton} setActive={setActiveButton} />
-                                        ))
-                                    }
-                                </ScrollView>
-                            </View>
+                    <View style={{ paddingVertical: 20 }}>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
 
-                        )
-                    }
+                            {
+                                ["All", "Unread", "Favorite", "Groups", "Communities"].map((item) => (
+                                    <Button title={item} active={activeButton} setActive={setActiveButton} />
+                                ))
+                            }
+                        </ScrollView>
+                    </View>
                     <View style={{ flex: 1 }}>
                         <FlatList
                             data={CHATS}
@@ -170,27 +167,29 @@ const Chats = () => {
                             flexDirection: "row",
                             alignItems: "center",
                             justifyContent: "space-between",
-                            padding: 10,
+                            padding: 14,
                             position: "absolute",
                             zIndex: 99999999999,
                             bottom: 0,
                             left: 0,
                             right: 0,
                             width: "100%",
-                            backgroundColor: "#ada0a0ff"
+                            backgroundColor: "#000000ff",
+                            opacity: 0.5
                         }}
                     >
-                        <TouchableOpacity style={{ padding: 10 }}>
-                            <Text>Archive</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{ padding: 10 }}>
-                            <Text>Read all</Text>
+                        <TouchableOpacity >
+                            <Text style={{ color: "white", fontSize: 16 }}>Archive</Text>
                         </TouchableOpacity>
                         <TouchableOpacity >
-                            <Text>Delete</Text>
+                            <Text style={{ color: "white", fontSize: 16 }}>Read all</Text>
                         </TouchableOpacity>
-                    </View>)}
-        </SafeAreaView>
+                        <TouchableOpacity >
+                            <Text style={{ color: "white", fontSize: 16 }}>Delete</Text>
+                        </TouchableOpacity>
+                    </View>)
+            }
+        </SafeAreaView >
     );
 };
 

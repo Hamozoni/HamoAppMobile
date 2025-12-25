@@ -5,6 +5,7 @@ const RootLayout = () => {
 
     const segments = useSegments();
 
+
     return (
         <Tabs
             screenOptions={{
@@ -50,8 +51,9 @@ const RootLayout = () => {
                 name="chats"
                 options={{
                     headerShown: false,
-                    tabBarStyle: { display: segments.length === 2 ? "flex" : "none" },
-
+                    tabBarStyle: {
+                        display: segments.length === 2 ? "flex" : "none",
+                    },
                     title: "Chats",
                     tabBarIcon: ({ focused, size, color }) => (
                         <Ionicons name={focused ? "chatbubbles" : "chatbubbles-outline"} size={size} color={color} />
