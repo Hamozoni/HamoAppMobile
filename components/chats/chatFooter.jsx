@@ -1,12 +1,27 @@
 import { TextInput, TouchableOpacity, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, FontAwesome6 } from "@expo/vector-icons";
+import { useState } from "react";
 
 export default function ChatFooter({ id }) {
+
+    const [isMedia, setIsMedia] = useState(false);
+
     return (
         <View style={{ paddingHorizontal: 10, paddingTop: 10, backgroundColor: "#fff" }}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-                <TouchableOpacity>
-                    <Ionicons name="add-outline" size={28} color="#1fa105" />
+                <TouchableOpacity
+                    style={{
+                        width: 30,
+                        height: 30,
+                        justifyContent: "center",
+                        alignItems: "center"
+                    }} onPress={() => setIsMedia(prev => !prev)}>
+                    {
+                        isMedia ?
+                            <FontAwesome6 name="keyboard" size={25} color="#1fa105" />
+                            : <Ionicons name="add-outline" size={30} color="#1fa105" />
+
+                    }
                 </TouchableOpacity>
                 <TextInput
                     placeholder="Type a message"
