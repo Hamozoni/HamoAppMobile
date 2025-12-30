@@ -1,18 +1,44 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { Ionicons, FontAwesome6, Entypo, FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import { useState } from "react";
 
 export default function FooterAttachment({ keyboardHeight }) {
+
+    const [selectedImage, setSelectedImage] = useState(null);
+
+    const pickImage = async () => {
+        const states = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!states.granted) {
+            Alert.alert("Permission required", "Please grant permission to access your media library");
+            return;
+        };
+
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images', 'videos'],
+            allowsMultipleSelection: true,
+            quality: 1,
+        });
+
+        console.log(result);
+
+        if (!result.canceled) {
+            setSelectedImage(result.assets[0].uri);
+        };
+    };
+
+
     return (
         <View style={[styles.attachmentContainer, { height: keyboardHeight - 13 }]}>
             <View style={styles.attachmentRow}>
                 <View style={styles.attachmentItem}>
-                    <TouchableOpacity style={styles.attachmentItemButton}>
+                    <TouchableOpacity style={styles.attachmentItemButton} onPress={pickImage}>
                         <FontAwesome6 name="photo-film" size={28} color="#60adecff" />
                     </TouchableOpacity>
                     <Text style={styles.attachmentItemText}>Photo</Text>
                 </View>
                 <View style={styles.attachmentItem}>
-                    <TouchableOpacity style={styles.attachmentItemButton}>
+                    <TouchableOpacity style={styles.attachmentItemButton} onPress={() => router.push("/chats/camera")}>
                         <Entypo name="camera" size={28} color="black" />
                     </TouchableOpacity>
                     <Text style={styles.attachmentItemText}>Camera</Text>
