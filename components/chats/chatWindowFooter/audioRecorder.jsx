@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { RoundedBtn } from "../../ui/roundedBtn";
 
 import {
@@ -87,8 +87,75 @@ export default function AudioRecorder({ setIsAudioRecorder }) {
             }, 1000);
         } else {
             clearInterval(timerRef.current);
+        };
+
+        return () => {
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+            }
         }
     }, [recorderState.isRecording]);
+
+    // Load and play a sound effect using expo-audio
+
+    const playsoundEffect = useCallback(async (source) => {
+        try {
+            // Release previous sound effect if exists
+
+            if (soundEffectPlayerRef.current) {
+                soundEffectPlayerRef.current.release();
+            };
+
+            // Create a new audio player for the sound effect
+
+            const player = createAudioPlayer(source);
+            soundEffectPlayerRef.current = player;
+
+            // Play the sound
+
+            await player.play();
+
+            // Automatically release when done
+
+            player.setOnPlaybackStatusUpdate((status) => {
+                if (status.didJustFinish) {
+                    player.release();
+                    soundEffectPlayerRef.current = null;
+                }
+            })
+        } catch (error) {
+            console.error('Failed to play sound effect', error);
+        }
+    }, []);
+
+    // Start recording
+
+    const startRecording = useCallback(async () => {
+        try {
+            setRecordTime(0);
+            await audioRecorder.prepareToRecordAsync();
+            audioRecorder.startRecording();
+        } catch (error) {
+            console.error('Failed to start recording', error);
+        }
+    }, []);
+
+    // Stop recording
+
+    const stopRecording = async () => {
+        try {
+            await audioRecorder.stopRecording();
+
+            const uri = audioRecorder.uri;
+            setRecordingUri(uri);
+
+            // if(onRecordingCompleted){
+            //     onRecordingCompleted(uri);
+            // }
+        } catch (error) {
+            console.error('Failed to stop recording', error);
+        }
+    };
 
 
 
