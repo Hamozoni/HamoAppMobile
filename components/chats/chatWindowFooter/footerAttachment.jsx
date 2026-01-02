@@ -1,12 +1,14 @@
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { Ionicons, FontAwesome6, Entypo, FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import * as DocumentPicker from "expo-document-picker";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 
 export default function FooterAttachment({ keyboardHeight }) {
 
     const [selectedAssets, setSelectedAssets] = useState(null);
+    const [selectedDocument, setSelectedDocument] = useState(null);
     const router = useRouter();
 
     const pickImage = async () => {
@@ -31,6 +33,27 @@ export default function FooterAttachment({ keyboardHeight }) {
         }
     };
 
+    const pickDocument = async () => {
+        try {
+            const result = await DocumentPicker.getDocumentAsync({
+                type: 'application/pdf', // Allows all file types
+            });
+
+            if (!result.canceled) {
+                // The selected file's information is in result.assets[0]
+                const file = result.assets[0];
+                console.log('File picked:', file.name);
+                console.log('File URI:', file.uri);
+                console.log('File size:', file.size);
+                console.log('File size:', file);
+                // You can now use this URI for upload or processing
+            } else {
+                console.log('User canceled the picker.');
+            }
+        } catch (error) {
+            console.error('Error picking document:', error);
+        }
+    };
 
     return (
         <View style={[styles.attachmentContainer, { height: keyboardHeight - 13 }]}>
@@ -62,7 +85,7 @@ export default function FooterAttachment({ keyboardHeight }) {
             </View>
             <View style={styles.attachmentRow}>
                 <View style={styles.attachmentItem}>
-                    <TouchableOpacity style={styles.attachmentItemButton}>
+                    <TouchableOpacity style={styles.attachmentItemButton} onPress={pickDocument}>
                         <Ionicons name="document" size={34} color="#60adecff" />
                     </TouchableOpacity>
                     <Text style={styles.attachmentItemText}>Document</Text>
