@@ -5,7 +5,7 @@ export const ChatCard = ({ chat }) => {
     const router = useRouter();
     return (
         <TouchableOpacity
-            onPress={() => router.push(`/chats/${chat?.id}`)}
+            onPress={() => router.push(`/chatWindow/${chat?.id}`)}
             style={{ flexDirection: "row", flex: 1, alignItems: "center", gap: 5 }}>
 
             <Image

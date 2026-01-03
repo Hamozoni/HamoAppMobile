@@ -9,18 +9,6 @@ export default function SettingLayout() {
     return (
         <Stack  >
             <Stack.Screen
-                name="index"
-                options={{
-                    headerShown: true,
-                    title: "Chats",
-                    headerLargeTitle: true,
-                    headerSearchBarOptions: {
-                        placeholder: "Search",
-
-                    },
-                }}
-            />
-            <Stack.Screen
                 name="[id]"
 
                 options={
@@ -42,23 +30,6 @@ export default function SettingLayout() {
                     headerShown: false,
                     gestureEnabled: false,
                     tabBarVisible: false,
-                }}
-            />
-            <Stack.Screen
-                name="contacts"
-                options={{
-                    title: "New Chat",
-                    headerShown: true,
-                    presentation: "modal",
-                    headerRight: () => (
-                        <TouchableOpacity onPress={() => router.back()}>
-                            <Ionicons name="close" size={26} />
-                        </TouchableOpacity>
-                    ),
-                    headerSearchBarOptions: {
-                        placeholder: "Search name or number",
-                    },
-
                 }}
             />
             <Stack.Screen
@@ -104,16 +75,6 @@ export default function SettingLayout() {
                         placeholder: "Search or enter an address",
                     },
 
-                }}
-            />
-            <Stack.Screen
-                name="camera"
-                options={{
-                    presentation: "fullScreenModal",
-                    animation: "flip",
-                    headerShown: false,
-                    gestureEnabled: false,
-                    tabBarVisible: false,
                 }}
             />
         </Stack>

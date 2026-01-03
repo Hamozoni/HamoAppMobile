@@ -1,11 +1,7 @@
-import { Tabs, useSegments } from "expo-router";
+import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 const RootLayout = () => {
-
-    const segments = useSegments();
-
-
     return (
         <Tabs
             screenOptions={{
@@ -21,7 +17,6 @@ const RootLayout = () => {
                 options={{
                     headerShown: false,
                     title: "Updates",
-                    tabBarStyle: { display: segments.length === 2 ? "flex" : "none" },
                     tabBarIcon: ({ focused, color, size }) => (
                         // <Image source={require("../../assets/application.png")} style={{ width: 24, height: 24 }} />
                         <Ionicons name={focused ? "notifications" : "notifications-outline"} size={30} color={color} />
@@ -40,10 +35,9 @@ const RootLayout = () => {
                 }} />
 
             <Tabs.Screen
-                name="chats"
+                name="chat"
                 options={{
                     headerShown: false,
-                    tabBarStyle: { display: segments.length === 2 ? "flex" : "none" },
                     title: "Chats",
                     tabBarIcon: ({ focused, size, color }) => (
                         <Ionicons name={focused ? "chatbubbles" : "chatbubbles-outline"} size={30} color={color} />

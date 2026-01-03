@@ -21,13 +21,6 @@ export default function UpdatesLayout() {
                         </TouchableOpacity>
                     )
                 }} />
-
-            <Stack.Screen
-                name="[index]"
-                options={{
-                    animation: "flip",
-                    headerShown: false,
-                }} />
         </Stack>
     );
 }

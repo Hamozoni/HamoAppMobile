@@ -31,7 +31,7 @@ export default function StatusGalleryCard({ status }) {
             if (Number.parseInt(index) === 0) {
                 router.back();
             } else {
-                router.replace(`/updates/${Number.parseInt(index) - 1}`);
+                router.replace(`/status/${Number.parseInt(index) - 1}`);
             }
         }
     }
@@ -44,7 +44,7 @@ export default function StatusGalleryCard({ status }) {
                 router.back();
             } else {
 
-                router.replace(`/updates/${Number.parseInt(index) + 1}`);
+                router.replace(`/status/${Number.parseInt(index) + 1}`);
             }
         }
     };
@@ -68,15 +68,15 @@ export default function StatusGalleryCard({ status }) {
     const handleRoute = (type) => {
         if (type === "left") {
             if (Number.parseInt(index) > 0) {
-                router.replace(`/updates/${Number.parseInt(index) - 1}`);
+                router.replace(`/status/${Number.parseInt(index) - 1}`);
             } else {
-                router.replace(`/updates`);
+                router.replace(`/status`);
             }
         } else {
             if (Number.parseInt(index) < STATUSES?.length - 1) {
-                router.replace(`/updates/${Number.parseInt(index) + 1}`);
+                router.replace(`/status/${Number.parseInt(index) + 1}`);
             } else {
-                router.replace(`/updates`);
+                router.replace(`/status`);
             }
         }
     };

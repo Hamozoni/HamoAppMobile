@@ -49,7 +49,7 @@ export const StatusCard = ({ status, index }) => {
     };
     if (status.statuses[0]?.type === 'text') {
         return (
-            <TouchableOpacity onPress={() => router.push(`/updates/${index}`)}>
+            <TouchableOpacity onPress={() => router.push(`/status/${index}`)}>
                 <TextCard>
                     <CardContainer />
                 </TextCard>
@@ -57,7 +57,7 @@ export const StatusCard = ({ status, index }) => {
         )
     }
     return (
-        <TouchableOpacity onPress={() => router.push(`/updates/${index}`)}>
+        <TouchableOpacity onPress={() => router.push(`/status/${index}`)}>
             <MediaCard>
                 <CardContainer />
             </MediaCard>

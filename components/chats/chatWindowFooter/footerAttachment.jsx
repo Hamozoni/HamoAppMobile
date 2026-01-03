@@ -62,13 +62,13 @@ export default function FooterAttachment({ keyboardHeight, setIsAttachment }) {
                     <Text style={styles.attachmentItemText}>Photo</Text>
                 </View>
                 <View style={styles.attachmentItem}>
-                    <TouchableOpacity style={styles.attachmentItemButton} onPress={() => router.push("/chats/camera")}>
+                    <TouchableOpacity style={styles.attachmentItemButton} onPress={() => router.push("/chatWindow/camera")}>
                         <Entypo name="camera" size={28} color="black" />
                     </TouchableOpacity>
                     <Text style={styles.attachmentItemText}>Camera</Text>
                 </View>
                 <View style={styles.attachmentItem}>
-                    <TouchableOpacity style={styles.attachmentItemButton} onPress={() => router.push("/chats/location")}>
+                    <TouchableOpacity style={styles.attachmentItemButton} onPress={() => router.push("/chatWindow/location")}>
                         <FontAwesome6 name="location-dot" size={34} color="#54ce49ee" />
                     </TouchableOpacity>
                     <Text style={styles.attachmentItemText}>Location</Text>
@@ -76,7 +76,7 @@ export default function FooterAttachment({ keyboardHeight, setIsAttachment }) {
             </View>
             <View style={styles.attachmentRow}>
                 <View style={styles.attachmentItem}>
-                    <TouchableOpacity style={styles.attachmentItemButton} onPress={() => router.push("/chats/shareContacts")}>
+                    <TouchableOpacity style={styles.attachmentItemButton} onPress={() => router.push("/chatWindow/shareContacts")}>
                         <FontAwesome6 name="contact-book" size={28} color="black" />
                     </TouchableOpacity>
                     <Text style={styles.attachmentItemText}>Contacts</Text>
