@@ -45,7 +45,7 @@ const RootLayout = () => {
                 }}
             />
             <Tabs.Screen
-                name="setting"
+                name="settings"
                 options={{
                     headerShown: false,
                     title: "Settings",

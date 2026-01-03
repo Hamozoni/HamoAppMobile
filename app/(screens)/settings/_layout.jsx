@@ -7,7 +7,7 @@ export default function SettingsLayout() {
     return (
         <Stack  >
             <Stack.Screen
-                name="list"
+                name="lists"
                 options={{
                     title: "Lists",
                     headerLeft: () => (
@@ -22,7 +22,7 @@ export default function SettingsLayout() {
             />
 
             <Stack.Screen
-                name="broadcast"
+                name="broadcasts"
                 options={{
                     title: "Broadcasts messages",
                     headerLeft: () => (

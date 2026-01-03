@@ -8,7 +8,7 @@ export const ProfileInfo = () => {
     return (
         <View style={{ padding: 20, borderRadius: 20, backgroundColor: "#fff", marginVertical: 20 }}>
             <View style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: 1, borderBottomColor: "#eee", marginBottom: 20, paddingBottom: 20, gap: 10 }}>
-                <TouchableOpacity onPress={() => router.push("/setting/profile")}>
+                <TouchableOpacity onPress={() => router.push("/settings/profile")}>
                     <Image
                         source={require("../../assets/images/pexels-al-amin-muhammad-988616478-29680723.jpg")}
                         style={{ width: 60, height: 60, borderRadius: 50, backgroundColor: "#d6f897ff" }}

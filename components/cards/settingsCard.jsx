@@ -5,9 +5,14 @@ import { useRouter } from "expo-router";
 export const SettingsCard = ({ iconName, title }) => {
 
     const router = useRouter();
+
+    const handleRouter = () => {
+
+        router.push(`settings/${title.toLowerCase().split(" ")[0]}`)
+    }
     return (
         <TouchableOpacity
-            onPress={() => router.push(`/settings/help`)}
+            onPress={handleRouter}
             style={{ flexDirection: "row", alignItems: "center", gap: 10, marginBottom: 10, height: 50 }}>
             <Ionicons name={iconName} size={20} color="#555353ff" />
             <View

@@ -1,12 +1,12 @@
-import { ScrollView, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { ScrollView, Text } from "react-native";
 
-export default function SettingsList() {
+export default function SettingsLinkedDevices() {
     return (
         <SafeAreaProvider>
             <SafeAreaView>
                 <ScrollView contentInsetAdjustmentBehavior="automatic">
-                    <Text>Settings List</Text>
+                    <Text>Linked Devices</Text>
                 </ScrollView>
             </SafeAreaView>
 
