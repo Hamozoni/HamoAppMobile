@@ -26,9 +26,12 @@ export default function SettingsLayout() {
                     headerLeft: () => (<ChevronBackBtn />),
                     headerRight: () => (
                         <TouchableOpacity>
-                            <Text>Edit</Text>
+                            <Text style={{ fontSize: 18, fontWeight: 500, color: "#47b863ff" }}>Edit</Text>
                         </TouchableOpacity>
-                    )
+                    ),
+                    headerSearchBarOptions: {
+                        placeholder: "Search",
+                    }
                 }}
             />
             <Stack.Screen
