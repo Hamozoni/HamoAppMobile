@@ -9,6 +9,7 @@ export default function SettingsStorageLayout() {
                 name="index"
                 options={{
                     headerShown: true,
+                    headerTransparent: true,
                     title: "Storage and data",
                     headerLeft: () => (
                         <RoundedBtn iconName="chevron-back" onPress={() => router.back()} />

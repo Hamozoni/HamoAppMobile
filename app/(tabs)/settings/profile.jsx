@@ -1,5 +1,6 @@
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View, ScrollView } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";
 
 const ProfileInput = ({ label, value }) => {
     return (
@@ -21,23 +22,25 @@ const profileData = [
 
 export default function Profile() {
     return (
-        <View style={{ paddingHorizontal: 10 }}>
-            <View style={{ alignItems: "center", marginVertical: 20 }}>
-                <TouchableOpacity style={{ alignItems: "center", marginBottom: 10 }}>
-                    <Image
-                        source={require("../../../assets/images/pexels-al-amin-muhammad-988616478-29680723.jpg")}
-                        style={{ width: 150, height: 150, borderRadius: "50%", backgroundColor: "#e4f7c2ff" }}
-                    />
-                </TouchableOpacity>
-                <TouchableOpacity>
-                    <Text style={{ fontSize: 18, fontWeight: "700", color: "#095e06ff" }}>Change Profile Photo</Text>
-                </TouchableOpacity>
-            </View>
-            <View style={{ marginTop: 20 }}>
-                {profileData.map((item) => (
-                    <ProfileInput key={item.label} label={item.label} value={item.value} />
-                ))}
-            </View>
-        </View>
+        <ThemedSafeAreaView>
+            <ScrollView contentInsetAdjustmentBehavior="automatic">
+                <View style={{ alignItems: "center", marginVertical: 20 }}>
+                    <TouchableOpacity style={{ alignItems: "center", marginBottom: 10 }}>
+                        <Image
+                            source={require("../../../assets/images/pexels-al-amin-muhammad-988616478-29680723.jpg")}
+                            style={{ width: 150, height: 150, borderRadius: "50%", backgroundColor: "#e4f7c2ff" }}
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <Text style={{ fontSize: 18, fontWeight: "700", color: "#095e06ff" }}>Change Profile Photo</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ marginTop: 20 }}>
+                    {profileData.map((item) => (
+                        <ProfileInput key={item.label} label={item.label} value={item.value} />
+                    ))}
+                </View>
+            </ScrollView>
+        </ThemedSafeAreaView>
     );
 };

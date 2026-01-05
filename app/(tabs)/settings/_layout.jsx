@@ -25,8 +25,7 @@ export default function SettingLayout() {
                     headerShown: true,
                     headerTransparent: true,
                     title: "Profile",
-                    headerBackButtonMenuEnabled: true,
-                    headerBackButtonDisplayMode: "minimal",
+                    headerLeft: () => (<ChevronBackBtn />),
                 }}
             />
             <Stack.Screen
