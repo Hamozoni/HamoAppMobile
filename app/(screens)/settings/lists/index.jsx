@@ -1,7 +1,8 @@
 import { Text, TouchableOpacity, View, StyleSheet, ScrollView } from "react-native"
 import ThemedSafeAreaView from "../../../../components/themedViews/safeAreaView";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons"
-import { useRouter } from "expo-router";
+import TitleForwarIconBtn from "../../../../components/buttons/titleForwarIconBtn";
+import ThemedViewContainer from "../../../../components/themedViews/ThemedViewContainer";
 
 const lists = [
     {
@@ -22,7 +23,6 @@ const lists = [
 ]
 export default function SettingsLists() {
 
-    const router = useRouter();
 
     const HeaderBtns = ({ children }) => {
         return (
@@ -42,31 +42,10 @@ export default function SettingsLists() {
         )
     };
 
-
-    const ListsLinksBtn = ({ title, link }) => {
-        return (
-            <TouchableOpacity
-                onPress={() => { router.push(link) }}
-                style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: 'space-between',
-                    paddingHorizontal: 10,
-                    paddingVertical: 15,
-                    borderBottomWidth: 1,
-                    borderBottomColor: "#e5e5e5ff"
-                }}>
-                <Text style={{ flex: 1, fontSize: 18, fontWeight: 500, color: "#5f5959ff" }}>
-                    {title}
-                </Text>
-                <Ionicons name="chevron-forward" size={20} color="black" />
-            </TouchableOpacity >
-        )
-    }
     return (
         <ThemedSafeAreaView>
             <ScrollView>
-                <View style={{ paddingHorizontal: 10, paddingVertical: 30, borderRadius: 10, backgroundColor: "#f8f5f5ff" }}>
+                <ThemedViewContainer paddingVertical={20}>
                     <View style={{ flexDirection: "row-reverse", justifyContent: "center", alignItems: "center", gap: 5, paddingVertical: 30, }}>
                         <HeaderBtns >
                             <MaterialCommunityIcons name="hospital" size={48} color="#14bd14ff" />
@@ -86,7 +65,7 @@ export default function SettingsLists() {
                         <Ionicons name="add" color="#055a05ff" size={22} />
                         <Text style={{ fontSize: 18, color: "#055a05ff", fontWeight: 500 }}>Create a custom list</Text>
                     </TouchableOpacity>
-                </View>
+                </ThemedViewContainer>
                 <Text
                     style={{
                         fontSize: 18,
@@ -96,17 +75,18 @@ export default function SettingsLists() {
 
                     Your lists
                 </Text>
-                <View style={{ paddingHorizontal: 10, backgroundColor: "#f8f5f5ff", borderRadius: 10 }}>
+                <ThemedViewContainer>
                     {
-                        lists.map((list) => (
-                            <ListsLinksBtn
+                        lists.map((list, index, array) => (
+                            <TitleForwarIconBtn
                                 key={list.id}
                                 title={list.title}
                                 link={list.link}
+                                isLast={index === array.length - 1}
                             />
                         ))
                     }
-                </View>
+                </ThemedViewContainer>
                 <Text
                     style={{
                         fontSize: 18,
@@ -116,11 +96,11 @@ export default function SettingsLists() {
 
                     Available presets
                 </Text>
-                <View style={{ padding: 20, backgroundColor: "#f8f5f5ff", borderRadius: 10 }}>
+                <ThemedViewContainer paddingVertical={20}>
                     <Text style={{ fontSize: 16, color: "#808080ff", textAlign: "center" }}>
                         If you remove a preset list like Unread or Groups, it will become available here.
                     </Text>
-                </View>
+                </ThemedViewContainer>
 
             </ScrollView>
         </ThemedSafeAreaView>

@@ -6,7 +6,7 @@ export default function ThemedSafeAreaView({ children }) {
         <SafeAreaProvider>
             <SafeAreaView
                 edges={["top", "bottom"]}
-                style={{ flex: 1, padding: 10, backgroundColor: "#ffffffff" }}>
+                style={{ flex: 1, paddingHorizontal: 15, backgroundColor: "#ffffffff" }}>
                 {children}
             </SafeAreaView>
         </SafeAreaProvider>
