@@ -1,13 +1,13 @@
 import { Text, View, FlatList } from "react-native";
 import { RoundedBtn } from "../../../components/buttons/roundedBtn";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { CALLS } from "../../../constants/call";
 import { CallCard } from "../../../components/cards/callCard";
+import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";
 
 
 const Calls = () => {
     return (
-        <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: "#fff", padding: 10 }}>
+        <ThemedSafeAreaView>
 
 
             <FlatList
@@ -43,7 +43,7 @@ const Calls = () => {
             />
 
 
-        </SafeAreaView>
+        </ThemedSafeAreaView>
     );
 };
 

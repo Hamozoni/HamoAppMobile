@@ -1,7 +1,6 @@
 
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { CHATS } from "../../../constants/chats";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { FlatList } from "react-native-gesture-handler";
 import { ChatCard } from "../../../components/cards/chatCard";
 import { useEffect, useState } from "react";
@@ -10,6 +9,7 @@ import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import Animated, { useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { Dimensions } from "react-native";
+import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";
 
 const width = Dimensions.get("window").width;
 
@@ -75,7 +75,7 @@ const Chats = () => {
 
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: "#fff", paddingHorizontal: 10 }} edges={["top"]}>
+        <ThemedSafeAreaView>
             <Stack.Screen
                 options={{
                     headerLeft: () => (
@@ -161,7 +161,7 @@ const Chats = () => {
                         </TouchableOpacity>
                     </View>)
             }
-        </SafeAreaView >
+        </ThemedSafeAreaView >
     );
 };
 
