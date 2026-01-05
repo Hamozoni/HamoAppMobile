@@ -9,6 +9,7 @@ export default function PrivacyLayout() {
                 name="index"
                 options={{
                     headerShown: true,
+                    headerTransparent: true,
                     title: "Privacy",
                     headerLeft: () => (
                         <RoundedBtn iconName="chevron-back" onPress={() => router.back()} />

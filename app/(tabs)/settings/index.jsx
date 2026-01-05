@@ -67,7 +67,7 @@ const Settings = () => {
                         />
                     ))}
                 </ThemedViewContainer>
-                <Seprater />
+                <Seprater height={30} />
 
             </ScrollView>
         </ThemedSafeAreaView>

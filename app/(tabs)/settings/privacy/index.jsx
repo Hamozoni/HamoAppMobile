@@ -3,6 +3,8 @@ import ThemedSafeAreaView from "../../../../components/themedViews/safeAreaView"
 import ThemedViewContainer from "../../../../components/themedViews/ThemedViewContainer";
 import TitleForwarIconBtn from "../../../../components/buttons/titleForwarIconBtn";
 import Seprater from "../../../../components/ui/separator";
+import Separator from "../../../../components/ui/separator";
+import SwitchedBtn from "../../../../components/buttons/switchedBtn";
 
 const PRIVACY = [
     {
@@ -107,7 +109,7 @@ export default function SettingsPrivacy() {
     return (
         <ThemedSafeAreaView>
             <ScrollView contentInsetAdjustmentBehavior="automatic" showsVerticalScrollIndicator={false}>
-                <Seprater />
+                <Separator />
                 <ThemedViewContainer>
                     {
                         PRIVACY.map((item, index, array) => (
@@ -121,7 +123,14 @@ export default function SettingsPrivacy() {
                         ))
                     }
                 </ThemedViewContainer>
-                <Seprater height={40} />
+                <Separator height={40} />
+                <ThemedViewContainer>
+                    <SwitchedBtn title="Read receipts" isSwitched={true} onValueChange={() => { }} />
+                </ThemedViewContainer>
+                <Text style={{ fontSize: 14, paddingHorizontal: 15, color: '#7a7979ff', marginTop: 10 }}>
+                    If you turn off read receipts, you won't be able to see read receipts from other users. Read receipts are always sent for group chats.
+                </Text>
+                <Separator />
                 {
                     PRIVACY2.map((item) => (
                         <View key={item.id}>
@@ -158,6 +167,13 @@ export default function SettingsPrivacy() {
                         </View>
                     ))
                 }
+                <ThemedViewContainer>
+                    <SwitchedBtn title="Allow camera effects" isSwitched={true} onValueChange={() => { }} />
+                </ThemedViewContainer>
+                <Text style={{ fontSize: 14, paddingHorizontal: 15, color: '#7a7979ff', marginTop: 10 }}>
+                    Use effects in the camera and video calls.
+                </Text>
+                <Separator height={30} />
             </ScrollView>
         </ThemedSafeAreaView>
     );

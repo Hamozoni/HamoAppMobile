@@ -1,6 +1,7 @@
 import { Stack } from "expo-router";
 import { RoundedBtn } from "../../../components/buttons/roundedBtn";
 import { useRouter } from "expo-router";
+import ChevronBackBtn from "../../../components/buttons/chevronBackBtn";
 
 export default function SettingLayout() {
     const router = useRouter();
@@ -34,9 +35,7 @@ export default function SettingLayout() {
                     headerShown: true,
                     headerTransparent: true,
                     title: "Linked Devices",
-                    headerLeft: () => (
-                        <RoundedBtn iconName="chevron-back" onPress={() => router.back()} />
-                    )
+                    headerLeft: () => (<ChevronBackBtn />)
                 }}
             />
             <Stack.Screen
@@ -45,9 +44,7 @@ export default function SettingLayout() {
                     headerShown: true,
                     headerTransparent: true,
                     title: "Account",
-                    headerLeft: () => (
-                        <RoundedBtn iconName="chevron-back" onPress={() => router.back()} />
-                    )
+                    headerLeft: () => (<ChevronBackBtn />)
                 }}
             />
             <Stack.Screen
@@ -69,10 +66,8 @@ export default function SettingLayout() {
                 options={{
                     headerShown: true,
                     title: "Notifications",
-                    headerTransparent: false,
-                    headerLeft: () => (
-                        <RoundedBtn iconName="chevron-back" onPress={() => router.back()} />
-                    )
+                    headerTransparent: true,
+                    headerLeft: () => (<ChevronBackBtn />)
                 }}
             />
             <Stack.Screen
@@ -87,9 +82,7 @@ export default function SettingLayout() {
                     headerShown: true,
                     headerTransparent: true,
                     title: "Invite a friend",
-                    headerLeft: () => (
-                        <RoundedBtn iconName="chevron-back" onPress={() => router.back()} />
-                    ),
+                    headerLeft: () => (<ChevronBackBtn />),
                     headerSearchBarOptions: {
                         placeholder: 'Search'
                     }

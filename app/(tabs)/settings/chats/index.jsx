@@ -79,13 +79,18 @@ export default function SettingsChats() {
 
                     ))
                 }
-                <SwitchedBtn title="Stave to photos" isSwitched={true} onValueChange={() => { }} />
-                <Text style={{ fontSize: 14, paddingHorizontal: 15, color: '#7a7979ff', marginTop: 5 }}>
+                <ThemedViewContainer>
+                    <SwitchedBtn title="Stave to photos" isSwitched={true} onValueChange={() => { }} />
+                </ThemedViewContainer>
+                <Text style={{ fontSize: 14, paddingHorizontal: 15, color: '#7a7979ff', marginTop: 10 }}>
                     Automatically save photos and videos to your device
                 </Text>
                 <Separator />
-                <SwitchedBtn title="Keep chats archived" isSwitched={true} onValueChange={() => { }} />
-                <Text style={{ fontSize: 14, paddingHorizontal: 15, color: '#7a7979ff', marginTop: 5 }}>
+                <ThemedViewContainer>
+                    <SwitchedBtn title="Keep chats archived" isSwitched={true} onValueChange={() => { }} />
+
+                </ThemedViewContainer>
+                <Text style={{ fontSize: 14, paddingHorizontal: 15, color: '#7a7979ff', marginTop: 10 }}>
                     Archived chats will remain archived when you receive a new message
                 </Text>
                 <Separator />
@@ -115,7 +120,7 @@ export default function SettingsChats() {
                         ))
                     }
                 </ThemedViewContainer>
-                <Separator />
+                <Separator height={30} />
             </ScrollView>
         </ThemedSafeAreaView>
     );
