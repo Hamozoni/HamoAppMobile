@@ -1,5 +1,5 @@
 import { Stack } from "expo-router";
-import { RoundedBtn } from "../../../../components/buttons/roundedBtn";
+import ChevronBackBtn from "../../../../components/buttons/chevronBackBtn";
 
 
 export default function SettingsChatsLayout() {
@@ -9,9 +9,9 @@ export default function SettingsChatsLayout() {
                 name="index"
                 options={{
                     headerShown: true,
+                    headerTransparent: true,
                     title: "Chats",
-                    headerLeft: () => (
-                        <RoundedBtn iconName="chevron-back" onPress={() => router.back()} />
+                    headerLeft: () => (<ChevronBackBtn />
                     )
                 }}
             />

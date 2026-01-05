@@ -2,7 +2,7 @@ import { ScrollView } from "react-native";
 import { ProfileInfo } from "../../../components/settings/profileInfo";
 import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";
 import ThemedViewContainer from "../../../components/themedViews/ThemedViewContainer";
-import Seprater from "../../../components/ui/seprater";
+import Seprater from "../../../components/ui/separator";
 import TitleForwarIconBtn from "../../../components/buttons/titleForwarIconBtn";
 
 const settingsData1 = [

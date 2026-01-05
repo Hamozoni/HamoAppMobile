@@ -7,7 +7,8 @@ export default function ChevronBackBtn() {
     const router = useRouter()
     return <RoundedBtn
         iconName="chevron-back"
-        size={26}
+        size={30}
+        color="#8b8b8bff"
         styles={{ padding: 0 }}
         onPress={() => router.back()}
     />

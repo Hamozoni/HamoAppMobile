@@ -2,7 +2,7 @@ import { ScrollView, Text, View } from "react-native";
 import ThemedSafeAreaView from "../../../../components/themedViews/safeAreaView";
 import ThemedViewContainer from "../../../../components/themedViews/ThemedViewContainer";
 import TitleForwarIconBtn from "../../../../components/buttons/titleForwarIconBtn";
-import Seprater from "../../../../components/ui/seprater";
+import Seprater from "../../../../components/ui/separator";
 
 const PRIVACY = [
     {
