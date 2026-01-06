@@ -1,5 +1,4 @@
 import { Stack } from "expo-router";
-import { RoundedBtn } from "../../../components/buttons/roundedBtn";
 import { useRouter } from "expo-router";
 import ChevronBackBtn from "../../../components/buttons/chevronBackBtn";
 
@@ -22,10 +21,7 @@ export default function SettingLayout() {
             <Stack.Screen
                 name="profile"
                 options={{
-                    headerShown: true,
-                    headerTransparent: true,
-                    title: "Profile",
-                    headerLeft: () => (<ChevronBackBtn />),
+                    headerShown: false,
                 }}
             />
             <Stack.Screen

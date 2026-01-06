@@ -1,62 +1,57 @@
-import { Text, View, TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import ContactsList from "../../../components/contacts/contacts";
+import ThemedViewContainer from "../../../components/themedViews/ThemedViewContainer";
+import TitleForwarIconBtn from "../../../components/buttons/titleForwarIconBtn";
+import Separator from "../../../components/ui/separator";
 
 
 const bottons = [
     {
-        text: 'New Group',
+        Title: 'New Group',
         iconName: 'people-outline',
-        id: 1
+        id: 1,
+        link: '/chat/newGroup'
     },
     {
-        text: 'New Contact',
+        Title: 'New Contact',
         iconName: 'person-add-outline',
-        id: 2
+        id: 2,
+        link: '/chat/newContact'
     },
     {
-        text: 'New Community',
+        Title: 'New Community',
         iconName: 'people-outline',
-        id: 3
+        id: 3,
+        link: '/chat/newCommunity',
+        selected: "Bring together topic-based groups"
     },
     {
-        text: 'New broadcast',
+        Title: 'New broadcast',
         iconName: 'megaphone-outline',
-        id: 4
+        id: 4,
+        link: '/chat/newBroadcast'
     }
 ]
 
 export default function ContactsPage() {
 
-
-    const Buttons = ({ text, iconName, index }) => {
-        return (
-            <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-                <Ionicons name={iconName} size={24} color="#07d400ff" />
-                <Text
-                    style={{ borderBottomWidth: index === bottons.length - 1 ? 0 : 1, borderBottomColor: "#eee", flex: 1, paddingVertical: 16 }}>
-                    {text}
-                </Text>
-            </TouchableOpacity>
-        )
-    };
-
     return (
         <ContactsList>
-            <View
-                style={{
-                    backgroundColor: "#fff",
-                    paddingHorizontal: 16,
-                    borderRadius: 10,
-                    marginVertical: 20
-                }}
-            >
+            <ThemedViewContainer>
                 {
-                    bottons.map(({ text, iconName, id }, index) => (
-                        <Buttons key={id} text={text} iconName={iconName} index={index} />
+                    bottons.map(({ Title, iconName, id, link, selected }, index) => (
+                        <TitleForwarIconBtn
+                            key={id}
+                            title={Title}
+                            iconName={iconName}
+                            link={link}
+                            selected={selected}
+                            isLast={index === bottons.length - 1}
+                        />
                     ))
                 }
-            </View>
+
+            </ThemedViewContainer>
+            <Separator />
         </ContactsList>
     )
 }

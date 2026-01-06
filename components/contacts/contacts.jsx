@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import * as Contacts from "expo-contacts";
 import ContactCard from "../cards/contactCard";
+import ThemedSafeAreaView from "../themedViews/safeAreaView";
+import ThemedViewContainer from "../themedViews/ThemedViewContainer";
 
 export default function ContactsList({ children }) {
     const [contacts, setContacts] = useState([]);
@@ -20,32 +21,28 @@ export default function ContactsList({ children }) {
         })()
     }, []);
     return (
-        <SafeAreaProvider>
-            <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
-                <ScrollView
-                    contentInsetAdjustmentBehavior="automatic"
-                    style={{ flex: 1, paddingHorizontal: 16 }}
-                    showsVerticalScrollIndicator={false}
+        <ThemedSafeAreaView>
+            <ScrollView showsVerticalScrollIndicator={false}>
+                <View
+                    style={{
+                        backgroundColor: "#fff",
+                        borderRadius: 10,
+                    }}
                 >
-                    <View
-                        style={{
-                            backgroundColor: "#fff",
-                            paddingHorizontal: 16,
-                            borderRadius: 10,
-                            marginVertical: 20
-                        }}
-                    >
-                        {children}
-                    </View>
-                    <View style={{ backgroundColor: "#fff", padding: 16, borderRadius: 10 }}>
-                        {
-                            contacts.map((contact) => (
-                                <ContactCard key={contact.id} contact={contact} />
-                            ))
-                        }
-                    </View>
-                </ScrollView>
-            </SafeAreaView>
-        </SafeAreaProvider>
+                    {children}
+                </View>
+                <ThemedViewContainer >
+                    {
+                        contacts.map((contact) => (
+                            <ContactCard key={contact.id} contact={contact} />
+                        ))
+                    }
+
+                </ThemedViewContainer>
+            </ScrollView>
+
+        </ThemedSafeAreaView>
+
+
     )
 }

@@ -142,20 +142,24 @@ export default function SettingsNotifications() {
                             <Text style={{ fontSize: 16, fontWeight: 500, color: "#696868ff", paddingHorizontal: 15, marginVertical: 10 }}>{item.title}</Text>
                             <ThemedViewContainer>
                                 {
-                                    item.data.map((dataItem) => (
+                                    item.data.map((dataItem, index) => (
 
                                         dataItem.selected ? (
                                             <TitleForwarIconBtn
                                                 key={dataItem.id}
                                                 title={dataItem.title}
                                                 link={dataItem.link}
+                                                isLast={dataItem.length === index + 1}
+                                                selected={dataItem?.selected}
                                             />
                                         ) : (
                                             <SwitchedBtn
                                                 key={dataItem.id}
                                                 title={dataItem.title}
                                                 isSwitched={dataItem.isSwitched}
-                                                onValueChange={dataItem.onValueChange} />
+                                                onValueChange={dataItem.onValueChange}
+                                                isLast={item.data.length === index + 1}
+                                            />
                                         )
                                     ))
                                 }
@@ -190,7 +194,7 @@ export default function SettingsNotifications() {
                                             key={item.id}
                                             title={item.title}
                                             link={item.link}
-                                            selectet={item.selected}
+                                            selected={item?.selected}
                                             isLast={true}
                                         />
                                     )

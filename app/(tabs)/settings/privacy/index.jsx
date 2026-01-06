@@ -10,43 +10,43 @@ const PRIVACY = [
     {
         id: 1,
         title: "Last seen & online",
-        selectet: "Nobody",
+        selected: "Nobody",
         link: "/settings/privacy/lastSeen",
     },
     {
         id: 2,
         title: "Profile Photo",
-        selectet: "Nobody",
+        selected: "Nobody",
         link: "/settings/privacy/photo",
     },
     {
         id: 3,
         title: "About",
-        selectet: "Nobody",
+        selected: "Nobody",
         link: "/settings/privacy/about",
     },
     {
         id: 4,
         title: "Links",
-        selectet: "Nobody",
+        selected: "Nobody",
         link: "/settings/privacy/links",
     },
     {
         id: 5,
         title: "Groups",
-        selectet: "Nobody",
+        selected: "Nobody",
         link: "/settings/privacy/groups",
     },
     {
         id: 6,
         title: "Avatar",
-        selectet: "Nobody",
+        selected: "Nobody",
         link: "/settings/privacy/avatar",
     },
     {
         id: 7,
         title: "Status",
-        selectet: "Nobody",
+        selected: "Nobody",
         link: "/settings/privacy/status",
     },
 ];
@@ -55,7 +55,7 @@ const PRIVACY2 = [
     {
         id: 1,
         title: "Live Location",
-        selectet: "Nobody",
+        selected: "Nobody",
         link: "/settings/privacy/liveLocation",
         description: "list of chats where you are sharing your live location",
     },
@@ -67,29 +67,26 @@ const PRIVACY2 = [
     {
         id: 3,
         title: "Contacts",
-        selectet: "Nobody",
+        selected: "Nobody",
         link: "/settings/privacy/contacts",
     },
     {
         id: 4,
         title: "Default messages timer",
-        selectet: "Nobody",
         link: "/settings/privacy/defaultMessagesTimer",
         subtitle: "Disappearing messages",
-        selectet: "Off",
+        selected: "Off",
         description: "Start new chats with disappearing messages set to your timer."
     },
     {
         id: 5,
         title: "App lock",
-        selectet: null,
         description: "Protect your app with a passcode, fingerprint, or face ID.",
         link: "/settings/privacy/appLock",
     },
     {
         id: 6,
         title: "Chat lock",
-        selectet: null,
         description: "Protect your chats with a passcode, fingerprint, or face ID.",
         link: "/settings/privacy/chatLock",
     },
@@ -117,7 +114,7 @@ export default function SettingsPrivacy() {
                                 key={item.id}
                                 title={item.title}
                                 link={item.link}
-                                selectet={item?.selectet}
+                                selected={item?.selected}
                                 isLast={index === array.length - 1}
                             />
                         ))
@@ -148,7 +145,7 @@ export default function SettingsPrivacy() {
                             <ThemedViewContainer >
                                 <TitleForwarIconBtn
                                     title={item.title}
-                                    selectet={item?.selectet}
+                                    selected={item?.selected}
                                     link={item.link}
                                     isLast={true}
                                 />
