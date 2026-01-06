@@ -1,5 +1,6 @@
 import { useRouter, Stack } from "expo-router";
-import { RoundedBtn } from "../../../../components/buttons/roundedBtn";
+import ChevronBackBtn from "../../../../components/buttons/chevronBackBtn";
+import { Text, View } from "react-native";
 
 export default function SettingsHelpLayout() {
     const router = useRouter();
@@ -8,10 +9,18 @@ export default function SettingsHelpLayout() {
             <Stack.Screen
                 name="index"
                 options={{
-                    title: "Help and feedback",
-                    headerLeft: () => (
-                        <RoundedBtn iconName='chevron-back' onPress={() => router.back()} />
-                    )
+                    headerTitle: () => (
+                        <View style={{ alignItems: "center", justifyContent: "center" }}>
+                            <Text style={{ fontSize: 16, fontWeight: 600, color: "#353535ff" }}>
+                                SudaChat App
+                            </Text>
+                            <Text style={{ fontSize: 14, fontWeight: 400, color: "#9b9898ff" }}>
+                                Version 1.0.0
+                            </Text>
+                        </View>
+                    ),
+                    headerTransparent: true,
+                    headerLeft: () => (<ChevronBackBtn />)
                 }}
             />
         </Stack>

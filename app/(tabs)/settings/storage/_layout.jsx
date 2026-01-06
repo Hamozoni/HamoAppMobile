@@ -1,5 +1,5 @@
 import { Stack } from "expo-router";
-import { RoundedBtn } from "../../../../components/buttons/roundedBtn";
+import ChevronBackBtn from "../../../../components/buttons/chevronBackBtn";
 
 
 export default function SettingsStorageLayout() {
@@ -11,9 +11,7 @@ export default function SettingsStorageLayout() {
                     headerShown: true,
                     headerTransparent: true,
                     title: "Storage and data",
-                    headerLeft: () => (
-                        <RoundedBtn iconName="chevron-back" onPress={() => router.back()} />
-                    )
+                    headerLeft: () => (<ChevronBackBtn />)
                 }}
             />
         </Stack>

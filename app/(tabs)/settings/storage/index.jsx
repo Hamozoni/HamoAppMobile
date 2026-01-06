@@ -124,6 +124,9 @@ export default function SettingsStorage() {
                         </View>
                     ))
                 }
+                <Text style={{ fontSize: 14, fontWeight: 500, color: "#757575ff", paddingHorizontal: 15, marginVertical: 10 }}>
+                    Voice messages are always automatically downloaded.
+                </Text>
                 <Separator />
             </ScrollView>
         </ThemedSafeAreaView>

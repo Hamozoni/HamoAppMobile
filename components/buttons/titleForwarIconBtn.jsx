@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity } from "react-native"
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { useRouter } from "expo-router"
 import { Ionicons } from "@expo/vector-icons";
 
@@ -8,7 +8,7 @@ export default function TitleForwarIconBtn(
         title,
         link,
         isLast = false,
-        selectet = null,
+        selected = null,
     }) {
 
     const router = useRouter();
@@ -21,16 +21,19 @@ export default function TitleForwarIconBtn(
                     <Ionicons name={iconName} size={20} color="#555353ff" />
                 )
             }
-            <Text style={{ flex: 1, fontSize: 16, fontWeight: 500, color: "#5f5959ff" }}>
-                {title}
-            </Text>
-            {
-                selectet && (
-                    <Text style={{ fontSize: 14, fontWeight: 500, color: "#5f5959ff" }}>
-                        {selectet}
-                    </Text>
-                )
-            }
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 5, flex: 1, justifyContent: "space-between", flexWrap: "wrap" }}>
+                <Text style={{ fontSize: 16, fontWeight: 500, color: "#353535ff" }}>
+                    {title}
+                </Text>
+                {
+                    selected && (
+                        <Text style={{ fontSize: 14, fontWeight: 400, color: "#5f5959ff" }}>
+                            {selected}
+                        </Text>
+                    )
+                }
+
+            </View>
             <Ionicons name="chevron-forward" size={18} color="#7a7979ff" />
         </TouchableOpacity >
     )
