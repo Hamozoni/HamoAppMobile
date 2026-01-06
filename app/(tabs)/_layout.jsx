@@ -1,15 +1,23 @@
-import { Tabs } from "expo-router";
+import { Tabs, useGlobalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 const RootLayout = () => {
+
+    const { isEdit } = useGlobalSearchParams();
+
+    console.log(isEdit);
     return (
         <Tabs
             screenOptions={{
                 headerShown: false,
                 tabBarActiveTintColor: "#02d85bff",
                 tabBarLabelStyle: {
-                    fontSize: 12,
+                    display: "none",
                 },
+                tabBarStyle: {
+                    display: isEdit ? "none" : "flex",
+                },
+
             }}
         >
             <Tabs.Screen
@@ -19,8 +27,11 @@ const RootLayout = () => {
                     title: "Updates",
                     tabBarIcon: ({ focused, color, size }) => (
                         // <Image source={require("../../assets/application.png")} style={{ width: 24, height: 24 }} />
-                        <Ionicons name={focused ? "notifications" : "notifications-outline"} size={size} color={color} />
+                        <Ionicons name={focused ? "notifications" : "notifications-outline"} size={size + 5} color={color} />
                     ),
+                    tabBarIconStyle: {
+                        transform: [{ translateY: 20 }],
+                    },
                 }}
             />
             <Tabs.Screen
@@ -29,15 +40,21 @@ const RootLayout = () => {
                     headerShown: false,
                     title: "Calls",
                     tabBarIcon: ({ focused, color, size }) => (
-                        <Ionicons name={focused ? "call" : "call-outline"} size={focused ? size + 2 : size} color={color} />
-                    )
+                        <Ionicons name={focused ? "call" : "call-outline"} size={size + 5} color={color} />
+                    ),
+                    tabBarIconStyle: {
+                        transform: [{ translateY: 5 }],
+                    },
 
                 }} />
             <Tabs.Screen
-                name="profile"
+                name="chat"
                 options={{
                     headerShown: false,
-                    title: "Profile",
+                    title: "Chats",
+                    tabBarIcon: ({ focused, color, size }) => (
+                        <Ionicons name={focused ? "chatbubbles" : "chatbubbles-outline"} size={size + 15} color={color} />
+                    ),
                     tabBarIconStyle: {
                         transform: [{ translateY: -25 }],
                         backgroundColor: "#fff",
@@ -47,27 +64,28 @@ const RootLayout = () => {
                         justifyContent: "center",
                         alignItems: "center",
                         borderWidth: 1,
-                        borderColor: "#ebebebff",
+                        borderColor: "#6bdd60ff",
 
 
                     },
                     tabBarLabelStyle: {
                         display: "none",
+                        // transform: [{ translateY: -20 }],
                     },
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name={"qr-code-outline"} size={size + 15} color={color} />
-                    )
 
                 }} />
 
             <Tabs.Screen
-                name="chat"
+                name="profile"
                 options={{
                     headerShown: false,
-                    title: "Chats",
+                    title: "Profile",
                     tabBarIcon: ({ focused, size, color }) => (
-                        <Ionicons name={focused ? "chatbubbles" : "chatbubbles-outline"} size={size} color={color} />
-                    )
+                        <Ionicons name="qr-code-outline" size={size + 5} color={color} />
+                    ),
+                    tabBarIconStyle: {
+                        transform: [{ translateY: 5 }],
+                    },
                 }}
             />
             <Tabs.Screen
@@ -76,8 +94,11 @@ const RootLayout = () => {
                     headerShown: false,
                     title: "Settings",
                     tabBarIcon: ({ focused, color, size }) => (
-                        <Ionicons name={focused ? "cog" : "cog-outline"} size={size} color={color} />
-                    )
+                        <Ionicons name={focused ? "cog" : "cog-outline"} size={size + 5} color={color} />
+                    ),
+                    tabBarIconStyle: {
+                        transform: [{ translateY: 20 }],
+                    },
                 }}
             />
         </Tabs>

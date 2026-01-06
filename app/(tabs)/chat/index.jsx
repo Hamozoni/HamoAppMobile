@@ -24,6 +24,7 @@ const Chats = () => {
 
     const handleEdit = () => {
         setIsEdit(prev => !prev);
+        router.setParams({ isEdit });
     };
     const Button = ({ title, active, setActive }) => {
         return (
@@ -53,13 +54,13 @@ const Chats = () => {
 
     const animChatCard = useAnimatedStyle(() => {
         return {
-            transform: [{ translateX: isEdit ? withSpring(0) : withSpring(-40) }],
+            transform: [{ translateX: isEdit ? withSpring(0) : withSpring(-30) }],
         };
     });
 
     const animTimeLine = useAnimatedStyle(() => {
         return {
-            width: isEdit ? withSpring(width - 60) : withSpring(width - 20),
+            width: isEdit ? withSpring(width - 75) : withSpring(width - 30),
         };
     });
 
@@ -90,7 +91,7 @@ const Chats = () => {
                 contentInsetAdjustmentBehavior="automatic"
                 data={CHATS}
                 renderItem={({ item }) => (
-                    <Animated.View style={[animChatCard, { flexDirection: "row", alignItems: "center", gap: 10 }]}>
+                    <Animated.View style={[animChatCard, { flexDirection: "row", alignItems: "center", gap: isEdit ? 5 : 0 }]}>
                         <TouchableOpacity
                             onPress={() => handleSelectChat(item)}
                             style={{
@@ -134,32 +135,30 @@ const Chats = () => {
             />
             {
                 isEdit && (
-                    <View
+                    <Animated.View
                         style={{
                             flexDirection: "row",
-                            alignItems: "center",
                             justifyContent: "space-between",
                             padding: 14,
                             position: "absolute",
                             zIndex: 99999999999,
                             bottom: 0,
                             left: 0,
-                            right: 0,
-                            width: "100%",
-                            backgroundColor: "#000000ff",
-                            opacity: 0.5
+                            height: 70,
+                            width,
+                            backgroundColor: "#ff464625",
                         }}
                     >
                         <TouchableOpacity >
-                            <Text style={{ color: "white", fontSize: 16 }}>Archive</Text>
+                            <Text style={{ color: "#9e1597ff", fontSize: 16, fontWeight: "600" }}>Archive</Text>
                         </TouchableOpacity>
                         <TouchableOpacity >
-                            <Text style={{ color: "white", fontSize: 16 }}>Read all</Text>
+                            <Text style={{ color: "#9e1597ff", fontSize: 16, fontWeight: "600" }}>Read all</Text>
                         </TouchableOpacity>
                         <TouchableOpacity >
-                            <Text style={{ color: "white", fontSize: 16 }}>Delete</Text>
+                            <Text style={{ color: "#9e1597ff", fontSize: 16, fontWeight: "600" }}>Delete</Text>
                         </TouchableOpacity>
-                    </View>)
+                    </Animated.View>)
             }
         </ThemedSafeAreaView >
     );
