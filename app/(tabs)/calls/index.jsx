@@ -41,10 +41,10 @@ const Calls = () => {
                 renderItem={({ item }) => <CallCard call={item} />}
                 keyExtractor={(item) => item.id}
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ gap: 10 }}
+                contentContainerStyle={{ gap: 5 }}
                 ListHeaderComponent={() => (
-                    <View>
-                        <View style={{ flexDirection: "row", justifyContent: "space-between", padding: 20 }}>
+                    <View >
+                        <View style={{ flexDirection: "row", justifyContent: "space-between", padding: 15 }}>
                             {
                                 CALLSBTN.map((item) => (
                                     <TouchableOpacity

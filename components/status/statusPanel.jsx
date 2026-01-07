@@ -8,16 +8,16 @@ export const StatusPanel = () => {
 
 
     return (
-        <View style={{ marginTop: 20 }}>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 10 }}>
+        <View >
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 10, paddingHorizontal: 20 }}>
                 <Text style={{ fontSize: 20, fontWeight: "bold" }}>Status</Text>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
                     <RoundedBtn iconName="camera" />
                     <RoundedBtn iconName="add" />
                 </View>
             </View>
-            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 5 }}>
-                <View style={{ width: 100, height: 180, borderRadius: 15, borderWidth: 1, borderColor: "#ccc", flexDirection: "column", justifyContent: "space-around", alignItems: "center" }}>
+            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 5, paddingHorizontal: 20 }}>
+                <View style={{ width: 100, height: 180, borderRadius: 15, borderWidth: 1, borderColor: "#ccc", flexDirection: "column", justifyContent: "space-around", alignItems: "center", }}>
                     <View style={{ padding: 10, alignItems: "center", justifyContent: "center", position: "relative" }}>
                         <Image source={require("../../assets/icon.png")}
                             style={{ width: 60, height: 60, borderRadius: 50 }}

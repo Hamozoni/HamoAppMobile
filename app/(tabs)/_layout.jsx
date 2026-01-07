@@ -1,5 +1,5 @@
 import { Tabs, useGlobalSearchParams } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 const RootLayout = () => {
 
@@ -19,13 +19,11 @@ const RootLayout = () => {
             }}
         >
             <Tabs.Screen
-                name="updates"
+                name="contacts"
                 options={{
                     headerShown: false,
-                    title: "Updates",
                     tabBarIcon: ({ focused, color, size }) => (
-                        // <Image source={require("../../assets/application.png")} style={{ width: 24, height: 24 }} />
-                        <Ionicons name={focused ? "notifications" : "notifications-outline"} size={size + 5} color={color} />
+                        <MaterialCommunityIcons name={focused ? "contacts" : "contacts-outline"} size={size + 5} color={color} />
                     ),
                     tabBarIconStyle: {
                         transform: [{ translateY: 20 }],
