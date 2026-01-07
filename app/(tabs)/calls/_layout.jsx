@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
-import { TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Text, TouchableOpacity } from "react-native";
+import { RoundedBtn } from "../../../components/buttons/roundedBtn";
 
 export default function UpdatesLayout() {
     return (
@@ -14,17 +14,14 @@ export default function UpdatesLayout() {
                     headerLargeTitle: true,
                     headerSearchBarOptions: {
                         placeholder: "Search",
-
                     },
                     headerLeft: () => (
-                        <TouchableOpacity style={{ width: 28, height: 28, borderRadius: "50%", backgroundColor: "#eeeeeeff", justifyContent: "center", alignItems: "center" }}>
-                            <Ionicons name="ellipsis-horizontal" size={26} />
+                        <TouchableOpacity>
+                            <Text style={{ color: "#1078b9ff", fontWeight: "bold", fontSize: 18 }}>Edit</Text>
                         </TouchableOpacity>
                     ),
                     headerRight: () => (
-                        <TouchableOpacity style={{ width: 28, height: 28, borderRadius: "50%", backgroundColor: "#eeeeeeff", justifyContent: "center", alignItems: "center" }}>
-                            <Ionicons name="add" size={26} />
-                        </TouchableOpacity>
+                        <RoundedBtn iconName="create-outline" color="#1078b9ff" size={26} />
                     )
                 }} />
         </Stack>

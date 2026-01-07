@@ -81,7 +81,7 @@ const Chats = () => {
                 options={{
                     headerLeft: () => (
                         <TouchableOpacity onPress={handleEdit} >
-                            <Text style={{ fontSize: 18, color: "#1449f7ee", fontWeight: "600" }}>{isEdit ? "Done" : "Edit"}</Text>
+                            <Text style={{ fontSize: 18, color: "#1078b9ff", fontWeight: "bold" }}>{isEdit ? "Done" : "Edit"}</Text>
                         </TouchableOpacity>
                     ),
 

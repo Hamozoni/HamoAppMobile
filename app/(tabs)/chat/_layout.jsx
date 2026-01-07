@@ -2,6 +2,7 @@ import { Stack } from "expo-router";
 import { TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { RoundedBtn } from "../../../components/buttons/roundedBtn";
 
 
 export default function ChatLayout() {
@@ -19,16 +20,12 @@ export default function ChatLayout() {
                 },
                 headerRight: () => (
                     <View style={{ flexDirection: "row", alignItems: "center" }}>
-                        <TouchableOpacity onPress={() => router.push("/chat/camera")} >
-                            <Ionicons name="camera" size={26} />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => {
-                                router.push("/chat/contacts");
-                            }}
-                            style={{ marginLeft: 10, width: "auto", height: "auto", borderRadius: "50%", backgroundColor: "green", justifyContent: "center", alignItems: "center" }}>
-                            <Ionicons name="add" size={26} color="white" />
-                        </TouchableOpacity>
+                        <RoundedBtn iconName="camera" color="#1078b9ff" size={26} onPress={() => {
+                            router.push("/chat/camera");
+                        }} />
+                        <RoundedBtn iconName="create-outline" color="#1078b9ff" size={26} onPress={() => {
+                            router.push("/chat/contacts");
+                        }} />
 
                     </View>
                 ),
