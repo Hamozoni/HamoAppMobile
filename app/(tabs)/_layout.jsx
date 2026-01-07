@@ -4,8 +4,6 @@ import { Ionicons } from "@expo/vector-icons";
 const RootLayout = () => {
 
     const { isEdit } = useGlobalSearchParams();
-
-    console.log(isEdit);
     return (
         <Tabs
             screenOptions={{

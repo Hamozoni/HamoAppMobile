@@ -135,30 +135,30 @@ const Chats = () => {
             />
             {
                 isEdit && (
-                    <Animated.View
+                    <View
                         style={{
                             flexDirection: "row",
                             justifyContent: "space-between",
-                            padding: 14,
+                            padding: 15,
                             position: "absolute",
                             zIndex: 99999999999,
                             bottom: 0,
                             left: 0,
                             height: 70,
                             width,
-                            backgroundColor: "#ff464625",
+                            backgroundColor: "#a09d9d25",
                         }}
                     >
                         <TouchableOpacity >
-                            <Text style={{ color: "#9e1597ff", fontSize: 16, fontWeight: "600" }}>Archive</Text>
+                            <Text style={{ color: "#fa4444ff", fontSize: 16, fontWeight: "600" }}>Archive</Text>
                         </TouchableOpacity>
                         <TouchableOpacity >
-                            <Text style={{ color: "#9e1597ff", fontSize: 16, fontWeight: "600" }}>Read all</Text>
+                            <Text style={{ color: "#fa4444ff", fontSize: 16, fontWeight: "600" }}>Read all</Text>
                         </TouchableOpacity>
                         <TouchableOpacity >
-                            <Text style={{ color: "#9e1597ff", fontSize: 16, fontWeight: "600" }}>Delete</Text>
+                            <Text style={{ color: "#fa4444ff", fontSize: 16, fontWeight: "600" }}>Delete</Text>
                         </TouchableOpacity>
-                    </Animated.View>)
+                    </View>)
             }
         </ThemedSafeAreaView >
     );
