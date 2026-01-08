@@ -89,8 +89,8 @@ export default function Verify() {
             // Simulate API call
             await new Promise((resolve) => setTimeout(resolve, 1500));
 
-            // Navigate to main app on success
-            router.replace("/(tabs)/chat");
+            // Navigate to profile setup
+            router.replace("/(auth)/setup-profile");
         } catch (err) {
             setError("Invalid verification code. Please try again.");
             console.error(err);
@@ -147,7 +147,7 @@ export default function Verify() {
                     {/* Header */}
                     <View style={styles.headerContainer}>
                         <View style={styles.iconContainer}>
-                            <Ionicons name="shield-checkmark" size={50} color="#25D366" />
+                            <Ionicons name="shield-checkmark" size={55} color="#258dd3ff" />
                         </View>
                         <Text style={styles.title}>Verify your number</Text>
                         <Text style={styles.subtitle}>
@@ -224,7 +224,7 @@ export default function Verify() {
                     <View style={styles.helpContainer}>
                         <Ionicons name="help-circle-outline" size={20} color="#888" />
                         <Text style={styles.helpText}>
-                            Didn't receive the code? Check your SMS messages or try resending.
+                            Didn't receive the code? Check your Telegram messages or try resending.
                         </Text>
                     </View>
 
@@ -233,7 +233,7 @@ export default function Verify() {
                         style={styles.changeNumberButton}
                         onPress={() => router.back()}
                     >
-                        <Ionicons name="pencil" size={16} color="#25D366" />
+                        <Ionicons name="pencil" size={16} color="#2593d3ff" />
                         <Text style={styles.changeNumberText}>Change phone number</Text>
                     </TouchableOpacity>
                 </ScrollView>
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
         width: 90,
         height: 90,
         borderRadius: 45,
-        backgroundColor: "#e8f8ef",
+        backgroundColor: "#e8f4f8ff",
         justifyContent: "center",
         alignItems: "center",
         marginBottom: 25,
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
     phoneNumber: {
         fontSize: 18,
         fontWeight: "600",
-        color: "#25D366",
+        color: "#206ba8ff",
         marginTop: 6,
     },
     otpContainer: {
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
         color: "#1a1a1a",
     },
     otpInputFilled: {
-        borderColor: "#25D366",
+        borderColor: "#25b0d3ff",
         backgroundColor: "#e8f8ef",
     },
     otpInputError: {
@@ -339,31 +339,31 @@ const styles = StyleSheet.create({
         color: "#888",
     },
     timerHighlight: {
-        color: "#25D366",
+        color: "#2aa4d4ff",
         fontWeight: "600",
     },
     resendButton: {
         fontSize: 16,
-        color: "#25D366",
+        color: "#258dd3ff",
         fontWeight: "600",
     },
     verifyButton: {
         flexDirection: "row",
-        backgroundColor: "#25D366",
+        backgroundColor: "#259cd3ff",
         paddingVertical: 16,
         borderRadius: 12,
         justifyContent: "center",
         alignItems: "center",
         gap: 8,
         marginBottom: 25,
-        shadowColor: "#25D366",
+        shadowColor: "#257fd3ff",
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
         elevation: 5,
     },
     verifyButtonDisabled: {
-        backgroundColor: "#b8e0c5",
+        backgroundColor: "#b8cbe0ff",
         shadowOpacity: 0,
         elevation: 0,
     },
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
     },
     changeNumberText: {
         fontSize: 15,
-        color: "#25D366",
+        color: "#259cd3ff",
         fontWeight: "600",
     },
 });

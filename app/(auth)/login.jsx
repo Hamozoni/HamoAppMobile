@@ -25,6 +25,11 @@ const COUNTRY_CODES = [
     { code: "+20", country: "EG", flag: "🇪🇬" },
     { code: "+91", country: "IN", flag: "🇮🇳" },
     { code: "+86", country: "CN", flag: "🇨🇳" },
+    { code: "+251", country: "ET", flag: "🇪🇹" },
+    { code: "+973", country: "BH", flag: "🇧🇭" },
+    { code: "+974", country: "QA", flag: "🇶🇦" },
+    { code: "+965", country: "KW", flag: "🇰🇼" },
+    { code: "+967", country: "OM", flag: "🇴🇲" },
 ];
 
 export default function Login() {
@@ -94,11 +99,11 @@ export default function Login() {
                 >
                     {/* Logo & Header */}
                     <View style={styles.headerContainer}>
-                        <View style={styles.logoContainer}>
-                            <View style={styles.logoCircle}>
-                                <Ionicons name="chatbubbles" size={50} color="#fff" />
-                            </View>
-                        </View>
+                        <Image
+                            source={require("../../assets/images/sudaChat.jpg")}
+                            style={{ width: 200, height: 200 }}
+                        />
+
                         <Text style={styles.title}>Welcome to SudaChat</Text>
                         <Text style={styles.subtitle}>
                             Enter your phone number to get started
@@ -188,7 +193,7 @@ export default function Login() {
                         <View style={styles.infoContainer}>
                             <Ionicons name="information-circle-outline" size={20} color="#888" />
                             <Text style={styles.infoText}>
-                                We'll send you a verification code via SMS to confirm your number.
+                                We'll send you a verification code via Telegram to confirm your number.
                             </Text>
                         </View>
                     </View>
@@ -238,22 +243,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginBottom: 50,
     },
-    logoContainer: {
-        marginBottom: 25,
-    },
-    logoCircle: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        backgroundColor: "#25D366",
-        justifyContent: "center",
-        alignItems: "center",
-        shadowColor: "#25D366",
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.4,
-        shadowRadius: 15,
-        elevation: 10,
-    },
     title: {
         fontSize: 28,
         fontWeight: "700",
@@ -288,26 +277,26 @@ const styles = StyleSheet.create({
     countrySelector: {
         flexDirection: "row",
         alignItems: "center",
-        paddingHorizontal: 15,
-        paddingVertical: 16,
+        paddingHorizontal: 10,
+        paddingVertical: 12,
         borderRightWidth: 1,
         borderRightColor: "#e0e0e0",
         backgroundColor: "#fafafa",
-        gap: 6,
+        gap: 5,
     },
     countryFlag: {
-        fontSize: 22,
+        fontSize: 24,
     },
     countryCode: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: "600",
         color: "#333",
     },
     phoneInput: {
         flex: 1,
-        paddingHorizontal: 15,
-        paddingVertical: 16,
-        fontSize: 18,
+        paddingHorizontal: 10,
+        paddingVertical: 12,
+        fontSize: 16,
         fontWeight: "500",
         color: "#1a1a1a",
         letterSpacing: 1,
@@ -379,21 +368,21 @@ const styles = StyleSheet.create({
     },
     continueButton: {
         flexDirection: "row",
-        backgroundColor: "#25D366",
+        backgroundColor: "#1b7ba1ff",
         paddingVertical: 16,
         borderRadius: 12,
         justifyContent: "center",
         alignItems: "center",
         gap: 8,
         marginBottom: 20,
-        shadowColor: "#25D366",
+        shadowColor: "#1b7ba1ff",
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
         elevation: 5,
     },
     continueButtonDisabled: {
-        backgroundColor: "#b8e0c5",
+        backgroundColor: "#a8e2fdff",
         shadowOpacity: 0,
         elevation: 0,
     },
@@ -410,7 +399,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     termsLink: {
-        color: "#25D366",
+        color: "#2585d3ff",
         fontWeight: "600",
     },
 });
