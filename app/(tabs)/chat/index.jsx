@@ -36,9 +36,9 @@ const Chats = () => {
                     borderRadius: 15,
                     backgroundColor: isEdit ? "transparent" : active === title ? "rgba(14, 218, 133, 1)" : "transparent",
                     borderColor: "#eee",
-                    borderWidth: 2,
+                    borderWidth: 1,
                     paddingHorizontal: 10,
-                    paddingVertical: 5,
+                    paddingVertical: 7,
                     marginRight: 5,
                     justifyContent: "center",
                     alignItems: "center"
@@ -122,7 +122,6 @@ const Chats = () => {
                     <ScrollView
                         horizontal
                         showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={{ marginBottom: 10, marginTop: 20 }}
                         contentInsetAdjustmentBehavior="automatic">
 
                         {

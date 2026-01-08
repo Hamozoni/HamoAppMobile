@@ -5,6 +5,7 @@ import MessageCard from "../../../components/cards/messageCard";
 import { FlatList } from "react-native";
 import { MESSAGES } from "../../../constants/messages";
 import { useRef, useState } from "react";
+import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";
 
 export default function ChatDetails() {
 
@@ -22,13 +23,7 @@ export default function ChatDetails() {
     };
 
     return (
-        <SafeAreaView
-            edges={["bottom"]}
-            style={{
-                flex: 1,
-                backgroundColor: "#fff",
-            }}
-        >
+        <ThemedSafeAreaView>
 
             <FlatList
                 data={messages}
@@ -36,15 +31,12 @@ export default function ChatDetails() {
                 onContentOffsetChange={handleScroll}
                 renderItem={({ item }) => <MessageCard message={item} />}
                 keyExtractor={(item) => item.id}
-                style={{ paddingHorizontal: 10, paddingVertical: 20, flex: 1 }}
+                style={{ paddingHorizontal: 5, paddingVertical: 20, flex: 1 }}
                 showsVerticalScrollIndicator={false}
                 ref={messagesFlatListRef}
             />
 
             <ChatFooter id={id} />
-
-
-
-        </SafeAreaView>
+        </ThemedSafeAreaView>
     );
 }

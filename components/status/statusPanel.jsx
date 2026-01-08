@@ -13,7 +13,7 @@ export const StatusPanel = () => {
                 <Text style={{ fontSize: 20, fontWeight: "bold" }}>Status</Text>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
                     <RoundedBtn iconName="camera" />
-                    <RoundedBtn iconName="add" />
+                    <RoundedBtn iconName="pencil" />
                 </View>
             </View>
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 5, paddingHorizontal: 20 }}>

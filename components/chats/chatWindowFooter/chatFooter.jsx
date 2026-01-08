@@ -1,5 +1,5 @@
 import { TextInput, TouchableOpacity, View, Keyboard, KeyboardAvoidingView, Platform } from "react-native";
-import { Ionicons, FontAwesome6 } from "@expo/vector-icons";
+import { Ionicons, FontAwesome6, Entypo } from "@expo/vector-icons";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "expo-router";
 import FooterAttachment from "./footerAttachment";
@@ -61,7 +61,7 @@ export default function ChatFooter({ id }) {
                         {
                             isAttachment ?
                                 <FontAwesome6 name="keyboard" size={25} color="#1fa105" />
-                                : <Ionicons name="add-outline" size={30} color="#1fa105" />
+                                : <Entypo name="attachment" size={24} color="#1fa105" />
 
                         }
                     </TouchableOpacity>
@@ -69,7 +69,7 @@ export default function ChatFooter({ id }) {
                         ref={textInputRef}
                         onFocus={() => setIsAttachment(false)}
                         placeholder="Type a message"
-                        style={{ height: 30, flex: 1, borderWidth: 1, borderColor: "#ccc", borderRadius: 20, paddingHorizontal: 10 }}
+                        style={{ height: 30, flex: 1, borderWidth: 1, borderColor: "#1fa105", borderRadius: 20, paddingHorizontal: 10 }}
                     />
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
                         <TouchableOpacity onPress={() => router.push("/chats/camera")}>
