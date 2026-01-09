@@ -246,13 +246,13 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 28,
         fontWeight: "700",
-        color: "#1a1a1a",
+        color: "#0a4072ff",
         marginBottom: 10,
         textAlign: "center",
     },
     subtitle: {
         fontSize: 16,
-        color: "#666",
+        color: "#949daaff",
         textAlign: "center",
         paddingHorizontal: 20,
     },

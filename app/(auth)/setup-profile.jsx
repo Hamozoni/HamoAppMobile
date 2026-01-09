@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
     continueButton: {
         flexDirection: "row",
         backgroundColor: "#259cd3",
-        paddingVertical: 16,
+        paddingVertical: 12,
         borderRadius: 12,
         justifyContent: "center",
         alignItems: "center",
