@@ -8,7 +8,7 @@ const RootLayout = () => {
         <Tabs
             screenOptions={{
                 headerShown: false,
-                tabBarActiveTintColor: "#02d85bff",
+                tabBarActiveTintColor: "#2983ceff",
                 tabBarLabelStyle: {
                     display: "none",
                 },
@@ -60,7 +60,7 @@ const RootLayout = () => {
                         justifyContent: "center",
                         alignItems: "center",
                         borderWidth: 1,
-                        borderColor: "#6bdd60ff",
+                        borderColor: "#e4f1f5ff",
 
 
                     },

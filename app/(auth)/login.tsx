@@ -15,8 +15,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import ThemedSafeAreaView from "../../components/themedViews/safeAreaView";
 
+// Type for country code
+interface CountryCode {
+    code: string;
+    country: string;
+    flag: string;
+}
+
 // Country codes data
-const COUNTRY_CODES = [
+const COUNTRY_CODES: CountryCode[] = [
     { code: "+1", country: "US", flag: "🇺🇸" },
     { code: "+44", country: "UK", flag: "🇬🇧" },
     { code: "+249", country: "SD", flag: "🇸🇩" },
@@ -34,22 +41,22 @@ const COUNTRY_CODES = [
 
 export default function Login() {
     const router = useRouter();
-    const phoneInputRef = useRef(null);
+    const phoneInputRef = useRef<TextInput>(null);
 
-    const [phoneNumber, setPhoneNumber] = useState("");
-    const [selectedCountry, setSelectedCountry] = useState(COUNTRY_CODES[2]); // Default to Sudan
-    const [showCountryPicker, setShowCountryPicker] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState<string>("");
+    const [selectedCountry, setSelectedCountry] = useState<CountryCode>(COUNTRY_CODES[2]); // Default to Sudan
+    const [showCountryPicker, setShowCountryPicker] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string>("");
 
-    const handlePhoneChange = (text) => {
+    const handlePhoneChange = (text: string): void => {
         // Only allow numbers
         const cleaned = text.replace(/[^0-9]/g, "");
         setPhoneNumber(cleaned);
         setError("");
     };
 
-    const validatePhone = () => {
+    const validatePhone = (): boolean => {
         if (!phoneNumber || phoneNumber.length < 9) {
             setError("Please enter a valid phone number");
             return false;
@@ -57,7 +64,7 @@ export default function Login() {
         return true;
     };
 
-    const handleContinue = async () => {
+    const handleContinue = async (): Promise<void> => {
         if (!validatePhone()) return;
 
         setIsLoading(true);
@@ -80,7 +87,7 @@ export default function Login() {
         }
     };
 
-    const selectCountry = (country) => {
+    const selectCountry = (country: CountryCode): void => {
         setSelectedCountry(country);
         setShowCountryPicker(false);
         phoneInputRef.current?.focus();
