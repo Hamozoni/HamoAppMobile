@@ -88,12 +88,12 @@ export default function Verify(): JSX.Element {
             // Here you would verify the OTP with Firebase
             console.log("Verifying OTP:", otpCode);
 
-            const deviceInfo = await getDeviceInfo();
+            const device = await getDeviceInfo();
 
             const data = await mutateAsync({
                 otp: parseInt(otpCode),
                 phoneNumber,
-                deviceInfo
+                device
             })
 
             console.log(data);

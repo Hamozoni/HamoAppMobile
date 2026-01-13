@@ -5,24 +5,17 @@ import { IDevice } from '../types/user.type';
 interface VerifyOtpPayload {
     phoneNumber: string;
     otp: number;
-    deviceInfo: IDevice;
+    device: IDevice;
 }
 
 interface VerifyOtpResponse {
-    success: true,
-    isNewUser: boolean,
-    accessToken: string,
-    refreshToken: string,
-    deviceId: string,
+    message?: string,
     user: {
         id: string,
-        phoneNumber: string,
-        displayName: string,
-        profilePicture: string,
-        about: string,
-        isPhoneVerified: boolean,
-        createdAt: Date
-    }
+        phoneNumber: string
+    },
+    accessToken: string,
+    refreshToken: string
 }
 
 const postVerifyOtp = async (payload: VerifyOtpPayload): Promise<VerifyOtpResponse> => {
