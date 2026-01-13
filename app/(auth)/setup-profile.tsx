@@ -15,6 +15,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import ThemedSafeAreaView from "../../components/themedViews/safeAreaView";
+import ThemedViewContainer from "../../components/themedViews/ThemedViewContainer";
+import Separator from "../../components/ui/separator";
 
 interface Errors {
     username?: string;
@@ -26,7 +28,6 @@ export default function SetupProfile() {
 
     const [profileImage, setProfileImage] = useState<string | null>(null);
     const [username, setUsername] = useState("");
-    const [birthDate, setBirthDate] = useState("");
     const [bio, setBio] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState<Errors>({});
@@ -70,21 +71,6 @@ export default function SetupProfile() {
         }
     };
 
-    const handleBirthDateChange = (text: string) => {
-        let cleaned = text.replace(/[^0-9]/g, "");
-        if (cleaned.length >= 2) {
-            cleaned = cleaned.slice(0, 2) + "/" + cleaned.slice(2);
-        }
-        if (cleaned.length >= 5) {
-            cleaned = cleaned.slice(0, 5) + "/" + cleaned.slice(5);
-        }
-        if (cleaned.length > 10) {
-            cleaned = cleaned.slice(0, 10);
-        }
-        setBirthDate(cleaned);
-        setErrors((prev) => ({ ...prev, birthDate: "" }));
-    };
-
     const validateForm = () => {
         const newErrors: Errors = {};
 
@@ -92,12 +78,6 @@ export default function SetupProfile() {
             newErrors.username = "Username is required";
         } else if (username.length < 3) {
             newErrors.username = "Username must be at least 3 characters";
-        }
-
-        if (!birthDate) {
-            newErrors.birthDate = "Birth date is required";
-        } else if (birthDate.length !== 10) {
-            newErrors.birthDate = "Please enter a valid date (DD/MM/YYYY)";
         }
 
         setErrors(newErrors);
@@ -109,12 +89,6 @@ export default function SetupProfile() {
 
         setIsLoading(true);
         try {
-            console.log("Profile data:", {
-                profileImage,
-                username,
-                birthDate,
-                bio,
-            });
 
             router.replace("/(tabs)/chat" as any);
         } catch (err) {
@@ -139,50 +113,56 @@ export default function SetupProfile() {
                     showsVerticalScrollIndicator={false}
                     keyboardShouldPersistTaps="handled"
                 >
-                    <View style={styles.headerContainer}>
-                        <Text style={styles.title}>Set up your profile</Text>
-                        <Text style={styles.subtitle}>
-                            Add a photo and some info about yourself
-                        </Text>
-                    </View>
+                    <TouchableOpacity
+                        style={styles.skipButton}
+                        onPress={handleSkip}
+                    >
+                        <Text style={styles.skipButtonText}>Skip</Text>
+                    </TouchableOpacity>
+                    <ThemedViewContainer paddingVertical={20}>
 
-                    <View style={styles.imageSection}>
-                        <TouchableOpacity
-                            style={styles.imageContainer}
-                            onPress={pickImage}
-                        >
-                            {profileImage ? (
-                                <Image
-                                    source={{ uri: profileImage }}
-                                    style={styles.profileImage}
-                                />
-                            ) : (
-                                <View style={styles.imagePlaceholder}>
-                                    <Ionicons name="person" size={60} color="#ccc" />
-                                </View>
-                            )}
-                            <View style={styles.editBadge}>
-                                <Ionicons name="camera" size={18} color="#fff" />
-                            </View>
-                        </TouchableOpacity>
-
-                        <View style={styles.imageButtons}>
+                        <View style={styles.imageSection}>
                             <TouchableOpacity
-                                style={styles.imageOptionButton}
+                                style={styles.imageContainer}
                                 onPress={pickImage}
                             >
-                                <Ionicons name="images-outline" size={20} color="#259cd3" />
-                                <Text style={styles.imageOptionText}>Gallery</Text>
+                                {profileImage ? (
+                                    <Image
+                                        source={{ uri: profileImage }}
+                                        style={styles.profileImage}
+                                    />
+                                ) : (
+                                    <View style={styles.imagePlaceholder}>
+                                        <Ionicons name="person" size={60} color="#ccc" />
+                                    </View>
+                                )}
+                                <View style={styles.editBadge}>
+                                    <Ionicons name="camera" size={18} color="#fff" />
+                                </View>
                             </TouchableOpacity>
-                            <TouchableOpacity
-                                style={styles.imageOptionButton}
-                                onPress={takePhoto}
-                            >
-                                <Ionicons name="camera-outline" size={20} color="#259cd3" />
-                                <Text style={styles.imageOptionText}>Camera</Text>
-                            </TouchableOpacity>
+
+                            <View style={styles.imageButtons}>
+                                <TouchableOpacity
+                                    style={styles.imageOptionButton}
+                                    onPress={pickImage}
+                                >
+                                    <Ionicons name="images-outline" size={20} color="#259cd3" />
+                                    <Text style={styles.imageOptionText}>Gallery</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.imageOptionButton}
+                                    onPress={takePhoto}
+                                >
+                                    <Ionicons name="camera-outline" size={20} color="#259cd3" />
+                                    <Text style={styles.imageOptionText}>Camera</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                    </View>
+
+                    </ThemedViewContainer>
+
+
+                    <Separator />
 
                     <View style={styles.formSection}>
                         <View style={styles.inputGroup}>
@@ -211,29 +191,7 @@ export default function SetupProfile() {
                         </View>
 
                         <View style={styles.inputGroup}>
-                            <Text style={styles.inputLabel}>Birth Date *</Text>
-                            <View style={[
-                                styles.inputContainer,
-                                errors.birthDate && styles.inputError
-                            ]}>
-                                <Ionicons name="calendar-outline" size={20} color="#888" />
-                                <TextInput
-                                    style={styles.textInput}
-                                    placeholder="DD/MM/YYYY"
-                                    placeholderTextColor="#999"
-                                    value={birthDate}
-                                    onChangeText={handleBirthDateChange}
-                                    keyboardType="number-pad"
-                                    maxLength={10}
-                                />
-                            </View>
-                            {errors.birthDate && (
-                                <Text style={styles.errorText}>{errors.birthDate}</Text>
-                            )}
-                        </View>
-
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.inputLabel}>Bio</Text>
+                            <Text style={[styles.inputLabel, { marginTop: 10 }]}>Bio</Text>
                             <View style={styles.bioContainer}>
                                 <TextInput
                                     style={styles.bioInput}
@@ -250,6 +208,8 @@ export default function SetupProfile() {
                             <Text style={styles.charCount}>{bio.length}/50</Text>
                         </View>
                     </View>
+
+                    <Separator />
 
                     <TouchableOpacity
                         style={[
@@ -269,12 +229,6 @@ export default function SetupProfile() {
                         )}
                     </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style={styles.skipButton}
-                        onPress={handleSkip}
-                    >
-                        <Text style={styles.skipButtonText}>Skip for now</Text>
-                    </TouchableOpacity>
                 </ScrollView>
             </KeyboardAvoidingView>
         </ThemedSafeAreaView>
@@ -286,14 +240,10 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     scrollContent: {
-        flexGrow: 1,
-        paddingHorizontal: 10,
-        paddingTop: 40,
-        paddingBottom: 30,
+        flex: 1,
     },
     headerContainer: {
         alignItems: "center",
-        marginBottom: 30,
     },
     title: {
         fontSize: 26,
@@ -309,27 +259,29 @@ const styles = StyleSheet.create({
     },
     imageSection: {
         alignItems: "center",
-        marginBottom: 35,
     },
     imageContainer: {
         position: "relative",
-        marginBottom: 15,
+        marginBottom: 20,
     },
     profileImage: {
+        borderRadius: "50%",
+        backgroundColor: "#fff",
         width: 130,
         height: 130,
-        borderRadius: 65,
-        backgroundColor: "#f0f0f0",
+        borderWidth: 2,
+        borderColor: "#73bae9ff",
+        borderStyle: "dashed",
     },
     imagePlaceholder: {
         width: 130,
         height: 130,
-        borderRadius: 65,
-        backgroundColor: "#f5f5f5",
+        borderRadius: "50%",
+        backgroundColor: "#fff",
         justifyContent: "center",
         alignItems: "center",
         borderWidth: 2,
-        borderColor: "#e0e0e0",
+        borderColor: "#eee",
         borderStyle: "dashed",
     },
     editBadge: {
@@ -338,7 +290,7 @@ const styles = StyleSheet.create({
         right: 5,
         width: 38,
         height: 38,
-        borderRadius: 19,
+        borderRadius: "50%",
         backgroundColor: "#259cd3",
         justifyContent: "center",
         alignItems: "center",
@@ -347,15 +299,20 @@ const styles = StyleSheet.create({
     },
     imageButtons: {
         flexDirection: "row",
-        gap: 20,
+        gap: 15,
     },
     imageOptionButton: {
         flexDirection: "row",
         alignItems: "center",
-        gap: 6,
+        justifyContent: "center",
+        gap: 5,
+        flex: 1,
         paddingVertical: 8,
         paddingHorizontal: 16,
-        borderRadius: 20,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: "#a9c7ffff",
+        borderStyle: "dashed",
         backgroundColor: "#e8f4f8",
     },
     imageOptionText: {
@@ -363,22 +320,20 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         color: "#259cd3",
     },
-    formSection: {
-        marginBottom: 25,
-    },
     inputGroup: {
-        marginBottom: 20,
+        // marginBottom: 20,
     },
     inputLabel: {
         fontSize: 14,
         fontWeight: "600",
         color: "#444",
         marginBottom: 8,
+        paddingHorizontal: 15,
     },
     inputContainer: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#f5f5f5",
+        backgroundColor: "#fff",
         borderRadius: 12,
         borderWidth: 1.5,
         borderColor: "#e0e0e0",
@@ -395,7 +350,7 @@ const styles = StyleSheet.create({
         color: "#1a1a1a",
     },
     bioContainer: {
-        backgroundColor: "#f5f5f5",
+        backgroundColor: "#fff",
         borderRadius: 12,
         borderWidth: 1.5,
         borderColor: "#e0e0e0",
@@ -405,7 +360,7 @@ const styles = StyleSheet.create({
     bioInput: {
         fontSize: 16,
         color: "#1a1a1a",
-        minHeight: 100,
+        minHeight: 80,
     },
     charCount: {
         textAlign: "right",
@@ -427,7 +382,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         gap: 8,
-        marginBottom: 15,
+        // marginBottom: 15,
         shadowColor: "#259cd3",
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
@@ -445,12 +400,12 @@ const styles = StyleSheet.create({
         fontWeight: "600",
     },
     skipButton: {
-        alignItems: "center",
-        paddingVertical: 12,
+        paddingVertical: 20,
+        paddingHorizontal: 15,
     },
     skipButtonText: {
         fontSize: 16,
-        color: "#888",
+        color: "#2b82d3ff",
         fontWeight: "500",
     },
 });
