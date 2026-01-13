@@ -45,36 +45,6 @@ const COUNTRY_CODES: CountryCode[] = [
 ];
 
 
-// Get the local IP from Expo's manifest
-const getBaseURL = (): string => {
-    // For Expo Go, use the debugger host IP
-    if (__DEV__) {
-        // Expo provides the IP automatically
-        const { manifest } = Constants;
-
-        // For Expo SDK 49+
-        if (manifest?.debuggerHost) {
-            const debuggerHost = manifest.debuggerHost.split(':').shift();
-            return `http://${debuggerHost}:8000/api/`;
-        }
-
-        // Fallback for older Expo versions
-        const expoGoUrl = Constants.expoGoConfig?.debuggerHost;
-        if (expoGoUrl) {
-            const host = expoGoUrl.split(':').shift();
-            return `http://${host}:8000/api/`;
-        }
-
-        // Manual fallback - replace with your IP
-        return 'http://172.20.10.4:8000/api/'; // ⚠️ Replace with your actual IP
-    }
-
-    // Production API
-    return 'https://your-production-api.com/api/';
-};
-
-export const API_BASE_URL = getBaseURL();
-
 export default function Login() {
     const router = useRouter();
     const phoneInputRef = useRef<TextInput>(null);
@@ -82,7 +52,6 @@ export default function Login() {
     const [phoneNumber, setPhoneNumber] = useState<string>("");
     const [selectedCountry, setSelectedCountry] = useState<CountryCode>(COUNTRY_CODES[2]); // Default to Sudan
     const [showCountryPicker, setShowCountryPicker] = useState<boolean>(false);
-    // const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>("");
 
 
@@ -107,23 +76,11 @@ export default function Login() {
     const handleContinue = async (): Promise<void> => {
         if (!validatePhone()) return;
         try {
-            // Here you would implement Firebase phone auth
-            // For now, we'll simulate navigation to OTP screen
             const fullPhoneNumber = `${selectedCountry.code}${phoneNumber}`;
-            console.log("Phone number:", fullPhoneNumber);
+            const data = await sendOpt(fullPhoneNumber)
 
-            // const response = await sendOpt(fullPhoneNumber);
-
-            const data = await fetch(`${API_BASE_URL}/auth/send-opt`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ phoneNumber: fullPhoneNumber }),
-            });
             console.log("Response:", data);
 
-            // Navigate to OTP verification screen
             router.push({
                 pathname: "/(auth)/verify",
                 params: { phoneNumber: fullPhoneNumber }

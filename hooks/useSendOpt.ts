@@ -9,13 +9,13 @@ interface VerifyOtpResponse {
     error?: string;
 }
 
-const postVerifyOtp = async (phoneNumber: string): Promise<VerifyOtpResponse> => {
-    const { data } = await axiosInstance.post('/auth/send-opt', { phoneNumber });
+const postOtp = async (phoneNumber: string): Promise<VerifyOtpResponse> => {
+    const { data } = await axiosInstance.post('/auth/send_otp', { phoneNumber });
     return data;
 };
 
 export const useSendOpt = () => {
     return useMutation({
-        mutationFn: postVerifyOtp,
+        mutationFn: postOtp,
     });
 };

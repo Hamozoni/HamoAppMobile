@@ -4,7 +4,7 @@ import * as SecureStore from 'expo-secure-store'; // For securely storing the JW
 
 // Create an Axios instance with a base URL
 export const axiosInstance: AxiosInstance = axios.create({
-    baseURL: "http://localhost:8000/api", // Your backend base URL
+    baseURL: process.env.EXPO_PUBLIC_API_URL, // Your backend base URL
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
@@ -12,31 +12,31 @@ export const axiosInstance: AxiosInstance = axios.create({
 });
 
 // Request Interceptor: Attach the JWT token to every request
-// axiosInstance.interceptors.request.use(
-//     async (config: InternalAxiosRequestConfig) => {
-//         try {
-//             const token = await SecureStore.getItemAsync('accessToken'); // Retrieve token
-//             if (token && config.headers) {
-//                 config.headers.Authorization = `Bearer ${token}`;
-//             }
-//         } catch (error) {
-//             console.error('Failed to retrieve auth token:', error);
-//         }
-//         return config;
-//     },
-//     (error) => {
-//         return Promise.reject(error);
-//     }
-// );
+axiosInstance.interceptors.request.use(
+    async (config: InternalAxiosRequestConfig) => {
+        try {
+            const token = await SecureStore.getItemAsync('accessToken'); // Retrieve token
+            if (token && config.headers) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+        } catch (error) {
+            console.log('Failed to retrieve auth token:', error);
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 // Optional: Response Interceptor for global error handling (e.g., token refresh)
-// axiosInstance.interceptors.response.use(
-//     (response) => response,
-//     async (error) => {
-//         const originalRequest = error.config;
-//         if (error.response?.status === 401 && !originalRequest._retry) {
-//             originalRequest._retry = true;
-//         }
-//         return Promise.reject(error);
-//     }
-// );
+axiosInstance.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        const originalRequest = error.config;
+        if (error.response?.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+        }
+        return Promise.reject(error);
+    }
+);
