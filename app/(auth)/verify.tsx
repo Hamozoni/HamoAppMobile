@@ -14,38 +14,25 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import ThemedSafeAreaView from "../../components/themedViews/safeAreaView";
-import { jsx } from "react/jsx-runtime";
+import { getDeviceInfo } from "../../utils/deviceInfo";
+import { formatTime } from "../../utils";
+import { useVerifyOtp } from "../../hooks/useVerifyOpt";
 
 const OTP_LENGTH = 6;
 const RESEND_TIMER = 180;
 
-interface IDeviceInfo {
-    deviceId: string;
-    platform: 'ios' | 'android' | 'web';
-    deviceName: string;
-    lastActive: Date;
-    publicKey: string;
-};
 
 export default function Verify(): JSX.Element {
+
     const router = useRouter();
     const { phoneNumber } = useLocalSearchParams<{ phoneNumber: string }>();
-
-    const [deviceId, setDeviceId] = useState<IDeviceInfo>({
-        deviceId: '',
-        platform: 'ios',
-        deviceName: '',
-        lastActive: new Date(),
-        publicKey: '',
-    });
     const [otp, setOtp] = useState<Array<string>>(Array(OTP_LENGTH).fill(""));
-    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>("");
     const [resendTimer, setResendTimer] = useState<number>(RESEND_TIMER);
     const [canResend, setCanResend] = useState<boolean>(false);
 
     const inputRefs = useRef<TextInput[]>([]);
-
+    const { mutateAsync, isPending: isLoading } = useVerifyOtp()
     // Countdown timer for resend
     useEffect(() => {
         if (resendTimer > 0) {
@@ -58,7 +45,6 @@ export default function Verify(): JSX.Element {
 
     // Focus first input on mount
     useEffect(() => {
-
         setTimeout(() => inputRefs.current[0]?.focus(), 300);
     }, []);
 
@@ -98,22 +84,24 @@ export default function Verify(): JSX.Element {
             setError("Please enter the complete verification code");
             return;
         }
-
-        setIsLoading(true);
         try {
             // Here you would verify the OTP with Firebase
             console.log("Verifying OTP:", otpCode);
 
-            // Simulate API call
-            await new Promise((resolve) => setTimeout(resolve, 1500));
+            const deviceInfo = await getDeviceInfo();
 
+            const data = await mutateAsync({
+                otp: parseInt(otpCode),
+                phoneNumber,
+                deviceInfo
+            })
+
+            console.log(data);
             // Navigate to profile setup
             router.replace("/(auth)/setup-profile");
         } catch (err) {
             setError("Invalid verification code. Please try again.");
             console.error(err);
-        } finally {
-            setIsLoading(false);
         }
     };
 
@@ -133,12 +121,6 @@ export default function Verify(): JSX.Element {
             setError("Failed to resend code. Please try again.");
             console.error(err);
         }
-    };
-
-    const formatTime = (seconds: number): string => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins}:${secs.toString().padStart(2, "0")}`;
     };
 
     const isOtpComplete = otp.every((digit) => digit !== "");

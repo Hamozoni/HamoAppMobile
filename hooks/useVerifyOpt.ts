@@ -1,15 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 import { axiosInstance } from '../lib/axios.config';
 import * as SecureStore from 'expo-secure-store';
-
+import { IDevice } from '../types/user.type';
 interface VerifyOtpPayload {
-    phone: string;
-    otp: string;
-    deviceId: string;
-    platform: 'ios' | 'android' | 'web';
-    deviceName: string;
-    lastActive: Date;
-    publicKey?: string;
+    phoneNumber: string;
+    otp: number;
+    deviceInfo: IDevice;
 }
 
 interface VerifyOtpResponse {
@@ -30,7 +26,7 @@ interface VerifyOtpResponse {
 }
 
 const postVerifyOtp = async (payload: VerifyOtpPayload): Promise<VerifyOtpResponse> => {
-    const { data } = await axiosInstance.post('/auth/verify-otp', payload);
+    const { data } = await axiosInstance.post('/auth/verify_otp', payload);
     return data;
 };
 
