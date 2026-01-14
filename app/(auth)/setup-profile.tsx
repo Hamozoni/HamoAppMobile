@@ -119,52 +119,57 @@ export default function SetupProfile() {
                     >
                         <Text style={styles.skipButtonText}>Skip</Text>
                     </TouchableOpacity>
-                    <ThemedViewContainer paddingVertical={20}>
+                    <Separator />
+                    <View style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 10, borderStyle: 'dashed' }}>
+                        <ThemedViewContainer paddingVertical={20}>
 
-                        <View style={styles.imageSection}>
-                            <TouchableOpacity
-                                style={styles.imageContainer}
-                                onPress={pickImage}
-                            >
-                                {profileImage ? (
-                                    <Image
-                                        source={{ uri: profileImage }}
-                                        style={styles.profileImage}
-                                    />
-                                ) : (
-                                    <View style={styles.imagePlaceholder}>
-                                        <Ionicons name="person" size={60} color="#ccc" />
-                                    </View>
-                                )}
-                                <View style={styles.editBadge}>
-                                    <Ionicons name="camera" size={18} color="#fff" />
-                                </View>
-                            </TouchableOpacity>
-
-                            <View style={styles.imageButtons}>
+                            <View style={styles.imageSection}>
                                 <TouchableOpacity
-                                    style={styles.imageOptionButton}
+                                    style={styles.imageContainer}
                                     onPress={pickImage}
                                 >
-                                    <Ionicons name="images-outline" size={20} color="#259cd3" />
-                                    <Text style={styles.imageOptionText}>Gallery</Text>
+                                    {profileImage ? (
+                                        <Image
+                                            source={{ uri: profileImage }}
+                                            style={styles.profileImage}
+                                        />
+                                    ) : (
+                                        <View style={styles.imagePlaceholder}>
+                                            <Ionicons name="person" size={60} color="#ccc" />
+                                        </View>
+                                    )}
+                                    <View style={styles.editBadge}>
+                                        <Ionicons name="camera" size={18} color="#fff" />
+                                    </View>
                                 </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={styles.imageOptionButton}
-                                    onPress={takePhoto}
-                                >
-                                    <Ionicons name="camera-outline" size={20} color="#259cd3" />
-                                    <Text style={styles.imageOptionText}>Camera</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
 
-                    </ThemedViewContainer>
+                                <View style={styles.imageButtons}>
+                                    <TouchableOpacity
+                                        style={styles.imageOptionButton}
+                                        onPress={pickImage}
+                                    >
+                                        <Ionicons name="images-outline" size={20} color="#259cd3" />
+                                        <Text style={styles.imageOptionText}>Gallery</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.imageOptionButton}
+                                        onPress={takePhoto}
+                                    >
+                                        <Ionicons name="camera-outline" size={20} color="#259cd3" />
+                                        <Text style={styles.imageOptionText}>Camera</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+
+                        </ThemedViewContainer>
+
+                    </View>
 
 
                     <Separator />
 
                     <View style={styles.formSection}>
+                        <Separator />
                         <View style={styles.inputGroup}>
                             <Text style={styles.inputLabel}>Username *</Text>
                             <View style={[
@@ -189,7 +194,7 @@ export default function SetupProfile() {
                                 <Text style={styles.errorText}>{errors.username}</Text>
                             )}
                         </View>
-
+                        <Separator />
                         <View style={styles.inputGroup}>
                             <Text style={[styles.inputLabel, { marginTop: 10 }]}>Bio</Text>
                             <View style={styles.bioContainer}>
@@ -333,10 +338,11 @@ const styles = StyleSheet.create({
     inputContainer: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#fff",
+        backgroundColor: "#fcfcfcff",
         borderRadius: 12,
-        borderWidth: 1.5,
+        borderWidth: 1,
         borderColor: "#e0e0e0",
+        borderStyle: "dashed",
         paddingHorizontal: 14,
         gap: 10,
     },
@@ -350,12 +356,13 @@ const styles = StyleSheet.create({
         color: "#1a1a1a",
     },
     bioContainer: {
-        backgroundColor: "#fff",
+        backgroundColor: "#fafafaff",
         borderRadius: 12,
-        borderWidth: 1.5,
+        borderWidth: 1,
         borderColor: "#e0e0e0",
         paddingHorizontal: 14,
-        paddingTop: 12,
+        borderStyle: "dashed",
+        paddingTop: 10,
     },
     bioInput: {
         fontSize: 16,
@@ -367,6 +374,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: "#888",
         marginTop: 6,
+        paddingHorizontal: 15,
     },
     errorText: {
         color: "#ff4444",
