@@ -90,7 +90,7 @@ export default function SetupProfile() {
         setIsLoading(true);
         try {
 
-            router.replace("/(tabs)/chat" as any);
+            router.replace("/(tabs)/chat" as string);
         } catch (err) {
             console.error(err);
         } finally {
@@ -99,7 +99,7 @@ export default function SetupProfile() {
     };
 
     const handleSkip = () => {
-        router.replace("/(tabs)/chat" as any);
+        router.replace("/(tabs)/chat" as string);
     };
 
     return (
@@ -168,7 +168,7 @@ export default function SetupProfile() {
 
                     <Separator />
 
-                    <View style={styles.formSection}>
+                    <View >
                         <Separator />
                         <View style={styles.inputGroup}>
                             <Text style={styles.inputLabel}>Username *</Text>
