@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     View,
     Text,
@@ -17,7 +17,7 @@ import * as ImagePicker from "expo-image-picker";
 import ThemedSafeAreaView from "../../components/themedViews/safeAreaView";
 import ThemedViewContainer from "../../components/themedViews/ThemedViewContainer";
 import Separator from "../../components/ui/separator";
-
+import * as SecureStore from 'expo-secure-store';
 interface Errors {
     username?: string;
     birthDate?: string;
