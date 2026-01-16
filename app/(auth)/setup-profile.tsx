@@ -10,6 +10,7 @@ import {
     ScrollView,
     Image,
     ActivityIndicator,
+    ImageBackground,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -121,47 +122,44 @@ export default function SetupProfile() {
                     </TouchableOpacity>
                     <Separator />
                     <View style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 10, borderStyle: 'dashed' }}>
-                        <ThemedViewContainer paddingVertical={20}>
 
-                            <View style={styles.imageSection}>
+                        <ImageBackground source={require('../../assets/images/sudaChat.jpg')} style={styles.imageSection}>
+                            <TouchableOpacity
+                                style={styles.imageContainer}
+                                onPress={pickImage}
+                            >
+                                {profileImage ? (
+                                    <Image
+                                        source={{ uri: profileImage }}
+                                        style={styles.profileImage}
+                                    />
+                                ) : (
+                                    <View style={styles.imagePlaceholder}>
+                                        <Ionicons name="person" size={60} color="#ccc" />
+                                    </View>
+                                )}
+                                <View style={styles.editBadge}>
+                                    <Ionicons name="camera" size={18} color="#fff" />
+                                </View>
+                            </TouchableOpacity>
+
+                            <View style={styles.imageButtons}>
                                 <TouchableOpacity
-                                    style={styles.imageContainer}
+                                    style={styles.imageOptionButton}
                                     onPress={pickImage}
                                 >
-                                    {profileImage ? (
-                                        <Image
-                                            source={{ uri: profileImage }}
-                                            style={styles.profileImage}
-                                        />
-                                    ) : (
-                                        <View style={styles.imagePlaceholder}>
-                                            <Ionicons name="person" size={60} color="#ccc" />
-                                        </View>
-                                    )}
-                                    <View style={styles.editBadge}>
-                                        <Ionicons name="camera" size={18} color="#fff" />
-                                    </View>
+                                    <Ionicons name="images-outline" size={20} color="#259cd3" />
+                                    <Text style={styles.imageOptionText}>Gallery</Text>
                                 </TouchableOpacity>
-
-                                <View style={styles.imageButtons}>
-                                    <TouchableOpacity
-                                        style={styles.imageOptionButton}
-                                        onPress={pickImage}
-                                    >
-                                        <Ionicons name="images-outline" size={20} color="#259cd3" />
-                                        <Text style={styles.imageOptionText}>Gallery</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={styles.imageOptionButton}
-                                        onPress={takePhoto}
-                                    >
-                                        <Ionicons name="camera-outline" size={20} color="#259cd3" />
-                                        <Text style={styles.imageOptionText}>Camera</Text>
-                                    </TouchableOpacity>
-                                </View>
+                                <TouchableOpacity
+                                    style={styles.imageOptionButton}
+                                    onPress={takePhoto}
+                                >
+                                    <Ionicons name="camera-outline" size={20} color="#259cd3" />
+                                    <Text style={styles.imageOptionText}>Camera</Text>
+                                </TouchableOpacity>
                             </View>
-
-                        </ThemedViewContainer>
+                        </ImageBackground>
 
                     </View>
 
@@ -247,23 +245,10 @@ const styles = StyleSheet.create({
     scrollContent: {
         flex: 1,
     },
-    headerContainer: {
-        alignItems: "center",
-    },
-    title: {
-        fontSize: 26,
-        fontWeight: "700",
-        color: "#1a1a1a",
-        marginBottom: 10,
-        textAlign: "center",
-    },
-    subtitle: {
-        fontSize: 16,
-        color: "#666",
-        textAlign: "center",
-    },
     imageSection: {
         alignItems: "center",
+        padding: 20,
+        objectFit: 'cover',
     },
     imageContainer: {
         position: "relative",

@@ -4,9 +4,12 @@ import { axiosInstance } from '../lib/axios.config';
 import type { IUser } from '../types/user.type';
 
 interface UpdateProfilePayload {
-    displayName: string,
-    profilePicture: string,
-    about: string,
+    displayName?: string,
+    profilePicture?: string,
+    profilePicturePublicId?: string,
+    coverPicture?: string,
+    coverPicturePublicId?: string,
+    about?: string,
 }
 
 const updateProfile = async (payload: UpdateProfilePayload): Promise<IUser> => {
