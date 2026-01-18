@@ -32,7 +32,8 @@ const tokenService = {
 
     // Refresh token (secure storage)
     getRefreshToken: async () => {
-        return SecureStore.getItemAsync("refreshToken");
+        console.log("getRefreshToken", await SecureStore.getItemAsync("refreshToken"));
+        return await SecureStore.getItemAsync("refreshToken");
     },
     setRefreshToken: async (token: string) => {
         await SecureStore.setItemAsync("refreshToken", token);
@@ -141,6 +142,7 @@ axiosInstance.interceptors.response.use(
 
         try {
             const refreshToken = await tokenService.getRefreshToken();
+
             if (!refreshToken) {
                 throw new Error("No refresh token");
             }

@@ -85,6 +85,16 @@ export default function SetupProfile() {
         return Object.keys(newErrors).length === 0;
     };
 
+    useEffect(() => {
+        (async () => {
+            const accessToken = await SecureStore.getItemAsync("accessToken");
+            const refreshToken = await SecureStore.getItemAsync("refreshToken");
+            console.log("accessToken", accessToken);
+            console.log("refreshToken", refreshToken);
+
+        })()
+    }, []);
+
     const { mutateAsync: postProfilePictureSignature } = useProfilePictureSignature();
 
     const handleContinue = async () => {

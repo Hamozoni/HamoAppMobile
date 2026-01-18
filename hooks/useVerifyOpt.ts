@@ -28,9 +28,11 @@ export const useVerifyOtp = () => {
 
     return useMutation({
         mutationFn: postVerifyOtp,
-        onSuccess: (data) => {
-            SecureStore.setItemAsync('accessToken', data.accessToken);
-            SecureStore.setItemAsync('refreshToken', data.refreshToken);
+        onSuccess: async (data) => {
+
+            console.log("data", data);
+            await SecureStore.setItemAsync('accessToken', data.accessToken);
+            await SecureStore.setItemAsync('refreshToken', data.refreshToken);
         },
     });
 };
