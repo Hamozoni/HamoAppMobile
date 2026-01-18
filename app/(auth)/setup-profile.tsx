@@ -19,6 +19,7 @@ import ThemedSafeAreaView from "../../components/themedViews/safeAreaView";
 import ThemedViewContainer from "../../components/themedViews/ThemedViewContainer";
 import Separator from "../../components/ui/separator";
 import * as SecureStore from 'expo-secure-store';
+import { useProfilePictureSignature } from "../../hooks/useProfilePicureSignature";
 interface Errors {
     username?: string;
     birthDate?: string;
@@ -30,7 +31,6 @@ export default function SetupProfile() {
     const [profileImage, setProfileImage] = useState<string | null>(null);
     const [username, setUsername] = useState("");
     const [bio, setBio] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState<Errors>({});
 
     const pickImage = async () => {
@@ -85,17 +85,20 @@ export default function SetupProfile() {
         return Object.keys(newErrors).length === 0;
     };
 
+    const { mutateAsync: postProfilePictureSignature } = useProfilePictureSignature();
+
     const handleContinue = async () => {
-        if (!validateForm()) return;
+        // if (!validateForm()) return;
 
-        setIsLoading(true);
         try {
+            if (profileImage) {
+                const data = await postProfilePictureSignature();
+                console.log(data);
+            }
 
-            router.replace("/(tabs)/chat" as string);
+            // router.replace("/(tabs)/chat" as string);
         } catch (err) {
             console.error(err);
-        } finally {
-            setIsLoading(false);
         }
     };
 
@@ -217,12 +220,12 @@ export default function SetupProfile() {
                     <TouchableOpacity
                         style={[
                             styles.continueButton,
-                            isLoading && styles.continueButtonDisabled,
+                            false && styles.continueButtonDisabled,
                         ]}
                         onPress={handleContinue}
-                        disabled={isLoading}
+                        disabled={false}
                     >
-                        {isLoading ? (
+                        {false ? (
                             <ActivityIndicator color="#fff" size="small" />
                         ) : (
                             <>

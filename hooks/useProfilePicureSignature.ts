@@ -1,16 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { axiosInstance } from "../lib/axios.config";
 
-interface UploadMediaPayload {
-    signature: string,
-    timestamp: string,
-    cloudName: string,
-    apiKey: string,
-    folder: string,
-    resourceType: string,
-    maxFileSize: string,
-    publicId: string,
-}
 
 interface UploadMediaResponse {
     signature: string,
@@ -24,12 +14,12 @@ interface UploadMediaResponse {
 }
 
 
-const postUploadMedia = async (payload: UploadMediaPayload): Promise<UploadMediaResponse> => {
-    const { data } = await axiosInstance.post('/media/upload', payload);
+const postUploadMedia = async (): Promise<UploadMediaResponse> => {
+    const { data } = await axiosInstance.post(`/cloudinary/profile_picture_signature`);
     return data;
 };
 
-export const useUploadMedia = () => {
+export const useProfilePictureSignature = () => {
     return useMutation({
         mutationFn: postUploadMedia,
     });

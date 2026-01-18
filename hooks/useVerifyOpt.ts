@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { axiosInstance } from '../lib/axios.config';
 import * as SecureStore from 'expo-secure-store';
 import { IDevice } from '../types/user.type';
+
 interface VerifyOtpPayload {
     phoneNumber: string;
     otp: number;
