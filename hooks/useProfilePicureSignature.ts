@@ -7,9 +7,8 @@ interface UploadMediaResponse {
     timestamp: string,
     cloudName: string,
     apiKey: string,
+    uploadUrl: string,
     folder: string,
-    resourceType: string,
-    maxFileSize: string,
     publicId: string,
 }
 

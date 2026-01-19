@@ -17,6 +17,7 @@ import ThemedSafeAreaView from "../../components/themedViews/safeAreaView";
 import { getDeviceInfo } from "../../utils/deviceInfo";
 import { formatTime } from "../../utils";
 import { useVerifyOtp } from "../../hooks/useVerifyOpt";
+import tokenService from "../../services/tokenService";
 
 const OTP_LENGTH = 6;
 const RESEND_TIMER = 180;
@@ -95,6 +96,9 @@ export default function Verify(): JSX.Element {
                 phoneNumber,
                 device
             })
+
+            tokenService.setAccessToken(data.accessToken);
+            tokenService.setRefreshToken(data.refreshToken);
 
             console.log(data);
             // Navigate to profile setup

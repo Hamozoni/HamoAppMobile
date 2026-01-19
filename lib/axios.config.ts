@@ -3,45 +3,13 @@ import axios, {
     InternalAxiosRequestConfig,
     AxiosError,
 } from "axios";
-import * as SecureStore from "expo-secure-store";
+import tokenService from "../services/tokenService";
 
 declare module "axios" {
     export interface AxiosRequestConfig {
         skipAuth?: boolean;
     }
 }
-
-
-/**
- * ================================
- * Token helpers (single file)
- * ================================
- */
-
-let accessTokenMemory: string | null = null;
-
-const tokenService = {
-    // Access token (memory only)
-    getAccessToken: () => accessTokenMemory,
-    setAccessToken: (token: string) => {
-        accessTokenMemory = token;
-    },
-    clearAccessToken: () => {
-        accessTokenMemory = null;
-    },
-
-    // Refresh token (secure storage)
-    getRefreshToken: async () => {
-        console.log("getRefreshToken", await SecureStore.getItemAsync("refreshToken"));
-        return await SecureStore.getItemAsync("refreshToken");
-    },
-    setRefreshToken: async (token: string) => {
-        await SecureStore.setItemAsync("refreshToken", token);
-    },
-    clearRefreshToken: async () => {
-        await SecureStore.deleteItemAsync("refreshToken");
-    },
-};
 
 /**
  * ================================
@@ -67,7 +35,6 @@ axiosInstance.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
         if (config.skipAuth) return config;
 
-
         const token = tokenService.getAccessToken();
         if (token && config.headers) {
             config.headers.Authorization = `Bearer ${token}`;
@@ -80,16 +47,19 @@ axiosInstance.interceptors.request.use(
 
 /**
  * ================================
- * Refresh queue logic (CRITICAL)
+ * Refresh queue logic (prevents thundering herd)
  * ================================
  */
 
 let isRefreshing = false;
+let lastRefreshAttempt = 0;
 
-let failedQueue: {
+interface QueueItem {
     resolve: (token: string) => void;
     reject: (error: any) => void;
-}[] = [];
+}
+
+let failedQueue: QueueItem[] = [];
 
 const processQueue = (error: any, token: string | null = null) => {
     failedQueue.forEach((promise) => {
@@ -115,17 +85,24 @@ axiosInstance.interceptors.response.use(
     async (error: AxiosError) => {
         const originalRequest: any = error.config;
 
+        // Only handle 401 errors
         if (!error.response || error.response.status !== 401) {
             return Promise.reject(error);
         }
 
+        // Prevent infinite retry loops
         if (originalRequest._retry) {
+            // Clear tokens and redirect to login
+            tokenService.clearAccessToken();
+            await tokenService.clearRefreshToken();
+
+
             return Promise.reject(error);
         }
 
         originalRequest._retry = true;
 
-        // If refresh already happening → queue request
+        // If refresh already in progress, queue this request
         if (isRefreshing) {
             return new Promise((resolve, reject) => {
                 failedQueue.push({
@@ -133,7 +110,9 @@ axiosInstance.interceptors.response.use(
                         originalRequest.headers.Authorization = `Bearer ${token}`;
                         resolve(axiosInstance(originalRequest));
                     },
-                    reject,
+                    reject: (error) => {
+                        reject(error);
+                    },
                 });
             });
         }
@@ -141,38 +120,65 @@ axiosInstance.interceptors.response.use(
         isRefreshing = true;
 
         try {
-            const refreshToken = await tokenService.getRefreshToken();
+            // Get tokens from secure storage
+            const refreshToken = tokenService.getRefreshToken();
+
+            console.log(refreshToken);
 
             if (!refreshToken) {
-                throw new Error("No refresh token");
+                throw new Error("Missing refresh token");
             }
 
             // Call refresh endpoint
-            const response = await axios.post(
+            const { data } = await axios.post(
                 `${process.env.EXPO_PUBLIC_API_URL}/auth/refresh_token`,
-                { refreshToken },
-                { skipAuth: true }
+                {
+                    refreshToken
+                },
+                {
+                    timeout: 5000,
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
             );
 
-            const {
-                accessToken: newAccessToken,
-                refreshToken: newRefreshToken,
-            } = response.data;
+            console.log(data);
+
+            // Validate response
+            if (!data.accessToken || !data.refreshToken) {
+                throw new Error("Invalid refresh response");
+            }
 
             // Save new tokens
-            tokenService.setAccessToken(newAccessToken);
-            await tokenService.setRefreshToken(newRefreshToken);
+            tokenService.setAccessToken(data.accessToken);
+            await tokenService.setRefreshToken(data.refreshToken);
 
-            processQueue(null, newAccessToken);
+            lastRefreshAttempt = Date.now();
 
-            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+            // Process queued requests with new token
+            processQueue(null, data.accessToken);
+
+            // Retry original request with new token
+            originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
             return axiosInstance(originalRequest);
-        } catch (refreshError) {
-            processQueue(refreshError, null);
+        } catch (refreshError: any) {
+            console.error("Token refresh failed:", refreshError.message);
 
-            // Hard logout
+            // If refresh endpoint returns 401, tokens are invalid
+            if (refreshError.response?.status === 401) {
+                console.warn("Refresh token invalid or expired");
+            }
+
+            // Clear tokens and process queue with error
             tokenService.clearAccessToken();
             await tokenService.clearRefreshToken();
+
+            processQueue(refreshError, null);
+
+            // Redirect to login
+
+            // navigateToLogin();
 
             return Promise.reject(refreshError);
         } finally {
@@ -183,18 +189,31 @@ axiosInstance.interceptors.response.use(
 
 /**
  * ================================
- * Export token helpers (optional)
+ * Token helpers
  * ================================
  */
 
 export const authTokens = {
+    /**
+     * Store both access and refresh tokens
+     */
     setTokens: async (accessToken: string, refreshToken: string) => {
         tokenService.setAccessToken(accessToken);
         await tokenService.setRefreshToken(refreshToken);
     },
+
+    /**
+     * Clear both tokens and redirect to login
+     */
     clearTokens: async () => {
         tokenService.clearAccessToken();
         await tokenService.clearRefreshToken();
+        // navigateToLogin();
     },
+
+    /**
+     * Get current access token (for manual API calls if needed)
+     */
+    getAccessToken: () => tokenService.getAccessToken(),
 };
 
