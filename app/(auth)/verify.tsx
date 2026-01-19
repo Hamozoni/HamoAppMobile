@@ -19,6 +19,8 @@ import { formatTime } from "../../utils";
 import { useVerifyOtp } from "../../hooks/useVerifyOpt";
 import tokenService from "../../services/tokenService";
 
+import * as SecureStore from "expo-secure-store";
+
 const OTP_LENGTH = 6;
 const RESEND_TIMER = 180;
 
@@ -97,8 +99,8 @@ export default function Verify(): JSX.Element {
                 device
             })
 
-            tokenService.setAccessToken(data.accessToken);
-            tokenService.setRefreshToken(data.refreshToken);
+            await SecureStore.setItemAsync("accessToken", data.accessToken);
+            await SecureStore.setItemAsync("refreshToken", data.refreshToken);
 
             console.log(data);
             // Navigate to profile setup

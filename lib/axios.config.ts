@@ -3,7 +3,8 @@ import axios, {
     InternalAxiosRequestConfig,
     AxiosError,
 } from "axios";
-import tokenService from "../services/tokenService";
+
+import * as SecureStore from "expo-secure-store";
 
 declare module "axios" {
     export interface AxiosRequestConfig {
@@ -35,7 +36,7 @@ axiosInstance.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
         if (config.skipAuth) return config;
 
-        const token = tokenService.getAccessToken();
+        const token = await SecureStore.getItemAsync("accessToken");
         if (token && config.headers) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -93,8 +94,8 @@ axiosInstance.interceptors.response.use(
         // Prevent infinite retry loops
         if (originalRequest._retry) {
             // Clear tokens and redirect to login
-            tokenService.clearAccessToken();
-            await tokenService.clearRefreshToken();
+            // await SecureStore.deleteItemAsync("accessToken");
+            // await SecureStore.deleteItemAsync("refreshToken");
 
 
             return Promise.reject(error);
@@ -121,7 +122,7 @@ axiosInstance.interceptors.response.use(
 
         try {
             // Get tokens from secure storage
-            const refreshToken = tokenService.getRefreshToken();
+            const refreshToken = await SecureStore.getItemAsync("refreshToken");
 
             console.log(refreshToken);
 
@@ -151,8 +152,8 @@ axiosInstance.interceptors.response.use(
             }
 
             // Save new tokens
-            tokenService.setAccessToken(data.accessToken);
-            await tokenService.setRefreshToken(data.refreshToken);
+            await SecureStore.setItemAsync("accessToken", data.accessToken);
+            await SecureStore.setItemAsync("refreshToken", data.refreshToken);
 
             lastRefreshAttempt = Date.now();
 
@@ -171,8 +172,7 @@ axiosInstance.interceptors.response.use(
             }
 
             // Clear tokens and process queue with error
-            tokenService.clearAccessToken();
-            await tokenService.clearRefreshToken();
+
 
             processQueue(refreshError, null);
 
@@ -193,27 +193,27 @@ axiosInstance.interceptors.response.use(
  * ================================
  */
 
-export const authTokens = {
-    /**
-     * Store both access and refresh tokens
-     */
-    setTokens: async (accessToken: string, refreshToken: string) => {
-        tokenService.setAccessToken(accessToken);
-        await tokenService.setRefreshToken(refreshToken);
-    },
+// export const authTokens = {
+//     /**
+//      * Store both access and refresh tokens
+//      */
+//     setTokens: async (accessToken: string, refreshToken: string) => {
+//         tokenService.setAccessToken(accessToken);
+//         await tokenService.setRefreshToken(refreshToken);
+//     },
 
-    /**
-     * Clear both tokens and redirect to login
-     */
-    clearTokens: async () => {
-        tokenService.clearAccessToken();
-        await tokenService.clearRefreshToken();
-        // navigateToLogin();
-    },
+//     /**
+//      * Clear both tokens and redirect to login
+//      */
+//     clearTokens: async () => {
+//         tokenService.clearAccessToken();
+//         await tokenService.clearRefreshToken();
+//         // navigateToLogin();
+//     },
 
-    /**
-     * Get current access token (for manual API calls if needed)
-     */
-    getAccessToken: () => tokenService.getAccessToken(),
-};
+//     /**
+//      * Get current access token (for manual API calls if needed)
+//      */
+//     getAccessToken: () => tokenService.getAccessToken(),
+// };
 
