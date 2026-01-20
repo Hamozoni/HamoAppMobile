@@ -10,6 +10,9 @@ interface UploadMediaResponse {
     uploadUrl: string,
     folder: string,
     publicId: string,
+    overwrite: string,
+    invalidate: string,
+    resource_type: string,
 }
 
 

@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { View, Text, Image, TouchableOpacity, ImageBackground, StyleSheet } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import * as ImagePicker from 'expo-image-picker';
 import { useProfilePictureSignature } from '../../hooks/useProfilePicureSignature';
 import axios from 'axios';
-import tokenService from '../../services/tokenService';
-import * as SecureStore from 'expo-secure-store';
 
 export const SetupProfileImage = () => {
 
@@ -23,6 +21,8 @@ export const SetupProfileImage = () => {
                 const formData = new FormData();
                 const data = await postProfilePictureSignature();
                 console.log(data);
+                console.log(image);
+
                 if (!data) return;
                 formData.append('file', image);
                 formData.append('public_id', data.publicId);
@@ -31,30 +31,22 @@ export const SetupProfileImage = () => {
                 formData.append('cloud_name', data.cloudName);
                 formData.append('api_key', data.apiKey);
                 formData.append('folder', data.folder);
-                formData.append("overwrite", "true");
-                formData.append("invalidate", "true");
+                formData.append('overwrite', data.overwrite);
+                formData.append('invalidate', data.invalidate);
+                formData.append('resource_type', data.resource_type);
 
 
-                // const imageInfo = await axios.post(data.uploadUrl, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+                const imageInfo = await axios.post(data.uploadUrl, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
 
 
-                // console.log(imageInfo.data);
+                console.log(imageInfo.data);
             }
 
             // router.replace("/(tabs)/chat" as string);
         } catch (err) {
-            console.error(err);
+            console.log("Cloudinary Error:", JSON.stringify(err.response.data, null, 2));
         }
     };
-
-    useEffect(() => {
-        (async () => {
-            const token = await SecureStore.getItemAsync("accessToken");
-            const refreshToken = await SecureStore.getItemAsync("refreshToken");
-            console.log(token);
-            console.log(refreshToken);
-        })()
-    }, []);
 
     const pickImage = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
