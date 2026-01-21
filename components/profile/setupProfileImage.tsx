@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons'
 import * as ImagePicker from 'expo-image-picker';
 import { useProfilePictureSignature } from '../../hooks/useProfilePicureSignature';
 import axios from 'axios';
+import { useUpdateProfile } from '../../hooks/useProfileApi';
 
 export const SetupProfileImage = () => {
 
@@ -11,7 +12,7 @@ export const SetupProfileImage = () => {
     const [profileImage, setProfileImage] = useState<any>(null);
 
     const { mutateAsync: postProfilePictureSignature, isPending } = useProfilePictureSignature();
-
+    const { mutateAsync: postProfilePicture, isPending: isPendingProfilePicture } = useUpdateProfile();
     const handleContinue = async (image: any) => {
         // if (!validateForm()) return;
 
@@ -19,31 +20,32 @@ export const SetupProfileImage = () => {
             if (image) {
 
                 const formData = new FormData();
-                const data = await postProfilePictureSignature();
-                console.log(data);
-                console.log(image);
+                const pictureSignature = await postProfilePictureSignature();
 
-                if (!data) return;
+                console.log(pictureSignature);
+
+                if (!pictureSignature) return;
                 formData.append('file', image);
-                formData.append('public_id', data.publicId);
-                formData.append('signature', data.signature);
-                formData.append('timestamp', data.timestamp);
-                formData.append('cloud_name', data.cloudName);
-                formData.append('api_key', data.apiKey);
-                formData.append('folder', data.folder);
-                formData.append('overwrite', data.overwrite);
-                formData.append('invalidate', data.invalidate);
-                formData.append('resource_type', data.resource_type);
+                formData.append('public_id', pictureSignature.publicId);
+                formData.append('signature', pictureSignature.signature);
+                formData.append('timestamp', pictureSignature.timestamp);
+                formData.append('cloud_name', pictureSignature.cloudName);
+                formData.append('api_key', pictureSignature.apiKey);
+                formData.append('folder', pictureSignature.folder);
+                formData.append('overwrite', pictureSignature.overwrite.toString());
+                formData.append('invalidate', pictureSignature.invalidate.toString());
 
 
-                const imageInfo = await axios.post(data.uploadUrl, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+                const { data } = await axios.post(pictureSignature.uploadUrl, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
 
 
-                console.log(imageInfo.data);
+                console.log(data);
+                const profileData = await postProfilePicture({ profilePicture: data.secure_url, profilePicturePublicId: data.public_id });
+                console.log(profileData);
             }
 
             // router.replace("/(tabs)/chat" as string);
-        } catch (err) {
+        } catch (err: any) {
             console.log("Cloudinary Error:", JSON.stringify(err.response.data, null, 2));
         }
     };
