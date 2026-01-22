@@ -53,7 +53,7 @@ export const SetupProfileImage = () => {
 
                 console.log(data);
 
-                // const profileData = await postProfilePicture({ profilePicture: data.secure_url, profilePicturePublicId: data.public_id });
+                const profileData = await postProfilePicture(data);
 
                 console.log(profileData);
             }
