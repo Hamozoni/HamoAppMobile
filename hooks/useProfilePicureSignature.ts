@@ -12,7 +12,6 @@ interface UploadMediaResponse {
     publicId: string,
     overwrite: string,
     invalidate: string,
-    resource_type: string,
 }
 
 
