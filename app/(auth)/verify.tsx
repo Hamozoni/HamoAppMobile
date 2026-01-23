@@ -16,8 +16,8 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import ThemedSafeAreaView from "../../components/themedViews/safeAreaView";
 import { getDeviceInfo } from "../../utils/deviceInfo";
 import { formatTime } from "../../utils";
-import { useVerifyOtp } from "../../hooks/useVerifyOpt";
-import tokenService from "../../services/tokenService";
+import { useVerifyOtp } from "../../hooks/api/useVerifyOpt";
+
 
 import * as SecureStore from "expo-secure-store";
 
@@ -96,6 +96,7 @@ export default function Verify(): JSX.Element {
             const data = await mutateAsync({
                 otp: parseInt(otpCode),
                 phoneNumber,
+                countryCode: "+249",
                 device
             })
 

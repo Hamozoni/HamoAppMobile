@@ -5,6 +5,7 @@ import axios, {
 } from "axios";
 
 import * as SecureStore from "expo-secure-store";
+import { emitAuthFailed } from "../utils/authEvents";
 
 declare module "axios" {
     export interface AxiosRequestConfig {
@@ -26,11 +27,6 @@ export const axiosInstance: AxiosInstance = axios.create({
     },
 });
 
-/**
- * ================================
- * Request interceptor
- * ================================
- */
 
 axiosInstance.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
@@ -46,11 +42,6 @@ axiosInstance.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-/**
- * ================================
- * Refresh queue logic (prevents thundering herd)
- * ================================
- */
 
 let isRefreshing = false;
 let lastRefreshAttempt = 0;
@@ -74,11 +65,6 @@ const processQueue = (error: any, token: string | null = null) => {
     failedQueue = [];
 };
 
-/**
- * ================================
- * Response interceptor (401 handling)
- * ================================
- */
 
 axiosInstance.interceptors.response.use(
     (response) => response,
@@ -86,24 +72,20 @@ axiosInstance.interceptors.response.use(
     async (error: AxiosError) => {
         const originalRequest: any = error.config;
 
-        // Only handle 401 errors
         if (!error.response || error.response.status !== 401) {
             return Promise.reject(error);
         }
 
-        // Prevent infinite retry loops
+
         if (originalRequest._retry) {
-            // Clear tokens and redirect to login
-            // await SecureStore.deleteItemAsync("accessToken");
-            // await SecureStore.deleteItemAsync("refreshToken");
-
-
             return Promise.reject(error);
         }
 
         originalRequest._retry = true;
 
-        // If refresh already in progress, queue this request
+        if (Date.now() - lastRefreshAttempt < 3000) {
+            return Promise.reject(error);
+        }
         if (isRefreshing) {
             return new Promise((resolve, reject) => {
                 failedQueue.push({
@@ -111,9 +93,7 @@ axiosInstance.interceptors.response.use(
                         originalRequest.headers.Authorization = `Bearer ${token}`;
                         resolve(axiosInstance(originalRequest));
                     },
-                    reject: (error) => {
-                        reject(error);
-                    },
+                    reject,
                 });
             });
         }
@@ -121,71 +101,35 @@ axiosInstance.interceptors.response.use(
         isRefreshing = true;
 
         try {
-            // Get tokens from secure storage
             const refreshToken = await SecureStore.getItemAsync("refreshToken");
+            if (!refreshToken) throw new Error("Missing refresh token");
 
-            console.log(refreshToken);
-
-            if (!refreshToken) {
-                throw new Error("Missing refresh token");
-            }
-
-            // Call refresh endpoint
             const { data } = await axios.post(
                 `${process.env.EXPO_PUBLIC_API_URL}/auth/refresh_token`,
-                {
-                    refreshToken
-                },
-                {
-                    timeout: 5000,
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
+                { refreshToken }
             );
 
-            console.log(data);
-
-            // Validate response
-            if (!data.accessToken || !data.refreshToken) {
-                throw new Error("Invalid refresh response");
-            }
-
-            // Save new tokens
             await SecureStore.setItemAsync("accessToken", data.accessToken);
             await SecureStore.setItemAsync("refreshToken", data.refreshToken);
 
             lastRefreshAttempt = Date.now();
 
-            // Process queued requests with new token
             processQueue(null, data.accessToken);
 
-            // Retry original request with new token
             originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
             return axiosInstance(originalRequest);
-        } catch (refreshError: any) {
-            console.error("Token refresh failed:", refreshError.message);
 
-            // If refresh endpoint returns 401, tokens are invalid
-            if (refreshError.response?.status === 401) {
-                console.warn("Refresh token invalid or expired");
-            }
-
-            // Clear tokens and process queue with error
-
-
+        } catch (refreshError) {
+            isRefreshing = false;
             processQueue(refreshError, null);
-
-            // Redirect to login
-
-            // navigateToLogin();
-
+            emitAuthFailed();
             return Promise.reject(refreshError);
         } finally {
             isRefreshing = false;
         }
     }
 );
+
 
 /**
  * ================================

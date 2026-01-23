@@ -1,5 +1,3 @@
-// config/api.config.ts
-import Constants from 'expo-constants';
 import { useState, useRef } from "react";
 import {
     View,
@@ -16,9 +14,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import ThemedSafeAreaView from "../../components/themedViews/safeAreaView";
-import { useSendOpt } from "../../hooks/useSendOpt";
-import { axiosInstance } from "../../lib/axios.config";
-import axios from "axios";
+import { useSendOpt } from "../../hooks/api/useSendOpt";
 
 // Type for country code
 interface CountryCode {

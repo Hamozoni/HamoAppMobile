@@ -6,13 +6,14 @@ import tokenService from '../services/tokenService';
 interface VerifyOtpPayload {
     phoneNumber: string;
     otp: number;
+    countryCode: string;
     device: IDevice;
 }
 
 interface VerifyOtpResponse {
     message?: string,
     user: {
-        id: string,
+        _id: string,
         phoneNumber: string
     },
     accessToken: string,

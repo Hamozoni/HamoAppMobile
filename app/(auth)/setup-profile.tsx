@@ -15,9 +15,10 @@ import { useRouter } from "expo-router";
 import ThemedSafeAreaView from "../../components/themedViews/safeAreaView";
 import Separator from "../../components/ui/separator";
 import { SetupProfileImage } from "../../components/profile/setupProfileImage";
+import { useUpdateProfile } from "../../hooks/api/useProfileApi";
 
 interface Errors {
-    username?: string;
+    displayName?: string;
     birthDate?: string;
 };
 
@@ -26,19 +27,25 @@ export default function SetupProfile() {
     const router = useRouter();
 
 
-    const [username, setUsername] = useState("");
-    const [bio, setBio] = useState("");
+    const [displayName, setDisplayName] = useState("");
+    const [about, setAbout] = useState("");
     const [errors, setErrors] = useState<Errors>({});
 
-
+    const { mutateAsync: postUpdateProfile, isPending: isLoading } = useUpdateProfile();
 
     const handleContinue = async () => {
         // if (!validateForm()) return;
 
         try {
 
+            const response = await postUpdateProfile({
+                displayName,
+                about,
+            });
 
-            // router.replace("/(tabs)/chat" as string);
+            console.log(response);
+
+            router.replace("/(tabs)/chat" as string);
         } catch (err) {
             console.error(err);
         }
@@ -76,24 +83,24 @@ export default function SetupProfile() {
                             <Text style={styles.inputLabel}>Username *</Text>
                             <View style={[
                                 styles.inputContainer,
-                                errors.username && styles.inputError
+                                errors.displayName && styles.inputError
                             ]}>
                                 <Ionicons name="person-outline" size={20} color="#888" />
                                 <TextInput
                                     style={styles.textInput}
                                     placeholder="Enter your username"
                                     placeholderTextColor="#999"
-                                    value={username}
+                                    value={displayName}
                                     onChangeText={(text) => {
-                                        setUsername(text);
-                                        setErrors((prev) => ({ ...prev, username: "" }));
+                                        setDisplayName(text);
+                                        setErrors((prev) => ({ ...prev, displayName: "" }));
                                     }}
                                     maxLength={30}
                                     autoCapitalize="none"
                                 />
                             </View>
-                            {errors.username && (
-                                <Text style={styles.errorText}>{errors.username}</Text>
+                            {errors.displayName && (
+                                <Text style={styles.errorText}>{errors.displayName}</Text>
                             )}
                         </View>
                         <Separator />
@@ -104,15 +111,15 @@ export default function SetupProfile() {
                                     style={styles.bioInput}
                                     placeholder="Tell us about yourself..."
                                     placeholderTextColor="#999"
-                                    value={bio}
-                                    onChangeText={setBio}
+                                    value={about}
+                                    onChangeText={setAbout}
                                     multiline
                                     numberOfLines={4}
                                     maxLength={50}
                                     textAlignVertical="top"
                                 />
                             </View>
-                            <Text style={styles.charCount}>{bio.length}/50</Text>
+                            <Text style={styles.charCount}>{about.length}/50</Text>
                         </View>
                     </View>
 
@@ -121,12 +128,12 @@ export default function SetupProfile() {
                     <TouchableOpacity
                         style={[
                             styles.continueButton,
-                            false && styles.continueButtonDisabled,
+                            isLoading && styles.continueButtonDisabled,
                         ]}
                         onPress={handleContinue}
-                        disabled={false}
+                        disabled={isLoading}
                     >
-                        {false ? (
+                        {isLoading ? (
                             <ActivityIndicator color="#fff" size="small" />
                         ) : (
                             <>

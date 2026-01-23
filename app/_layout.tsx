@@ -4,7 +4,9 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { queryClient } from "../lib/queryClient.config";
 import { QueryClientProvider } from "@tanstack/react-query";
 
+
 export default function RootLayout() {
+
 
     return (
         <GestureHandlerRootView>

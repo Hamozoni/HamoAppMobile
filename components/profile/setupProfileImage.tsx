@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import { View, Text, Image, TouchableOpacity, ImageBackground, StyleSheet } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import * as ImagePicker from 'expo-image-picker';
-import { useProfilePictureSignature } from '../../hooks/useProfilePicureSignature';
+import { useProfilePictureSignature } from '../../hooks/api/useProfilePicureSignature';
 import axios from 'axios';
-import { useUpdateProfile } from '../../hooks/useProfileApi';
+import { useUpdateProfilePicture } from '../../hooks/api/useProfileApi';
 
 export const SetupProfileImage = () => {
 
@@ -12,13 +12,8 @@ export const SetupProfileImage = () => {
     const [profileImage, setProfileImage] = useState<any>(null);
 
     const { mutateAsync: postProfilePictureSignature, isPending } = useProfilePictureSignature();
-    const { mutateAsync: postProfilePicture, isPending: isPendingProfilePicture } = useUpdateProfile();
+    const { mutateAsync: postProfilePicture, isPending: isPendingProfilePicture } = useUpdateProfilePicture();
 
-    const createFileFromUri = async (uri: any, fileName: any, mimeType: any) => {
-        const response = await fetch(uri);
-        const blob = await response.blob();
-        return new File([blob], fileName, { type: mimeType });
-    };
 
     const handleContinue = async (image: any) => {
         // if (!validateForm()) return;
@@ -27,7 +22,7 @@ export const SetupProfileImage = () => {
             if (image) {
 
 
-                const formData = new FormData();
+                const formData = new FormData() as any;
                 const pictureSignature = await postProfilePictureSignature();
 
                 if (!pictureSignature) return;
@@ -37,7 +32,7 @@ export const SetupProfileImage = () => {
                     uri: image.uri,
                     type: image.mimeType,
                     name: image.fileName || 'avatar.jpg'
-                });
+                })
 
                 formData.append('public_id', pictureSignature.publicId);
                 formData.append('signature', pictureSignature.signature);
@@ -60,10 +55,6 @@ export const SetupProfileImage = () => {
 
             // router.replace("/(tabs)/chat" as string);
         } catch (err: any) {
-            console.log('Full error:', err);
-            console.log('Error response:', err?.response);
-            console.log('Error status:', err?.response?.status);
-            console.log('Error data:', err?.response?.data);
         }
     };
 
