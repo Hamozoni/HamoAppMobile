@@ -1,7 +1,7 @@
 
 import { useMutation } from '@tanstack/react-query';
 import { axiosInstance } from '../../lib/axios.config';
-import type { IUser } from '../../types/user.type';
+import { IUser } from '../../types/user.type';
 
 interface ICloudinaryData {
     public_id: string,

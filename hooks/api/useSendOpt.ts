@@ -1,6 +1,6 @@
 // src/hooks/useVerifyOtp.ts
 import { useMutation } from '@tanstack/react-query';
-import { axiosInstance } from '../lib/axios.config';
+import { axiosInstance } from '../../lib/axios.config';
 
 interface VerifyOtpResponse {
     success?: boolean;

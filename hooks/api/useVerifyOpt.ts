@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
-import { axiosInstance } from '../lib/axios.config';
-import { IDevice } from '../types/user.type';
-import tokenService from '../services/tokenService';
+import { axiosInstance } from '../../lib/axios.config';
+import { IDevice } from '../../types/user.type';
 
 interface VerifyOtpPayload {
     phoneNumber: string;

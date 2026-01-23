@@ -1,38 +1,41 @@
-import { Redirect, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-
 import { queryClient } from "../lib/queryClient.config";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore";
-import { ActivityIndicator } from "react-native";
 import { AuthBootstrap } from "../utils/authBootstrap";
+import { onAuthFailed } from "../utils/authEvents";
+import * as SecureStore from "expo-secure-store";
 
 
 export default function RootLayout() {
 
-    const { hydrate, hydrated, user } = useAuthStore();
+    const { hydrate } = useAuthStore();
 
     useEffect(() => {
         hydrate();
     }, []);
 
-    if (!hydrated) return <ActivityIndicator />;
+    useEffect(() => {
+        onAuthFailed(async () => {
+            await SecureStore.deleteItemAsync("accessToken");
+            await SecureStore.deleteItemAsync("refreshToken");
+            await useAuthStore.getState().clearUser();
+        });
+    }, []);
+
 
     return (
-        <>
-            <AuthBootstrap />
-
-            {!user ? <Redirect href="/(auth)/login" /> :
-                <GestureHandlerRootView>
-                    <QueryClientProvider client={queryClient}>
-                        <Stack screenOptions={{ headerShown: false }}>
-                            <Stack.Screen name="(screens)" />
-                            <Stack.Screen name="(tabs)" />
-                            <Stack.Screen name="(auth)" />
-                        </Stack>
-                    </QueryClientProvider>
-                </GestureHandlerRootView>}
-        </>
+        <GestureHandlerRootView>
+            <QueryClientProvider client={queryClient}>
+                <AuthBootstrap />
+                <Stack screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="(screens)" />
+                    <Stack.Screen name="(tabs)" />
+                    <Stack.Screen name="(auth)" />
+                </Stack>
+            </QueryClientProvider>
+        </GestureHandlerRootView>
     );
 }
