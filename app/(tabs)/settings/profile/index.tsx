@@ -5,33 +5,35 @@ import Separator from "../../../../components/ui/separator";
 import ThemedViewContainer from "../../../../components/themedViews/ThemedViewContainer";
 import TitleForwardIconBtn from "../../../../components/buttons/titleForwardIconBtn";
 import { Ionicons } from "@expo/vector-icons";
+import { useAuthStore } from "../../../../store/useAuthStore";
 
 type IoniconsName = keyof typeof Ionicons.glyphMap;
 
-const profileImage = require("../../../../assets/images/pexels-al-amin-muhammad-988616478-29680723.jpg");
 
 interface ProfileItem {
-    id: number;
+    _id: string | undefined;
     subTitle: string;
-    title: string;
-    link: string;
+    title: string | undefined;
+    link: string | undefined;
     iconName: IoniconsName;
 }
 
-const profileData: ProfileItem[] = [
-    { subTitle: "Name", title: "John Doe", id: 1, link: '/settings/profile/name', iconName: 'person-outline' },
-    { subTitle: "About", title: "at work", id: 2, link: '/settings/profile/about', iconName: 'alert-circle-outline' },
-    { subTitle: "Phone", title: "+1234567890", id: 3, link: '/settings/profile/phone', iconName: 'call-outline' },
-];
-
 export default function Profile() {
+
+    const user = useAuthStore((state) => state.user);
+
+    const profileData: ProfileItem[] = [
+        { subTitle: "Name", title: user?.displayName, _id: "name", link: '/settings/profile/name', iconName: 'person-outline' },
+        { subTitle: "About", title: user?.about, _id: "about", link: '/settings/profile/about', iconName: 'alert-circle-outline' },
+        { subTitle: "Phone", title: user?.phoneNumber, _id: "phone", link: '/settings/profile/phone', iconName: 'call-outline' },
+    ];
     return (
         <ThemedSafeAreaView>
             <ScrollView contentInsetAdjustmentBehavior="automatic">
                 <View style={{ alignItems: "center", marginVertical: 20 }}>
                     <TouchableOpacity style={{ alignItems: "center", marginBottom: 10 }}>
                         <Image
-                            source={profileImage}
+                            source={{ uri: user?.profilePictureFileId?.secureUrl }}
                             style={{ width: 150, height: 150, borderRadius: 75, backgroundColor: "#e4f7c2ff" }}
                         />
                     </TouchableOpacity>
@@ -40,8 +42,8 @@ export default function Profile() {
                     </TouchableOpacity>
                 </View>
                 <Separator />
-                {profileData.map(({ subTitle, title, id, link, iconName }) => (
-                    <View key={id}>
+                {profileData.map(({ subTitle, title, _id, link, iconName }) => (
+                    <View key={_id}>
                         <Text style={{ fontSize: 16, color: "#606160ff", fontWeight: '600', marginBottom: 10, paddingHorizontal: 15 }}>{subTitle}</Text>
                         <ThemedViewContainer>
                             <TitleForwardIconBtn
