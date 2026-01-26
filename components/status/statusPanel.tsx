@@ -4,7 +4,7 @@ import { STATUSES } from "../../constants/status";
 import { StatusCard } from "../cards/statusCard";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { useAuthStore } from "../../store/useAuthStore";
+import { useAuthStore } from "../../hooks/store/useAuthStore";
 
 export const StatusPanel = () => {
 

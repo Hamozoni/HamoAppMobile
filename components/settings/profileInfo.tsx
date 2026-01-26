@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import ThemedViewContainer from "../themedViews/ThemedViewContainer";
 import TitleForwardIconBtn from "../buttons/titleForwardIconBtn";
-import { useAuthStore } from "../../store/useAuthStore";
+import { useAuthStore } from "../../hooks/store/useAuthStore";
 
 export const ProfileInfo = () => {
     const router = useRouter();

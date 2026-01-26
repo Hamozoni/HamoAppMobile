@@ -5,7 +5,7 @@ import Separator from "../../../../components/ui/separator";
 import ThemedViewContainer from "../../../../components/themedViews/ThemedViewContainer";
 import TitleForwardIconBtn from "../../../../components/buttons/titleForwardIconBtn";
 import { Ionicons } from "@expo/vector-icons";
-import { useAuthStore } from "../../../../store/useAuthStore";
+import { useAuthStore } from "../../../../hooks/store/useAuthStore";
 
 type IoniconsName = keyof typeof Ionicons.glyphMap;
 

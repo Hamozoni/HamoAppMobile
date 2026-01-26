@@ -3,7 +3,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { queryClient } from "../lib/queryClient.config";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { useAuthStore } from "../store/useAuthStore";
+import { useAuthStore } from "../hooks/store/useAuthStore";
 import { AuthBootstrap } from "../utils/authBootstrap";
 import { onAuthFailed } from "../utils/authEvents";
 import * as SecureStore from "expo-secure-store";

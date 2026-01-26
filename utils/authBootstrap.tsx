@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useAuthStore } from "../store/useAuthStore";
+import { useAuthStore } from "../hooks/store/useAuthStore";
 import { useGetProfile } from "../hooks/api/useProfileApi";
 
 export function AuthBootstrap() {

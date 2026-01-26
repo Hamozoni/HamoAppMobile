@@ -1,7 +1,7 @@
 // store/useAuthStore.ts
 import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { IUser } from "../types/user.type";
+import { IUser } from "../../types/user.type";
 
 interface AuthState {
     user: IUser | null;
