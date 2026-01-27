@@ -6,7 +6,7 @@ import ThemedSafeAreaView from "../themedViews/safeAreaView";
 import ThemedViewContainer from "../themedViews/ThemedViewContainer";
 import { useGetContacts } from "../../hooks/api/useContactsApi";
 import { useAuthStore } from "../../hooks/store/useAuthStore";
-import * as Localization from "expo-localization";
+import { IUser } from "../../types/user.type";
 
 interface ContactsListProps {
     children?: React.ReactNode;
@@ -16,29 +16,29 @@ export default function ContactsList({ children }: ContactsListProps) {
     const { mutateAsync: getContacts } = useGetContacts();
     const [contacts, setContacts] = useState<Contacts.Contact[]>([]);
 
-    const user = useAuthStore((state: any) => state.user);
+    const [myContacts, setMyContacts] = useState<IUser[]>([]);
 
+    const user = useAuthStore((state: any) => state.user);
+    function normalize(phone: string) {
+        return phone
+            .replace(/\s/g, "")
+            .replace(/-/g, "")
+            .replace(/\(/g, "")
+            .replace(/\)/g, "");
+    }
     useEffect(() => {
         (async () => {
             const { status } = await Contacts.requestPermissionsAsync();
             if (status === "granted") {
                 const { data } = await Contacts.getContactsAsync({ fields: [Contacts.Fields.PhoneNumbers] })
-                function normalize(phone: string) {
-                    return phone
-                        .replace(/\s/g, "")
-                        .replace(/-/g, "")
-                        .replace(/\(/g, "")
-                        .replace(/\)/g, "");
-                }
-                console.log(data
-                    .flatMap(c => c.phoneNumbers ?? [])
-                    .map(p => normalize(p.number))
-                    .filter(Boolean));
-
-
-                // const contacts = await getContacts([data.map((contact) => contact.phoneNumbers?.[0].number)]);
-                // console.log(contacts);
                 setContacts(data);
+
+                const phoneNumbers = data.flatMap(c => c.phoneNumbers ?? []).map(p => normalize(p?.number)).filter(Boolean);
+
+                console.log(phoneNumbers)
+                const myContacts = await getContacts({ phoneNumbers });
+
+                setMyContacts(myContacts)
             }
         })();
     }, []);
