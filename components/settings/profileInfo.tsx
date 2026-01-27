@@ -16,8 +16,7 @@ export const ProfileInfo = () => {
                 <TouchableOpacity onPress={() => router.push("/settings/profile" as any)}>
                     <Image
                         source={{
-                            uri: user?.
-                                profilePictureFileId?.secureUrl
+                            uri: user?.profilePicture?.secureUrl
                         }}
                         style={{ width: 60, height: 60, borderRadius: 30, backgroundColor: "#d6f897ff" }}
                     />

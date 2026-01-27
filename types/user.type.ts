@@ -15,7 +15,7 @@ export interface IUser {
     _id: string,
     phoneNumber: string,
     displayName: string,
-    profilePictureFileId: {
+    profilePicture: {
         _id: string,
         secureUrl: string,
         publicId: string,

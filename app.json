@@ -30,7 +30,8 @@
       "expo-router",
       "expo-video",
       "expo-secure-store",
-      "expo-localization"
+      "expo-localization",
+      "expo-sqlite"
     ]
   }
 }

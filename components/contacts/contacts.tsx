@@ -19,6 +19,7 @@ export default function ContactsList({ children }: ContactsListProps) {
     const [myContacts, setMyContacts] = useState<IUser[]>([]);
 
     const user = useAuthStore((state: any) => state.user);
+
     function normalize(phone: string) {
         return phone
             .replace(/\s/g, "")
@@ -31,12 +32,15 @@ export default function ContactsList({ children }: ContactsListProps) {
             const { status } = await Contacts.requestPermissionsAsync();
             if (status === "granted") {
                 const { data } = await Contacts.getContactsAsync({ fields: [Contacts.Fields.PhoneNumbers] })
+
+                console.log(data[90])
+
                 setContacts(data);
 
-                const phoneNumbers = data.flatMap(c => c.phoneNumbers ?? []).map(p => normalize(p?.number)).filter(Boolean);
-
-                console.log(phoneNumbers)
+                const phoneNumbers = data.flatMap(c => c.phoneNumbers ?? []).map(p => normalize((p as any)?.number)).filter(Boolean);
                 const myContacts = await getContacts({ phoneNumbers });
+
+                console.log(myContacts)
 
                 setMyContacts(myContacts)
             }

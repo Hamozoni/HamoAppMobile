@@ -33,7 +33,7 @@ export default function Profile() {
                 <View style={{ alignItems: "center", marginVertical: 20 }}>
                     <TouchableOpacity style={{ alignItems: "center", marginBottom: 10 }}>
                         <Image
-                            source={{ uri: user?.profilePictureFileId?.secureUrl }}
+                            source={{ uri: user?.profilePicture?.secureUrl }}
                             style={{ width: 150, height: 150, borderRadius: 75, backgroundColor: "#e4f7c2ff" }}
                         />
                     </TouchableOpacity>
@@ -47,9 +47,9 @@ export default function Profile() {
                         <Text style={{ fontSize: 16, color: "#606160ff", fontWeight: '600', marginBottom: 10, paddingHorizontal: 15 }}>{subTitle}</Text>
                         <ThemedViewContainer>
                             <TitleForwardIconBtn
-                                title={title}
+                                title={title || ""}
                                 iconName={iconName}
-                                link={link}
+                                link={link || ""}
                                 selected={null}
                                 isLast={true}
                             />
