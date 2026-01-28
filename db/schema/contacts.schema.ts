@@ -2,14 +2,16 @@
 
 const CONTACTS_SCHEMA = `
 CREATE TABLE IF NOT EXISTS contacts (
-    id TEXT PRIMARY KEY,
-    name TEXT,
+    _id TEXT PRIMARY KEY,
     phoneNumber TEXT,
-    profilePicture TEXT,
+    countryCode TEXT,
+    countryISO TEXT,
+    displayName TEXT,
     about TEXT,
-    isPhoneVerified BOOLEAN,
-    createdAt DATETIME,
-    updatedAt DATETIME
+    profilePicture TEXT,
+    lastSeen DATETIME,
+    isOnline BOOLEAN,
+    isBlocked BOOLEAN
 )`
 
 export default CONTACTS_SCHEMA;
