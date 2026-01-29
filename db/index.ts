@@ -69,7 +69,7 @@ export const executeTransaction = <T>(
  */
 export const executeQuery = <T = any>(
     sql: string,
-    params?: any[]
+    params?: any
 ): T[] => {
     const database = getDatabase();
     return database.getAllSync<T>(sql, params);
@@ -80,7 +80,7 @@ export const executeQuery = <T = any>(
  */
 export const executeQueryFirst = <T = any>(
     sql: string,
-    params?: any[]
+    params?: any
 ): T | null => {
     const database = getDatabase();
     return database.getFirstSync<T>(sql, params);
@@ -91,7 +91,7 @@ export const executeQueryFirst = <T = any>(
  */
 export const executeUpdate = (
     sql: string,
-    params?: any[]
+    params?: any
 ): SQLite.SQLiteRunResult => {
     const database = getDatabase();
     return database.runSync(sql, params);
