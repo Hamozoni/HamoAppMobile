@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS contacts (
     profilePicture TEXT,
     lastSeen DATETIME,
     isOnline BOOLEAN,
-    isBlocked BOOLEAN
+    isBlocked BOOLEAN,
+    isRequested BOOLEAN,
 )`
 
 export default CONTACTS_SCHEMA;

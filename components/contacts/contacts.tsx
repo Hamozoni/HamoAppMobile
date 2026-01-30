@@ -23,8 +23,8 @@ export default function ContactsList({ children }: ContactsListProps) {
 
     useEffect(() => {
         (async () => {
-
-            syncContacts("sa")
+            const contacts = await syncContacts();
+            console.log(contacts?.find((contact: any) => contact.phoneNumber === "+249126328203"));
         })();
     }, []);
 

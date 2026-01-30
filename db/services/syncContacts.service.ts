@@ -1,6 +1,18 @@
 import * as Contacts from "expo-contacts";
+import { axiosInstance } from "../../lib/axios.config";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 
-export async function syncContacts(defaultCountry: string = "SD") {
+export async function syncContacts() {
+
+    const normalizePhone = (raw: string, defaultCountryISO: string): string | null => {
+
+        const phone = parsePhoneNumberFromString(raw, defaultCountryISO as any);
+
+        if (!phone || !phone.isValid()) return null;
+
+        return phone.number; // E.164 → +249912345678
+
+    };
 
     // 1️⃣ Permission
     const { status } = await Contacts.requestPermissionsAsync();
@@ -18,7 +30,8 @@ export async function syncContacts(defaultCountry: string = "SD") {
 
     data.map((contact) => {
         contact.phoneNumbers?.map(numb => {
-            conatcts.push({ displayName: contact.name, _id: numb?.id, phoneNumber: numb?.number })
+            if (!numb?.number) return;
+            conatcts.push({ displayName: contact.name, _id: numb?.id, phoneNumber: normalizePhone(numb?.number || "", "SA"), isRequested: false })
         })
     })
 
@@ -26,11 +39,19 @@ export async function syncContacts(defaultCountry: string = "SD") {
 
     const phoneNumbers = conatcts.map(({ phoneNumber }) => phoneNumber)
 
-    const d = {
-        phoneNumbers,
-        Contacts
-    }
 
-    return d
+    const { data: requestedContacts } = await axiosInstance.post('/contacts/sync', { phoneNumbers, countryISO: "SA" });
+    let myContacts: any[] = []
+    conatcts.map((contact) => {
+        requestedContacts.map((requestedContact: any) => {
+            if (contact.phoneNumber == requestedContact.phoneNumber) {
+                myContacts.push({ ...requestedContact, isRequested: true })
+            }
+            else {
+                myContacts.push(contact)
+            }
+
+        })
+    })
 }
 
