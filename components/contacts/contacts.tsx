@@ -7,6 +7,7 @@ import ThemedViewContainer from "../themedViews/ThemedViewContainer";
 import { useGetContacts } from "../../hooks/api/useContactsApi";
 import { useAuthStore } from "../../hooks/store/useAuthStore";
 import { IUser } from "../../types/user.type";
+import { syncContacts } from "../../db/services/syncContacts.service";
 
 interface ContactsListProps {
     children?: React.ReactNode;
@@ -20,30 +21,10 @@ export default function ContactsList({ children }: ContactsListProps) {
 
     const user = useAuthStore((state: any) => state.user);
 
-    function normalize(phone: string) {
-        return phone
-            .replace(/\s/g, "")
-            .replace(/-/g, "")
-            .replace(/\(/g, "")
-            .replace(/\)/g, "");
-    }
     useEffect(() => {
         (async () => {
-            const { status } = await Contacts.requestPermissionsAsync();
-            if (status === "granted") {
-                const { data } = await Contacts.getContactsAsync({ fields: [Contacts.Fields.PhoneNumbers] })
 
-                console.log(data[90])
-
-                setContacts(data);
-
-                const phoneNumbers = data.flatMap(c => c.phoneNumbers ?? []).map(p => normalize((p as any)?.number)).filter(Boolean);
-                const myContacts = await getContacts({ phoneNumbers });
-
-                console.log(myContacts)
-
-                setMyContacts(myContacts)
-            }
+            syncContacts("sa")
         })();
     }, []);
 
