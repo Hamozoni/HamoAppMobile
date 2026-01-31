@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS contacts (
     lastSeen DATETIME,
     isOnline BOOLEAN,
     isBlocked BOOLEAN,
-    isRequested BOOLEAN,
+    isRegistered BOOLEAN,
 )`
 
 export default CONTACTS_SCHEMA;

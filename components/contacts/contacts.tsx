@@ -7,7 +7,6 @@ import ThemedViewContainer from "../themedViews/ThemedViewContainer";
 import { useGetContacts } from "../../hooks/api/useContactsApi";
 import { useAuthStore } from "../../hooks/store/useAuthStore";
 import { IUser } from "../../types/user.type";
-import { syncContacts } from "../../db/services/syncContacts.service";
 
 interface ContactsListProps {
     children?: React.ReactNode;
@@ -21,12 +20,6 @@ export default function ContactsList({ children }: ContactsListProps) {
 
     const user = useAuthStore((state: any) => state.user);
 
-    useEffect(() => {
-        (async () => {
-            const contacts = await syncContacts();
-            console.log(contacts?.find((contact: any) => contact.phoneNumber === "+249126328203"));
-        })();
-    }, []);
 
     return (
         <ThemedSafeAreaView>

@@ -18,60 +18,33 @@ export class ContactsRepository {
     static search(query: string): any[] {
         return executeQuery<any>(
             `SELECT * FROM contacts 
-       WHERE displayName LIKE ? OR phoneNumber LIKE ?
-       ORDER BY displayName ASC`,
+                WHERE displayName LIKE ? OR phoneNumber LIKE ?
+                ORDER BY displayName ASC`,
             [`%${query}%`, `%${query}%`]
         );
     }
 
-    static create(contact: any): number {
-        const result = executeUpdate(
-            `INSERT INTO contacts (_id, phoneNumber, countryCode, countryISO, displayName, about, profilePicture, lastSeen, isOnline, isBlocked,isRegistered)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?`,
-            [
-                contact._id,
-                contact.phoneNumber,
-                contact.countryCode,
-                contact.countryISO,
-                contact.displayName,
-                contact.about || null,
-                contact.profilePicture || null,
-                contact.lastSeen || null,
-                contact.isOnline || false,
-                contact.isBlocked || false,
-                contact.isRegistered || false,
-            ]
-        );
-        return result.lastInsertRowId!;
-    }
+    // static create(contact: any): number {
+    //     const result = executeUpdate(
+    //         `INSERT INTO contacts (_id, phoneNumber, countryCode, countryISO, displayName, about, profilePicture, lastSeen, isOnline, isBlocked,isRegistered)
+    //            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?`,
+    //         [
+    //             contact._id,
+    //             contact.phoneNumber,
+    //             contact.countryCode,
+    //             contact.countryISO,
+    //             contact.displayName,
+    //             contact.about || null,
+    //             contact.profilePicture || null,
+    //             contact.lastSeen || null,
+    //             contact.isOnline || false,
+    //             contact.isBlocked || false,
+    //             contact.isRegistered || false,
+    //         ]
+    //     );
+    //     return result.lastInsertRowId!;
+    // }
 
-    static update(_id: number, contact: Partial<any>): void {
-        const fields: string[] = [];
-        const values: any[] = [];
-
-        if (contact.displayName !== undefined) {
-            fields.push('displayName = ?');
-            values.push(contact.displayName);
-        }
-        if (contact.profilePicture !== undefined) {
-            fields.push('profilePicture = ?');
-            values.push(contact.profilePicture);
-        }
-        if (contact.about !== undefined) {
-            fields.push('about = ?');
-            values.push(contact.about);
-        }
-        if (contact.about !== undefined) {
-            fields.push('about = ?');
-            values.push(contact.about);
-        }
-
-
-        executeUpdate(
-            `UPDATE contacts SET ${fields.join(', ')} WHERE _id = ?`,
-            values
-        );
-    }
 
     static batchUpdate(contacts: any[]): void {
         const params = contacts.map(c => [
@@ -90,8 +63,8 @@ export class ContactsRepository {
         ]);
 
         executeBatch(
-            `INSERT INTO contacts (_id, phoneNumber, diplayName, profilePicture, about, lastSeen, isOnline, isBlocked)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `INSERT INTO contacts (_id, phoneNumber, diplayName, profilePicture, about, lastSeen, isOnline, isBlocked,isRegistered)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)
                 ON CONFLICT(_id) DO UPDATE SET
                     phoneNumber = excluded.phoneNumber ,
                     countryCode = excluded.countryCode,
@@ -101,8 +74,9 @@ export class ContactsRepository {
                     profilePicture = excluded.profilePicture,
                     lastSeen = excluded.lastSeen,
                     isOnline = excluded.isOnline,
-                    isBlocked = excluded.isBlocked`,
-            params
+                    isBlocked = excluded.isBlocked,
+                    isRegistered = excluded.isRegistered
+            `, params
         );
     }
 
