@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react";
 import { useAuthStore } from "../hooks/store/useAuthStore";
 import { useGetProfile } from "../hooks/api/useProfileApi";
+import { syncContacts } from "../db/services/syncContacts.service";
+import { useContactsStore } from "../hooks/store/useContactsStore";
 
 export function AuthBootstrap() {
     const syncedRef = useRef(false);
@@ -17,6 +19,10 @@ export function AuthBootstrap() {
                 // offline / token expired → handled elsewhere
             }
         }
+
+        syncContacts().then(() => {
+            useContactsStore.getState().loadContacts()
+        })
 
         syncUser();
     }, []);
