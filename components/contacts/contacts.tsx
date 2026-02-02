@@ -7,18 +7,17 @@ import ThemedViewContainer from "../themedViews/ThemedViewContainer";
 import { useGetContacts } from "../../hooks/api/useContactsApi";
 import { useAuthStore } from "../../hooks/store/useAuthStore";
 import { IUser } from "../../types/user.type";
+import { useContactsStore } from "../../hooks/store/useContactsStore";
 
 interface ContactsListProps {
     children?: React.ReactNode;
 }
 
 export default function ContactsList({ children }: ContactsListProps) {
-    const { mutateAsync: getContacts } = useGetContacts();
-    const [contacts, setContacts] = useState<Contacts.Contact[]>([]);
 
-    const [myContacts, setMyContacts] = useState<IUser[]>([]);
+    const { contacts, registered, loading } = useContactsStore();
 
-    const user = useAuthStore((state: any) => state.user);
+    console.log(contacts);
 
 
     return (
