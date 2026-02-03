@@ -35,7 +35,7 @@ export async function syncContacts() {
 
     upsertContacts(
         registered.map((u: any) => ({
-            _id: u.contactId,
+            _id: u._d,
             phoneE164: u.phoneE164,
             isRegistered: true,
             userId: u._id,
