@@ -4,24 +4,27 @@ import { upsertContacts } from "../repositories/contacts.repo";
 import { axiosInstance } from "../../lib/axios.config";
 
 export async function syncContacts() {
+
     const { data } = await Contacts.getContactsAsync({
         fields: [Contacts.Fields.PhoneNumbers],
     });
+
+    console.log(data[5]);
 
     const normalized: any[] = [];
 
     for (const c of data) {
         for (const p of c.phoneNumbers ?? []) {
-            const e164 = normalizePhone(p.number, p.countryCode || "SA");
-            if (!e164) continue;
+            const phoneNumber = normalizePhone(p.number, p.countryCode || "SA");
+            if (!phoneNumber) continue;
 
             normalized.push({
-                _id: `${c.id}_${e164}`,
-                phoneNumber: p.number,
-                phoneE164: e164,
+                _id: c?.id,
+                phoneNumber,
                 countryISO: p.countryCode,
                 displayName: c.name,
                 isRegistered: false,
+                profilePicture: null,
             });
         }
     }
@@ -36,9 +39,10 @@ export async function syncContacts() {
     upsertContacts(
         registered.map((u: any) => ({
             _id: u._d,
-            phoneE164: u.phoneE164,
+            phoneNumber: u.phoneNumber,
             isRegistered: true,
-            userId: u._id,
+            countryISO: u.countryISO,
+            displayName: u.displayName,
             profilePicture: u?.profilePicture?.secureUrl,
         }))
     );

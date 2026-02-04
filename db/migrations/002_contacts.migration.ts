@@ -11,14 +11,10 @@ export const migration_002_contacts = {
         countryCode TEXT,
         countryISO TEXT,
         displayName TEXT,
-        about TEXT,
         profilePicture TEXT,
-        lastSeen DATETIME,
-        isOnline BOOLEAN,
-        isBlocked BOOLEAN,
         isRegistered BOOLEAN,
-        created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now') * 1000),
-        updated_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now') * 1000),
+        // created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now') * 1000),
+        // updated_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now') * 1000),
         FOREIGN KEY (_id) REFERENCES users(_id) ON DELETE CASCADE
       );
     `);

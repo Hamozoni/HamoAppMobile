@@ -6,24 +6,20 @@ export function upsertContacts(rows: any[]) {
     INSERT OR REPLACE INTO contacts (
       _id,
       phoneNumber,
-      phoneE164,
       countryCode,
       countryISO,
       displayName,
       isRegistered,
-      userId,
       profilePicture
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
         rows.map(c => [
             c._id,
             c.phoneNumber,
-            c.phoneE164,
             c.countryCode,
             c.countryISO,
             c.displayName,
             c.isRegistered ? 1 : 0,
-            c.userId ?? null,
             c.profilePicture ?? null
         ])
     );
