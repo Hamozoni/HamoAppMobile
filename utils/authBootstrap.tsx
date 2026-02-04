@@ -3,7 +3,6 @@ import { useAuthStore } from "../hooks/store/useAuthStore";
 import { useGetProfile } from "../hooks/api/useProfileApi";
 import { syncContacts } from "../db/services/syncContacts.service";
 import { useContactsStore } from "../hooks/store/useContactsStore";
-import { runMigrations } from "../db/runMigration";
 
 export function AuthBootstrap() {
 
