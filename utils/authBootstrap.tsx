@@ -3,10 +3,13 @@ import { useAuthStore } from "../hooks/store/useAuthStore";
 import { useGetProfile } from "../hooks/api/useProfileApi";
 import { syncContacts } from "../db/services/syncContacts.service";
 import { useContactsStore } from "../hooks/store/useContactsStore";
+import { runMigrations } from "../db/runMigration";
 
 export function AuthBootstrap() {
+
     const syncedRef = useRef(false);
     const { mutateAsync: getProfile } = useGetProfile();
+
     useEffect(() => {
         if (syncedRef.current) return;
         syncedRef.current = true;
@@ -19,10 +22,9 @@ export function AuthBootstrap() {
                 // offline / token expired → handled elsewhere
             }
         }
-
         syncContacts().then(() => {
             useContactsStore.getState().loadContacts()
-        })
+        });
 
         syncUser();
     }, []);
