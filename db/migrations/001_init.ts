@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS contacts (
   displayName TEXT,
   about TEXT,
   profilePicture TEXT,
-  isRegistered INTEGER DEFAULT 0,
+  isRegistered INTEGER DEFAULT 0
 );
 
 CREATE INDEX IF NOT EXISTS idx_contacts_phoneNumber

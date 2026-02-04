@@ -12,9 +12,7 @@ export const migration_002_contacts = {
         countryISO TEXT,
         displayName TEXT,
         profilePicture TEXT,
-        isRegistered BOOLEAN,
-        // created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now') * 1000),
-        // updated_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now') * 1000),
+        isRegistered BOOLEAN
         FOREIGN KEY (_id) REFERENCES users(_id) ON DELETE CASCADE
       );
     `);

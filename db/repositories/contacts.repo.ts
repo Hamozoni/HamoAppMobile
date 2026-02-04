@@ -11,7 +11,7 @@ export function upsertContacts(rows: any[]) {
       displayName,
       isRegistered,
       profilePicture
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?)
     `,
         rows.map(c => [
             c._id,
