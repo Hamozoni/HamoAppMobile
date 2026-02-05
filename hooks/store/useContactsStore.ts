@@ -25,7 +25,7 @@ export const useContactsStore = create<ContactsState>((set) => ({
             getRegisteredContacts(),
         ]);
 
-        console.log(all)
+        console.log(registered)
 
         set({
             contacts: all,

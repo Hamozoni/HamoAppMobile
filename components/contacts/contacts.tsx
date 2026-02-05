@@ -17,7 +17,7 @@ export default function ContactsList({ children }: ContactsListProps) {
 
     const { contacts, registered, loading } = useContactsStore();
 
-    console.log(contacts);
+    console.log(contacts[5]);
 
 
     return (

@@ -23,7 +23,7 @@ export async function syncContacts() {
                 phoneNumber,
                 countryISO: p.countryCode,
                 displayName: c.name,
-                isRegistered: false,
+                isRegistered: 0,
                 profilePicture: null,
             });
         }
@@ -33,14 +33,14 @@ export async function syncContacts() {
 
     // Send to backend
     const { data: registered } = await axiosInstance.post("/contacts/sync", {
-        phoneNumbers: normalized.map(n => n.phoneE164),
+        phoneNumbers: normalized.map(n => n.phoneNumber),
     });
 
     upsertContacts(
         registered.map((u: any) => ({
             _id: u._d,
             phoneNumber: u.phoneNumber,
-            isRegistered: true,
+            isRegistered: 1,
             countryISO: u.countryISO,
             displayName: u.displayName,
             profilePicture: u?.profilePicture?.secureUrl,
