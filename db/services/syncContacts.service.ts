@@ -9,8 +9,6 @@ export async function syncContacts() {
         fields: [Contacts.Fields.PhoneNumbers],
     });
 
-    console.log(data[5]);
-
     const normalized: any[] = [];
 
     for (const c of data) {
@@ -21,7 +19,7 @@ export async function syncContacts() {
             normalized.push({
                 _id: c?.id,
                 phoneNumber,
-                countryISO: p.countryCode,
+                countryCode: c.countryCode,
                 displayName: c.name,
                 isRegistered: 0,
                 profilePicture: null,
@@ -36,12 +34,15 @@ export async function syncContacts() {
         phoneNumbers: normalized.map(n => n.phoneNumber),
     });
 
+    console.log(registered)
+
     upsertContacts(
         registered.map((u: any) => ({
             _id: u._d,
             phoneNumber: u.phoneNumber,
             isRegistered: 1,
             countryISO: u.countryISO,
+            countryCode: u.countryCode,
             displayName: u.displayName,
             profilePicture: u?.profilePicture?.secureUrl,
         }))
