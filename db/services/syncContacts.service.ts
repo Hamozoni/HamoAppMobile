@@ -38,10 +38,11 @@ export async function syncContacts() {
 
     upsertContacts(
         registered.map((u: any) => ({
-            _id: u._d,
+            _id: u._id,
             phoneNumber: u.phoneNumber,
             isRegistered: 1,
             countryISO: u.countryISO,
+            about: u?.about,
             countryCode: u.countryCode,
             displayName: u.displayName,
             profilePicture: u?.profilePicture?.secureUrl,
