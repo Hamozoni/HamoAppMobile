@@ -1,19 +1,12 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-interface PhoneNumber {
-    id: string;
-    number: string;
-}
 
-interface DeviceContact {
-    id?: string;
-    name: string;
-    phoneNumbers?: PhoneNumber[];
-}
 
 interface ContactCardProps {
-    contact: DeviceContact;
+    _id?: string;
+    displayName: string;
+    phoneNumbers?: string;
 }
 
 const ContactCard = ({ contact }: ContactCardProps) => {
@@ -24,14 +17,8 @@ const ContactCard = ({ contact }: ContactCardProps) => {
             </View>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 5, flex: 1, justifyContent: "space-between", paddingVertical: 15, borderBottomWidth: 1, borderBottomColor: "#eee" }}>
                 <View >
-                    <Text style={{ fontSize: 14, fontWeight: "bold" }}>{contact.name}</Text>
-                    <View style={{ flexDirection: "row", gap: 5, flex: 1 }}>
-                        {
-                            contact?.phoneNumbers?.map((phone) => (
-                                <Text style={{ color: "#313131ff", fontSize: 12 }} key={phone.id}>{phone.number}</Text>
-                            ))
-                        }
-                    </View>
+                    <Text style={{ fontSize: 14, fontWeight: "bold" }}>{contact.displayName}</Text>
+                    <Text style={{ color: "#313131ff", fontSize: 12 }}>{contact.phoneNumber}</Text>
 
                 </View>
                 <TouchableOpacity>

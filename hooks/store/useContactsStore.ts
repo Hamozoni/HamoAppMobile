@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import {
-    clearContacts,
     getAllContacts,
     getRegisteredContacts,
 } from "../../db/repositories/contacts.repo";
@@ -20,8 +19,6 @@ export const useContactsStore = create<ContactsState>((set) => ({
 
     loadContacts: async () => {
         set({ loading: true });
-
-        await clearContacts()
         const [all, registered] = await Promise.all([
             getAllContacts(),
             getRegisteredContacts(),

@@ -1,12 +1,7 @@
-import React, { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
-import * as Contacts from "expo-contacts";
 import ContactCard from "../cards/contactCard";
 import ThemedSafeAreaView from "../themedViews/safeAreaView";
 import ThemedViewContainer from "../themedViews/ThemedViewContainer";
-import { useGetContacts } from "../../hooks/api/useContactsApi";
-import { useAuthStore } from "../../hooks/store/useAuthStore";
-import { IUser } from "../../types/user.type";
 import { useContactsStore } from "../../hooks/store/useContactsStore";
 
 interface ContactsListProps {
@@ -16,6 +11,9 @@ interface ContactsListProps {
 export default function ContactsList({ children }: ContactsListProps) {
 
     const { contacts, registered, loading } = useContactsStore();
+
+    console.log(registered)
+    console.log(contacts[0])
 
     return (
         <ThemedSafeAreaView>
@@ -31,7 +29,7 @@ export default function ContactsList({ children }: ContactsListProps) {
                 <ThemedViewContainer >
                     {
                         contacts.map((contact) => (
-                            <ContactCard key={(contact as any).id} contact={contact as any} />
+                            <ContactCard key={(contact as any)._id} contact={contact as any} />
                         ))
                     }
                 </ThemedViewContainer>
