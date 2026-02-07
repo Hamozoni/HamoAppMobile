@@ -17,9 +17,6 @@ export default function ContactsList({ children }: ContactsListProps) {
 
     const { contacts, registered, loading } = useContactsStore();
 
-    console.log(registered);
-
-
     return (
         <ThemedSafeAreaView>
             <ScrollView showsVerticalScrollIndicator={false}>

@@ -1,7 +1,7 @@
 const MIGRATION_001 = `
 CREATE TABLE IF NOT EXISTS contacts (
-  _id TEXT PRIMARY KEY,
-  phoneNumber TEXT NOT NULL,
+  _id TEXT,
+  phoneNumber TEXT PRIMARY KEY,
   countryCode TEXT,
   countryISO TEXT,
   displayName TEXT,

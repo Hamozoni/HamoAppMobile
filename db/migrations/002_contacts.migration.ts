@@ -6,14 +6,14 @@ export const migration_002_contacts = {
   up: (db: SQLite.SQLiteDatabase) => {
     db.execSync(`
       CREATE TABLE IF NOT EXISTS contacts (
-        _id TEXT PRIMARY KEY,
-        phoneNumber TEXT,
+        _id TEXT ,
+        phoneNumber TEXT PRIMARY KEY,
         countryCode TEXT,
         countryISO TEXT,
         displayName TEXT,
         profilePicture TEXT,
         isRegistered BOOLEAN
-        FOREIGN KEY (_id) REFERENCES users(_id) ON DELETE CASCADE
+        FOREIGN KEY (phoneNumber) REFERENCES users(phoneNumber) ON DELETE CASCADE
       );
     `);
 
@@ -22,7 +22,7 @@ export const migration_002_contacts = {
     `);
 
     db.execSync(`
-      CREATE INDEX IF NOT EXISTS idx_contacts_id ON contacts(_id);
+      CREATE INDEX IF NOT EXISTS idx_contacts_phoneNumber ON contacts(phoneNumber);
     `);
   }
 };

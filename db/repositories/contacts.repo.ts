@@ -6,6 +6,7 @@ export function upsertContacts(rows: any[]) {
     INSERT OR REPLACE INTO contacts (
       _id,
       phoneNumber,
+      about,
       countryCode,
       countryISO,
       displayName,
@@ -16,6 +17,7 @@ export function upsertContacts(rows: any[]) {
         rows.map(c => [
             c._id,
             c.phoneNumber,
+            c.about,
             c.countryCode,
             c.countryISO,
             c.displayName,
