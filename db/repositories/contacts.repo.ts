@@ -1,4 +1,4 @@
-import { executeBatch, executeQuery } from "../index";
+import { executeBatch, executeQuery, executeUpdate } from "../index";
 
 export function upsertContacts(rows: any[]) {
     executeBatch(
@@ -12,7 +12,7 @@ export function upsertContacts(rows: any[]) {
       displayName,
       isRegistered,
       profilePicture
-    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?,?,?,?,?,?,?,?)
     `,
         rows.map(c => [
             c._id,
@@ -31,6 +31,10 @@ export function getRegisteredContacts() {
     return executeQuery(
         "SELECT * FROM contacts WHERE isRegistered = 1 ORDER BY displayName"
     );
+};
+
+export function clearContacts() {
+    executeUpdate("DELETE FROM contacts;");
 }
 
 export function getAllContacts() {
