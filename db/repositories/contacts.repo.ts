@@ -25,6 +25,26 @@ export function upsertContacts(rows: any[]) {
             c.profilePicture ?? null
         ])
     );
+};
+
+export function updateContact(contact: any) {
+    executeUpdate(
+        `
+    UPDATE contacts SET 
+        _id = ?,
+        about = ?,
+        isRegistered = ?,
+        profilePicture = ?
+    WHERE phoneNumber = ?
+    `,
+        [
+            contact._id,
+            contact.about,
+            contact.isRegistered ? 1 : 0,
+            contact.profilePicture ?? null,
+            contact.phoneNumber
+        ]
+    );
 }
 
 export function getRegisteredContacts() {
