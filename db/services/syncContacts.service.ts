@@ -34,7 +34,6 @@ export async function syncContacts() {
         phoneNumbers: normalized.map(n => n.phoneNumber),
     });
 
-    console.log({ registered })
 
     upsertContacts(
         registered.map((u: any) => ({
