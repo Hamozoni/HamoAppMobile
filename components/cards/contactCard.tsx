@@ -1,5 +1,6 @@
 import { Text, TouchableOpacity, View, Image } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useRouter } from "expo-router";
 
 
 
@@ -10,8 +11,20 @@ interface ContactCardProps {
 }
 
 const ContactCard = ({ contact }: ContactCardProps) => {
+
+    const router = useRouter()
+
+    const handleContact = () => {
+        if (contact.isRegistered === 1) {
+            router.replace(`chatWindow/${contact?._id}`)
+        } else {
+            return;
+        }
+    };
+
+
     return (
-        <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 5, }}>
+        <TouchableOpacity onPress={handleContact} style={{ flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 5, }}>
             <View style={{ width: 35, height: 35, borderRadius: 50, backgroundColor: "#eee", justifyContent: "center", alignItems: "center" }}>
                 {
                     contact?.profilePicture ?

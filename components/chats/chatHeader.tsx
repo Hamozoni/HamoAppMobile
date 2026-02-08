@@ -11,7 +11,7 @@ interface ChatHeaderProps {
 export const ChatHeaderLeft = ({ id }: ChatHeaderProps) => {
     const router = useRouter();
     return (
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => router.replace("/")}>
             <Ionicons name="chevron-back" size={24} color="#1fa105" />
         </TouchableOpacity>
     );
