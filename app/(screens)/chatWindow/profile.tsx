@@ -19,7 +19,7 @@ export default function Profile() {
     return (
         <ThemedSafeAreaView>
             <ScrollView >
-                <View>
+                <View style={{ justifyContent: "center", alignItems: 'center', paddingHorizontal: 20 }}>
                     <Image source={{ uri: findContact().profilePicture }} width={100} height={100} style={{ borderRadius: "50%" }} />
                 </View>
                 <Text>
