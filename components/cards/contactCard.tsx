@@ -16,7 +16,7 @@ const ContactCard = ({ contact }: ContactCardProps) => {
 
     const handleContact = () => {
         if (contact.isRegistered === 1) {
-            router.replace(`chatWindow/${contact?._id}`)
+            router.replace(`chatWindow/${contact?.phoneNumber}`)
         } else {
             return;
         }

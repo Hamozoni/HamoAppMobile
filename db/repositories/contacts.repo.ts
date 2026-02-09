@@ -59,6 +59,6 @@ export function clearContacts() {
 
 export function getAllContacts() {
     return executeQuery(
-        "SELECT * FROM contacts ORDER BY displayName"
+        "SELECT * FROM contacts WHERE isRegistered = 0 ORDER BY displayName"
     );
 }

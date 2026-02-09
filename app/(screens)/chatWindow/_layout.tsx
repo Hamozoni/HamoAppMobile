@@ -4,7 +4,9 @@ import { TouchableOpacity, Text } from "react-native";
 import { ChatHeaderLeft, ChatHeaderRight, ChatHeaderMiddle } from "../../../components/chats/chatHeader";
 
 export default function ChatWindowLayout() {
+
     const router = useRouter();
+
     return (
         <Stack  >
             <Stack.Screen
@@ -25,6 +27,13 @@ export default function ChatWindowLayout() {
                 name="mediaGallery"
                 options={{
                     headerShown: false,
+                    gestureEnabled: false,
+                }}
+            />
+            <Stack.Screen
+                name="profile"
+                options={{
+                    headerShown: true,
                     gestureEnabled: false,
                 }}
             />
