@@ -19,8 +19,6 @@ export const ChatHeaderLeft = ({ id }: ChatHeaderProps) => {
 };
 
 export const ChatHeaderMiddle = ({ id }: ChatHeaderProps) => {
-    const chatIndex = Number.parseInt(id) - 1;
-    const chat = CHATS[chatIndex];
 
     const { registered } = useContactsStore();
 
