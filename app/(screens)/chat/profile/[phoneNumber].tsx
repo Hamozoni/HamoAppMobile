@@ -13,7 +13,7 @@ export default function Profile() {
 
 
     const findContact = () => {
-        return registered?.find(e => e.phoneNumber === `+${phoneNumber.replace(' ', '')}`)
+        return registered?.find(e => e.phoneNumber === phoneNumber)
     };
 
 
