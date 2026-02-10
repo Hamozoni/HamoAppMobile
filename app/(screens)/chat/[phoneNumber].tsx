@@ -8,7 +8,8 @@ import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";
 import { ChatMessage } from "../../../components/cards/messageCard";
 
 export default function ChatDetails() {
-    const { id } = useLocalSearchParams<{ id: string }>();
+
+    const { phoneNumber } = useLocalSearchParams<{ phoneNumber: string }>();
     const messagesFlatListRef = useRef<FlatList>(null);
     const [messages] = useState<ChatMessage[]>(MESSAGES);
 
@@ -32,7 +33,7 @@ export default function ChatDetails() {
                 showsVerticalScrollIndicator={false}
                 ref={messagesFlatListRef}
             />
-            <ChatFooter id={id} />
+            <ChatFooter phoneNumber={phoneNumber} />
         </ThemedSafeAreaView>
     );
 }

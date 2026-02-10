@@ -1,21 +1,19 @@
 import { Image, ScrollView, Text, View } from "react-native"
-import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView"
+import ThemedSafeAreaView from "../../../../components/themedViews/safeAreaView"
 import { useLocalSearchParams } from "expo-router/build/hooks"
-import { useContactsStore } from "../../../hooks/store/useContactsStore";
+import { useContactsStore } from "../../../../hooks/store/useContactsStore";
 
 
 export default function Profile() {
 
-    const { phone } = useLocalSearchParams();
+    const { phoneNumber } = useLocalSearchParams<{ phoneNumber: string }>();
 
     const { registered } = useContactsStore();
 
 
 
     const findContact = () => {
-
-        console.log(`+${phone}`)
-        return registered?.find(e => e.phoneNumber === `+${phone.replace(' ', '')}`)
+        return registered?.find(e => e.phoneNumber === `+${phoneNumber.replace(' ', '')}`)
     };
 
 
@@ -39,5 +37,3 @@ export default function Profile() {
         </ThemedSafeAreaView>
     )
 };
-
-

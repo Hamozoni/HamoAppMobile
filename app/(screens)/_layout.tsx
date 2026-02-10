@@ -10,7 +10,7 @@ export default function ScreenLayout() {
                     headerShown: false,
                 }} />
             <Stack.Screen
-                name="chatWindow"
+                name="chat"
                 options={{
                     headerShown: false,
                 }} />

@@ -8,17 +8,17 @@ export default function ChatWindowLayout() {
     const router = useRouter();
 
     return (
-        <Stack  >
+        <Stack >
             <Stack.Screen
-                name="[id]"
+                name="[phoneNumber]"
                 options={
                     ({ route }) => {
-                        const { id } = route.params as { id: string };
+                        const { phoneNumber } = route.params as { phoneNumber: string };
                         return {
                             headerShown: true,
-                            headerLeft: () => <ChatHeaderLeft id={id} />,
-                            headerRight: () => <ChatHeaderRight id={id} />,
-                            headerTitle: () => <ChatHeaderMiddle id={id} />,
+                            headerLeft: () => <ChatHeaderLeft phoneNumber={phoneNumber} />,
+                            headerRight: () => <ChatHeaderRight phoneNumber={phoneNumber} />,
+                            headerTitle: () => <ChatHeaderMiddle phoneNumber={phoneNumber} />,
                         }
                     }
                 }
@@ -33,7 +33,7 @@ export default function ChatWindowLayout() {
             <Stack.Screen
                 name="profile"
                 options={{
-                    headerShown: true,
+                    headerShown: false,
                     gestureEnabled: false,
                 }}
             />

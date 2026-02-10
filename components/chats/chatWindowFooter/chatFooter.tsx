@@ -6,10 +6,10 @@ import FooterAttachment from "./footerAttachment";
 import AudioRecorder from "./audioRecorder";
 
 interface ChatFooterProps {
-    id: string;
+    phoneNumber: string;
 }
 
-export default function ChatFooter({ id }: ChatFooterProps) {
+export default function ChatFooter({ phoneNumber }: ChatFooterProps) {
     const [keyboardHeight, setKeyboardHeight] = useState(336);
     const [isAttachment, setIsAttachment] = useState(false);
     const [isAudioRecorder, setIsAudioRecorder] = useState(false);

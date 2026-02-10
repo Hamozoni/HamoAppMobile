@@ -5,10 +5,10 @@ import React from "react";
 import { useContactsStore } from "../../hooks/store/useContactsStore";
 
 interface ChatHeaderProps {
-    id: string;
+    phoneNumber: string;
 }
 
-export const ChatHeaderLeft = ({ id }: ChatHeaderProps) => {
+export const ChatHeaderLeft = ({ phoneNumber }: ChatHeaderProps) => {
     const router = useRouter();
     return (
         <TouchableOpacity onPress={() => router.replace("/")}>
@@ -17,18 +17,18 @@ export const ChatHeaderLeft = ({ id }: ChatHeaderProps) => {
     );
 };
 
-export const ChatHeaderMiddle = ({ id }: ChatHeaderProps) => {
+export const ChatHeaderMiddle = ({ phoneNumber }: ChatHeaderProps) => {
 
     const { registered } = useContactsStore();
 
     const findContact = () => {
-        return registered?.find(e => e.phoneNumber === id)
+        return registered?.find(e => e.phoneNumber === phoneNumber)
     };
 
     const router = useRouter()
 
     return (
-        <TouchableOpacity onPress={() => router.push(`chatWindow/profile?phone=${id}`)} style={{ flexDirection: "row", alignItems: "center", gap: 10, flex: 1 }}>
+        <TouchableOpacity onPress={() => router.push(`chat/profile/${phoneNumber}`)} style={{ flexDirection: "row", alignItems: "center", gap: 10, flex: 1 }}>
             <Image
                 source={{ uri: findContact().profilePicture }}
                 style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: "#ccc" }}
@@ -41,7 +41,7 @@ export const ChatHeaderMiddle = ({ id }: ChatHeaderProps) => {
     );
 };
 
-export const ChatHeaderRight = ({ id }: ChatHeaderProps) => {
+export const ChatHeaderRight = ({ phoneNumber }: ChatHeaderProps) => {
     return (
         <View style={{ flexDirection: "row", alignItems: "center", gap: 15 }}>
             <TouchableOpacity>

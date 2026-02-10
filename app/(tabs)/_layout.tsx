@@ -43,7 +43,7 @@ const RootLayout = () => {
                     },
                 }} />
             <Tabs.Screen
-                name="chat"
+                name="chats"
                 options={{
                     headerShown: false,
                     title: "Chats",
