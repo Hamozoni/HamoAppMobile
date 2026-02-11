@@ -1,4 +1,4 @@
-import { Image, ScrollView, Text, View } from "react-native"
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import ThemedSafeAreaView from "../../../../components/themedViews/safeAreaView"
 import { useLocalSearchParams } from "expo-router/build/hooks"
 import { useContactsStore } from "../../../../hooks/store/useContactsStore";
@@ -33,10 +33,39 @@ export default function Profile() {
                         </Text>
                     }
                 </View>
-                <View style={{ flexDirection: "row", gap: 10 }}>
-
+                <View style={{ flexDirection: "row", gap: 5, justifyContent: "center", alignItems: "center", marginVertical: 15 }}>
+                    <TouchableOpacity style={styles.infoBtn}>
+                        <Ionicons name="call-outline" size={24} color="black" />
+                        <Text>
+                            Audio
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.infoBtn}>
+                        <Ionicons name="videocam-outline" size={24} color="black" />
+                        <Text>
+                            Audio
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.infoBtn}>
+                        <Ionicons name="search" size={24} color="black" />
+                        <Text>
+                            Audio
+                        </Text>
+                    </TouchableOpacity>
                 </View>
             </ScrollView>
         </ThemedSafeAreaView>
     )
 };
+
+const styles = StyleSheet.create({
+    infoBtn: {
+        flexDirection: "column",
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#eee",
+        padding: 10,
+        borderRadius: 8
+    }
+})
