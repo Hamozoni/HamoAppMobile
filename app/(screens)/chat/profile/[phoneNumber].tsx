@@ -35,21 +35,21 @@ export default function Profile() {
                 </View>
                 <View style={{ flexDirection: "row", gap: 5, justifyContent: "center", alignItems: "center", marginVertical: 15 }}>
                     <TouchableOpacity style={styles.infoBtn}>
-                        <Ionicons name="call-outline" size={24} color="black" />
-                        <Text>
+                        <Ionicons name="call-outline" size={24} color="#65a52aff" />
+                        <Text style={{ paddingTop: 5 }}>
                             Audio
                         </Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.infoBtn}>
-                        <Ionicons name="videocam-outline" size={24} color="black" />
-                        <Text>
-                            Audio
+                        <Ionicons name="videocam-outline" size={24} color="#65a52aff" />
+                        <Text style={{ paddingTop: 5 }}>
+                            Video
                         </Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.infoBtn}>
-                        <Ionicons name="search" size={24} color="black" />
-                        <Text>
-                            Audio
+                        <Ionicons name="search" size={24} color="#65a52aff" />
+                        <Text style={{ paddingTop: 5 }}>
+                            Search
                         </Text>
                     </TouchableOpacity>
                 </View>
