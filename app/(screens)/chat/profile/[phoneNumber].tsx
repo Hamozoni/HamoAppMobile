@@ -4,6 +4,80 @@ import { useLocalSearchParams } from "expo-router/build/hooks"
 import { useContactsStore } from "../../../../hooks/store/useContactsStore";
 import Ionicons from '@expo/vector-icons/Ionicons';
 
+
+// export default function TitleForwardIconBtn({
+//     iconName = null,
+//     title,
+//     link,
+//     isLast = false,
+//     selected = null,
+// }: TitleForwardIconBtnProps) {
+
+const profileSetting = [
+    [{
+        id: 1,
+        iconName: 'image-outline',
+        title: 'Media, links, and docs',
+        link: "/chat/profile/media",
+        selected: 'None',
+    },
+    {
+        id: 2,
+        iconName: 'star-outline',
+        title: 'Stared',
+        link: "/chat/profile/stared",
+        selected: 'None',
+    },],
+    [
+        {
+            id: 3,
+            iconName: 'notifications-outline',
+            title: 'Notifications',
+            link: "/chat/profile/notifications",
+            selected: null,
+        },
+        {
+            id: 4,
+            iconName: 'sunny-outline',
+            title: 'Chat theme',
+            link: "/chat/profile/theme",
+            selected: null,
+        },
+        {
+            id: 5,
+            iconName: 'cloud-download-outline',
+            title: 'Save to photos',
+            link: "/chat/profile/save",
+            selected: "Default",
+        },
+    ],
+    [
+        {
+            id: 6,
+            iconName: 'timer-outline',
+            title: 'Disapperaring messages',
+            link: "/chat/profile/disappearing",
+            selected: "Off",
+        },
+        {
+            id: 7,
+            iconName: 'sunny-outline',
+            title: 'Chat theme',
+            link: "/chat/profile/theme",
+            selected: null,
+        },
+        {
+            id: 8,
+            iconName: 'cloud-download-outline',
+            title: 'Save to photos',
+            link: "/chat/profile/save",
+            selected: "Default",
+        },
+    ]
+
+
+]
+
 export default function Profile() {
 
     const { phoneNumber } = useLocalSearchParams<{ phoneNumber: string }>();
