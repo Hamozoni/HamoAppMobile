@@ -3,6 +3,9 @@ import ThemedSafeAreaView from "../../../../components/themedViews/safeAreaView"
 import { useLocalSearchParams } from "expo-router/build/hooks"
 import { useContactsStore } from "../../../../hooks/store/useContactsStore";
 import Ionicons from '@expo/vector-icons/Ionicons';
+import ThemedViewContainer from "../../../../components/themedViews/ThemedViewContainer";
+import TitleForwardIconBtn from "../../../../components/buttons/titleForwardIconBtn";
+import Separator from "../../../../components/ui/separator";
 
 
 // export default function TitleForwardIconBtn({
@@ -53,6 +56,13 @@ const profileSetting = [
     ],
     [
         {
+            id: 7,
+            iconName: 'lock-closed-outline',
+            title: 'Lock chat',
+            link: "/chat/profile/lock",
+            selected: "Off",
+        },
+        {
             id: 6,
             iconName: 'timer-outline',
             title: 'Disapperaring messages',
@@ -60,18 +70,11 @@ const profileSetting = [
             selected: "Off",
         },
         {
-            id: 7,
-            iconName: 'sunny-outline',
-            title: 'Chat theme',
-            link: "/chat/profile/theme",
-            selected: null,
-        },
-        {
             id: 8,
-            iconName: 'cloud-download-outline',
-            title: 'Save to photos',
-            link: "/chat/profile/save",
-            selected: "Default",
+            iconName: 'lock-closed-outline',
+            title: 'Encryption',
+            link: "/chat/profile/encryption",
+            selected: "Messaged snd calls are end to end encrypted. Tap to verify.",
         },
     ]
 
@@ -89,7 +92,7 @@ export default function Profile() {
 
     return (
         <ThemedSafeAreaView>
-            <ScrollView >
+            <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={{ justifyContent: "center", alignItems: 'center', paddingTop: 40, marginBottom: 20 }}>
                     <Image source={{ uri: findContact()?.profilePicture }} width={150} height={150} style={{ borderRadius: "50%" }} />
                 </View>
@@ -126,6 +129,29 @@ export default function Profile() {
                             Search
                         </Text>
                     </TouchableOpacity>
+                </View>
+                <View>
+                    {
+                        profileSetting.map((e, i) => (
+                            <>
+                                <ThemedViewContainer key={i}>
+                                    {
+                                        e.map((item) => (
+                                            <TitleForwardIconBtn
+                                                key={item.id}
+                                                iconName={item.iconName}
+                                                title={item.title}
+                                                link={item.link}
+                                                isLast={item.isLast}
+                                                selected={item.selected}
+                                            />
+                                        ))
+                                    }
+                                </ThemedViewContainer>
+                                <Separator />
+                            </>
+                        ))
+                    }
                 </View>
             </ScrollView>
         </ThemedSafeAreaView>
