@@ -32,10 +32,14 @@ const ContactCard = ({ contact }: ContactCardProps) => {
         <TouchableOpacity onPress={handleContact} style={{ flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 5, }}>
             <View style={{ width: 35, height: 35, borderRadius: 50, backgroundColor: "#eee", justifyContent: "center", alignItems: "center" }}>
                 {
-                    (contact?.profilePicture && contact?.isRegistered === 1) ?
-                        <Image source={{ uri: contact?.profilePicture }} width={35} height={35} style={{ borderRadius: 50 }} />
-                        :
-                        <Ionicons name="person" size={20} color="#8d8d8dff" />
+                    // contact?.isRegistered === 1 ? (
+                    //     contact.profilePicture ?
+                    //         <Image source={{ uri: contact.profilePicture }} width={35} height={35} style={{ borderRadius: 50 }} />
+                    //         :
+                    //         <Ionicons name="person" size={20} color="#8d8d8dff" />
+                    // )
+                    //     :
+                    <Ionicons name="person" size={20} color="#8d8d8dff" />
                 }
             </View>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 5, flex: 1, justifyContent: "space-between", paddingVertical: 15, borderBottomWidth: 1, borderBottomColor: "#eee" }}>
