@@ -4,10 +4,15 @@ import { useRouter } from "expo-router";
 
 
 
-interface ContactCardProps {
-    _id?: string;
+export interface ContactCardProps {
+    _id: string;
     displayName: string;
     phoneNumbers?: string;
+    profilePicture?: string;
+    about?: string;
+    countryCode?: string;
+    countryISO?: string;
+    isRegistered?: number;
 }
 
 const ContactCard = ({ contact }: ContactCardProps) => {

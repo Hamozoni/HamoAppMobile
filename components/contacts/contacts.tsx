@@ -1,5 +1,5 @@
 import { ScrollView, Text, View } from "react-native";
-import ContactCard from "../cards/contactCard";
+import ContactCard, { ContactCardProps } from "../cards/contactCard";
 import ThemedSafeAreaView from "../themedViews/safeAreaView";
 import ThemedViewContainer from "../themedViews/ThemedViewContainer";
 import { useContactsStore } from "../../hooks/store/useContactsStore";
@@ -13,8 +13,9 @@ export default function ContactsList({ children }: ContactsListProps) {
 
     const { contacts, registered, loading } = useContactsStore();
 
-    console.log(registered)
-    console.log(contacts[0])
+    if (loading) {
+        return <Text>Loading...</Text>
+    }
 
     return (
         <ThemedSafeAreaView>
@@ -37,7 +38,7 @@ export default function ContactsList({ children }: ContactsListProps) {
                             </Text>
                             <ThemedViewContainer>
                                 {
-                                    registered?.map((contact: any) => (
+                                    registered?.map((contact: ContactCardProps) => (
                                         <ContactCard key={contact._id} contact={contact} />
                                     ))
 
@@ -54,7 +55,7 @@ export default function ContactsList({ children }: ContactsListProps) {
 
                         <ThemedViewContainer>
                             {
-                                contacts.map((contact) => (
+                                contacts.map((contact: ContactCardProps) => (
                                     <ContactCard key={(contact as any)._id} contact={contact as any} />
                                 ))
                             }
