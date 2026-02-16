@@ -17,66 +17,79 @@ import Separator from "../../../../components/ui/separator";
 // }: TitleForwardIconBtnProps) {
 
 const profileSetting = [
-    [{
+    {
         id: 1,
-        iconName: 'image-outline',
-        title: 'Media, links, and docs',
-        link: "/chat/profile/media",
-        selected: 'None',
+        data: [{
+            id: 1,
+            iconName: 'image-outline',
+            title: 'Media, links, and docs',
+            link: "/chat/profile/media",
+            selected: 'None',
+        },
+        {
+            id: 2,
+            iconName: 'star-outline',
+            title: 'Stared',
+            link: "/chat/profile/stared",
+            selected: 'None',
+        },],
+
     },
     {
         id: 2,
-        iconName: 'star-outline',
-        title: 'Stared',
-        link: "/chat/profile/stared",
-        selected: 'None',
-    },],
-    [
-        {
-            id: 3,
-            iconName: 'notifications-outline',
-            title: 'Notifications',
-            link: "/chat/profile/notifications",
-            selected: null,
-        },
-        {
-            id: 4,
-            iconName: 'sunny-outline',
-            title: 'Chat theme',
-            link: "/chat/profile/theme",
-            selected: null,
-        },
-        {
-            id: 5,
-            iconName: 'cloud-download-outline',
-            title: 'Save to photos',
-            link: "/chat/profile/save",
-            selected: "Default",
-        },
-    ],
-    [
-        {
-            id: 7,
-            iconName: 'lock-closed-outline',
-            title: 'Lock chat',
-            link: "/chat/profile/lock",
-            selected: "Off",
-        },
-        {
-            id: 6,
-            iconName: 'timer-outline',
-            title: 'Disapperaring messages',
-            link: "/chat/profile/disappearing",
-            selected: "Off",
-        },
-        {
-            id: 8,
-            iconName: 'lock-closed-outline',
-            title: 'Encryption',
-            link: "/chat/profile/encryption",
-            selected: "Messaged snd calls are end to end encrypted. Tap to verify.",
-        },
-    ]
+        data:
+            [
+                {
+                    id: 3,
+                    iconName: 'notifications-outline',
+                    title: 'Notifications',
+                    link: "/chat/profile/notifications",
+                    selected: null,
+                },
+                {
+                    id: 4,
+                    iconName: 'sunny-outline',
+                    title: 'Chat theme',
+                    link: "/chat/profile/theme",
+                    selected: null,
+                },
+                {
+                    id: 5,
+                    iconName: 'cloud-download-outline',
+                    title: 'Save to photos',
+                    link: "/chat/profile/save",
+                    selected: "Default",
+                },
+            ],
+    },
+    {
+        id: 3,
+        data:
+            [
+                {
+                    id: 7,
+                    iconName: 'lock-closed-outline',
+                    title: 'Lock chat',
+                    link: "/chat/profile/lock",
+                    selected: "Off",
+                },
+                {
+                    id: 6,
+                    iconName: 'timer-outline',
+                    title: 'Disapperaring messages',
+                    link: "/chat/profile/disappearing",
+                    selected: "Off",
+                },
+                {
+                    id: 8,
+                    iconName: 'lock-closed-outline',
+                    title: 'Encryption',
+                    link: "/chat/profile/encryption",
+                    selected: "Messaged snd calls are end to end encrypted. Tap to verify.",
+                },
+            ]
+    },
+
 
 
 ]
@@ -132,17 +145,17 @@ export default function Profile() {
                 </View>
                 <View>
                     {
-                        profileSetting.map((e, i) => (
+                        profileSetting.map((e) => (
                             <>
-                                <ThemedViewContainer key={i}>
+                                <ThemedViewContainer key={e.id}>
                                     {
-                                        e.map((item) => (
+                                        e.data.map((item) => (
                                             <TitleForwardIconBtn
                                                 key={item.id}
                                                 iconName={item.iconName}
                                                 title={item.title}
                                                 link={item.link}
-                                                isLast={item.isLast}
+                                                isLast={item.id === e.data.length}
                                                 selected={item.selected}
                                             />
                                         ))
