@@ -30,11 +30,11 @@ export const ChatHeaderMiddle = ({ phoneNumber }: ChatHeaderProps) => {
     return (
         <TouchableOpacity onPress={() => router.push(`chat/profile/${phoneNumber}`)} style={{ flexDirection: "row", alignItems: "center", gap: 10, flex: 1 }}>
             <Image
-                source={{ uri: findContact().profilePicture }}
+                source={{ uri: findContact()?.profilePicture }}
                 style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: "#ccc" }}
             />
             <TouchableOpacity>
-                <Text style={{ fontSize: 16, fontWeight: "500" }}>{findContact().displayName}</Text>
+                <Text style={{ fontSize: 16, fontWeight: "500" }}>{findContact()?.displayName}</Text>
                 <Text style={{ fontSize: 14, color: "#666" }}>on line</Text>
             </TouchableOpacity>
         </TouchableOpacity>

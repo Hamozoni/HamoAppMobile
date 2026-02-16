@@ -22,10 +22,10 @@ export default function ChatLayout() {
                     headerRight: () => (
                         <View style={{ flexDirection: "row", alignItems: "center" }}>
                             <RoundedBtn iconName="camera" color="#1078b9ff" size={26} onPress={() => {
-                                router.push("/chat/camera" as any);
+                                router.push("/chats/camera" as any);
                             }} />
                             <RoundedBtn iconName="create-outline" color="#1078b9ff" size={26} onPress={() => {
-                                router.push("/chat/contacts" as any);
+                                router.push("/chats/contacts" as any);
                             }} />
                         </View>
                     ),
