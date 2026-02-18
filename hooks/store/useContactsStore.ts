@@ -27,10 +27,6 @@ export const useContactsStore = create<ContactsState>((set) => ({
             getRegisteredContacts(),
         ]);
 
-        console.log(all.find((c: any) => c.phoneNumber === "+249126328203"))
-
-        console.log(registered)
-
         set({
             contacts: all,
             registered,

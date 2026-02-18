@@ -11,11 +11,7 @@ interface ContactsListProps {
 
 export default function ContactsList({ children }: ContactsListProps) {
 
-    const { contacts, registered, loading } = useContactsStore();
-
-    if (loading) {
-        return <Text>Loading...</Text>
-    }
+    const { contacts, registered } = useContactsStore();
 
     return (
         <ThemedSafeAreaView>

@@ -2,7 +2,7 @@ import React from "react";
 import { Stack, useRouter } from "expo-router";
 import { TouchableOpacity, Text } from "react-native";
 import { ChatHeaderLeft, ChatHeaderRight, ChatHeaderMiddle } from "../../../components/chats/chatHeader";
-import { Ionicons } from "@expo/vector-icons";
+import ChevronBackBtn from "../../../components/buttons/chevronBackBtn";
 
 export default function ChatWindowLayout() {
 
@@ -74,11 +74,7 @@ export default function ChatWindowLayout() {
                     headerTransparent: true,
                     title: "New Chat",
                     headerShown: true,
-                    headerRight: () => (
-                        <TouchableOpacity onPress={() => router.back()}>
-                            <Ionicons name="close" size={26} />
-                        </TouchableOpacity>
-                    ),
+                    headerLeft: () => <ChevronBackBtn />,
                     headerSearchBarOptions: {
                         placeholder: "Search name or number",
                     },
