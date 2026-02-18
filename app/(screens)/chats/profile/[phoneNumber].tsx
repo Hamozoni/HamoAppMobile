@@ -58,14 +58,14 @@ const profileSetting = [
         data:
             [
                 {
-                    id: 7,
+                    id: 6,
                     iconName: 'lock-closed-outline',
                     title: 'Lock chat',
                     link: "/chat/profile/lock",
                     selected: "Off",
                 },
                 {
-                    id: 6,
+                    id: 7,
                     iconName: 'timer-outline',
                     title: 'Disapperaring messages',
                     link: "/chat/profile/disappearing",

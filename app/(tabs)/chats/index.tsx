@@ -58,11 +58,6 @@ const Chats = () => {
         router.setParams({ isEdit: String(isEdit) });
     }, [isEdit]);
 
-    const animChatCard = useAnimatedStyle(() => {
-        return {
-            transform: [{ translateX: isEdit ? withSpring(0) : withSpring(-30) }],
-        };
-    });
 
     const animTimeLine = useAnimatedStyle(() => {
         return {
@@ -93,7 +88,7 @@ const Chats = () => {
                 contentInsetAdjustmentBehavior="automatic"
                 data={CHATS as ChatItem[]}
                 renderItem={({ item }) => (
-                    <Animated.View style={[animChatCard, { flexDirection: "row", alignItems: "center", gap: isEdit ? 10 : 0 }]}>
+                    <Animated.View style={{ flexDirection: "row", alignItems: "center", gap: isEdit ? 10 : 0 }}>
                         {isEdit && (
                             <TouchableOpacity
                                 onPress={() => handleSelectChat(item)}
