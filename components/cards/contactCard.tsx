@@ -21,7 +21,7 @@ const ContactCard = ({ contact }: ContactCardProps) => {
 
     const handleContact = () => {
         if (contact.isRegistered === 1) {
-            router.replace(`chat/${contact?.phoneNumber}`)
+            router.push(`/chats/${contact?.phoneNumber}`)
         } else {
             return;
         }

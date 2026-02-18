@@ -1,24 +1,15 @@
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import ThemedSafeAreaView from "../../../../components/themedViews/safeAreaView"
 import { useLocalSearchParams } from "expo-router/build/hooks"
-import { useContactsStore } from "../../../../hooks/store/useContactsStore";
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useContactsStore } from "../../../../hooks/store/useContactsStore";
+import ThemedSafeAreaView from "../../../../components/themedViews/safeAreaView";
 import ThemedViewContainer from "../../../../components/themedViews/ThemedViewContainer";
 import TitleForwardIconBtn from "../../../../components/buttons/titleForwardIconBtn";
 import Separator from "../../../../components/ui/separator";
 
-
-// export default function TitleForwardIconBtn({
-//     iconName = null,
-//     title,
-//     link,
-//     isLast = false,
-//     selected = null,
-// }: TitleForwardIconBtnProps) {
-
 const profileSetting = [
     {
-        id: 1,
+        id: "first",
         data: [{
             id: 1,
             iconName: 'image-outline',
@@ -36,7 +27,7 @@ const profileSetting = [
 
     },
     {
-        id: 2,
+        id: "sec",
         data:
             [
                 {
@@ -63,7 +54,7 @@ const profileSetting = [
             ],
     },
     {
-        id: 3,
+        id: "third",
         data:
             [
                 {
@@ -155,7 +146,7 @@ export default function Profile() {
                                                 iconName={item.iconName}
                                                 title={item.title}
                                                 link={item.link}
-                                                isLast={item.id === e.data.length}
+                                                isLast={item.id === item.length}
                                                 selected={item.selected}
                                             />
                                         ))

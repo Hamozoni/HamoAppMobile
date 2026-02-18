@@ -2,6 +2,7 @@ import React from "react";
 import { Stack, useRouter } from "expo-router";
 import { TouchableOpacity, Text } from "react-native";
 import { ChatHeaderLeft, ChatHeaderRight, ChatHeaderMiddle } from "../../../components/chats/chatHeader";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function ChatWindowLayout() {
 
@@ -64,6 +65,23 @@ export default function ChatWindowLayout() {
                     title: "Send Location",
                     headerShown: false,
                     presentation: "modal",
+                }}
+            />
+
+            <Stack.Screen
+                name="contacts"
+                options={{
+                    headerTransparent: true,
+                    title: "New Chat",
+                    headerShown: true,
+                    headerRight: () => (
+                        <TouchableOpacity onPress={() => router.back()}>
+                            <Ionicons name="close" size={26} />
+                        </TouchableOpacity>
+                    ),
+                    headerSearchBarOptions: {
+                        placeholder: "Search name or number",
+                    },
                 }}
             />
         </Stack>

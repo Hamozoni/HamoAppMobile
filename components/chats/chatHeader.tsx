@@ -9,9 +9,10 @@ interface ChatHeaderProps {
 }
 
 export const ChatHeaderLeft = ({ phoneNumber }: ChatHeaderProps) => {
+
     const router = useRouter();
     return (
-        <TouchableOpacity onPress={() => router.replace("/")}>
+        <TouchableOpacity onPress={() => router.back()}>
             <Ionicons name="chevron-back" size={24} color="#1fa105" />
         </TouchableOpacity>
     );
@@ -28,7 +29,7 @@ export const ChatHeaderMiddle = ({ phoneNumber }: ChatHeaderProps) => {
     const router = useRouter()
 
     return (
-        <TouchableOpacity onPress={() => router.push(`chat/profile/${phoneNumber}`)} style={{ flexDirection: "row", alignItems: "center", gap: 10, flex: 1 }}>
+        <TouchableOpacity onPress={() => router.push(`chats/profile/${phoneNumber}`)} style={{ flexDirection: "row", alignItems: "center", gap: 10, flex: 1 }}>
             <Image
                 source={{ uri: findContact()?.profilePicture }}
                 style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: "#ccc" }}

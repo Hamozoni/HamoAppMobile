@@ -41,23 +41,6 @@ export default function ChatLayout() {
                     gestureEnabled: false,
                 }}
             />
-            <Stack.Screen
-                name="contacts"
-                options={{
-                    headerTransparent: true,
-                    title: "New Chat",
-                    headerShown: true,
-                    presentation: "modal",
-                    headerRight: () => (
-                        <TouchableOpacity onPress={() => router.back()}>
-                            <Ionicons name="close" size={26} />
-                        </TouchableOpacity>
-                    ),
-                    headerSearchBarOptions: {
-                        placeholder: "Search name or number",
-                    },
-                }}
-            />
         </Stack>
     );
 }
