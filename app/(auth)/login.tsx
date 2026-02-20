@@ -46,6 +46,8 @@ export default function Login() {
     const phoneInputRef = useRef<TextInput>(null);
 
     const [phoneNumber, setPhoneNumber] = useState<string>("");
+    const [countryCode, setCountryCode] = useState<string>("");
+    const [countryISO, setCountryISO] = useState<string>("");
     const [selectedCountry, setSelectedCountry] = useState<CountryCode>(COUNTRY_CODES[2]); // Default to Sudan
     const [showCountryPicker, setShowCountryPicker] = useState<boolean>(false);
     const [error, setError] = useState<string>("");
@@ -73,23 +75,21 @@ export default function Login() {
         if (!validatePhone()) return;
         try {
             const fullPhoneNumber = `${selectedCountry.code}${phoneNumber}`;
-            const data = await sendOpt(fullPhoneNumber)
-
-            console.log("Response:", data);
-
+            await sendOpt(fullPhoneNumber)
             router.push({
                 pathname: "/(auth)/verify",
-                params: { phoneNumber: fullPhoneNumber }
+                params: { phoneNumber: fullPhoneNumber, countryCode, countryISO }
             });
         } catch (err) {
             setError("Something went wrong. Please try again.");
-            console.error(err);
         }
     };
 
     const selectCountry = (country: CountryCode): void => {
         setSelectedCountry(country);
         setShowCountryPicker(false);
+        setCountryCode(country.code);
+        setCountryISO(country.country);
         phoneInputRef.current?.focus();
     };
 

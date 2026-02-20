@@ -6,6 +6,7 @@ interface VerifyOtpPayload {
     phoneNumber: string;
     otp: number;
     countryCode: string;
+    countryISO: string;
     device: IDevice;
 }
 

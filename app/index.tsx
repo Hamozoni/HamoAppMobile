@@ -8,7 +8,7 @@ export default function Index() {
 
     if (!hydrated) return <ActivityIndicator />;
 
-    if (!user) {
+    if (user) {
         return <Redirect href="/(auth)/login" />;
     }
 

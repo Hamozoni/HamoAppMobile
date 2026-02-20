@@ -24,11 +24,16 @@ import * as SecureStore from "expo-secure-store";
 const OTP_LENGTH = 6;
 const RESEND_TIMER = 180;
 
+type VerifyParams = {
+    phoneNumber: string;
+    countryCode: string;
+    countryISO: string;
+}
 
 export default function Verify(): JSX.Element {
 
     const router = useRouter();
-    const { phoneNumber } = useLocalSearchParams<{ phoneNumber: string }>();
+    const { phoneNumber, countryCode, countryISO } = useLocalSearchParams<VerifyParams>();
     const [otp, setOtp] = useState<Array<string>>(Array(OTP_LENGTH).fill(""));
     const [error, setError] = useState<string>("");
     const [resendTimer, setResendTimer] = useState<number>(RESEND_TIMER);
@@ -89,26 +94,23 @@ export default function Verify(): JSX.Element {
         }
         try {
             // Here you would verify the OTP with Firebase
-            console.log("Verifying OTP:", otpCode);
 
             const device = await getDeviceInfo();
 
             const data = await mutateAsync({
                 otp: parseInt(otpCode),
                 phoneNumber,
-                countryCode: "+249",
+                countryCode,
+                countryISO,
                 device
             })
 
             await SecureStore.setItemAsync("accessToken", data.accessToken);
             await SecureStore.setItemAsync("refreshToken", data.refreshToken);
-
-            console.log(data);
             // Navigate to profile setup
             router.replace("/(auth)/setup-profile");
         } catch (err) {
             setError("Invalid verification code. Please try again.");
-            console.error(err);
         }
     };
 
