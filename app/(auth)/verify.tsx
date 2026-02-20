@@ -110,6 +110,7 @@ export default function Verify(): JSX.Element {
             // Navigate to profile setup
             router.replace("/(auth)/setup-profile");
         } catch (err) {
+            console.log(err);
             setError("Invalid verification code. Please try again.");
         }
     };

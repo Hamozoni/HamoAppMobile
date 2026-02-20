@@ -45,14 +45,14 @@ export default function SetupProfile() {
 
             console.log(response);
 
-            router.replace("/(tabs)/chat" as string);
+            router.replace("/(tabs)/chats" as string);
         } catch (err) {
             console.error(err);
         }
     };
 
     const handleSkip = () => {
-        router.replace("/(tabs)/chat" as string);
+        router.replace("/(tabs)/chats" as string);
     };
 
     return (
