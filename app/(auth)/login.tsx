@@ -42,12 +42,13 @@ const COUNTRY_CODES: CountryCode[] = [
 
 
 export default function Login() {
+
     const router = useRouter();
     const phoneInputRef = useRef<TextInput>(null);
 
     const [phoneNumber, setPhoneNumber] = useState<string>("");
-    const [countryCode, setCountryCode] = useState<string>("");
-    const [countryISO, setCountryISO] = useState<string>("");
+    const [countryCode, setCountryCode] = useState<string>(COUNTRY_CODES[2].code);
+    const [countryISO, setCountryISO] = useState<string>(COUNTRY_CODES[2].country);
     const [selectedCountry, setSelectedCountry] = useState<CountryCode>(COUNTRY_CODES[2]); // Default to Sudan
     const [showCountryPicker, setShowCountryPicker] = useState<boolean>(false);
     const [error, setError] = useState<string>("");
@@ -59,7 +60,7 @@ export default function Login() {
     const handlePhoneChange = (text: string): void => {
         // Only allow numbers
         const cleaned = text.replace(/[^0-9]/g, "");
-        setPhoneNumber(cleaned);
+        setPhoneNumber(cleaned.startsWith('0') ? cleaned.slice(1) : cleaned);
         setError("");
     };
 
@@ -209,10 +210,10 @@ export default function Login() {
                     <TouchableOpacity
                         style={[
                             styles.continueButton,
-                            (!phoneNumber || isLoading) && styles.continueButtonDisabled,
+                            (phoneNumber?.length < 9 || isLoading) && styles.continueButtonDisabled,
                         ]}
                         onPress={handleContinue}
-                        disabled={!phoneNumber || isLoading}
+                        disabled={phoneNumber?.length < 9 || isLoading}
                     >
                         {isLoading ? (
                             <ActivityIndicator color="#fff" size="small" />
@@ -322,7 +323,7 @@ const styles = StyleSheet.create({
         maxHeight: 250,
     },
     countryList: {
-        padding: 8,
+        padding: 5,
     },
     countryOption: {
         flexDirection: "row",

@@ -16,6 +16,8 @@ import ThemedSafeAreaView from "../../components/themedViews/safeAreaView";
 import Separator from "../../components/ui/separator";
 import { SetupProfileImage } from "../../components/profile/setupProfileImage";
 import { useUpdateProfile } from "../../hooks/api/useProfileApi";
+import { AuthBootstrap } from "../../utils/authBootstrap";
+import { useAuthStore } from "../../hooks/store/useAuthStore";
 
 interface Errors {
     displayName?: string;
@@ -43,7 +45,7 @@ export default function SetupProfile() {
                 about,
             });
 
-            console.log(response);
+            await useAuthStore.getState().setUser(response);
 
             router.replace("/(tabs)/chats" as string);
         } catch (err) {
@@ -57,6 +59,7 @@ export default function SetupProfile() {
 
     return (
         <ThemedSafeAreaView>
+            <AuthBootstrap />
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={styles.container}

@@ -6,6 +6,7 @@ import { useContactsStore } from "../hooks/store/useContactsStore";
 import { clearContacts } from "../db/repositories/contacts.repo";
 
 export function AuthBootstrap() {
+
     const syncedRef = useRef(false);
     const { mutateAsync: getProfile } = useGetProfile();
     const { loadContacts, setIsSyncing } = useContactsStore();
