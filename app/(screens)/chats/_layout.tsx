@@ -75,9 +75,6 @@ export default function ChatWindowLayout() {
                     title: "New Chat",
                     headerShown: true,
                     headerLeft: () => <ChevronBackBtn />,
-                    headerSearchBarOptions: {
-                        placeholder: "Search name or number",
-                    },
                 }}
             />
         </Stack>

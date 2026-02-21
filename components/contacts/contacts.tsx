@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     // ── Search ──────────────────────────────────────
     searchWrapper: {
         backgroundColor: "#fff",
-        paddingHorizontal: 12,
+        paddingHorizontal: 0,
         paddingVertical: 8,
         borderBottomWidth: StyleSheet.hairlineWidth,
         borderBottomColor: "#E5E7EB",
@@ -252,8 +252,8 @@ const styles = StyleSheet.create({
 
     // ── Card container ───────────────────────────────
     cardWrapper: {
-        backgroundColor: "#fff",
-        marginHorizontal: 12,
+        backgroundColor: "#ffffffff",
+        marginHorizontal: 0,
         overflow: "hidden",
     },
     cardFirst: {

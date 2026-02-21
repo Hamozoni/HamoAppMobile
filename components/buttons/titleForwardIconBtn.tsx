@@ -71,7 +71,7 @@ import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
-const WA_GREEN = "#25D366";
+const WA_GREEN = "#25a2d3ab";
 const TEXT_PRIMARY = "#111B21";
 const TEXT_SECONDARY = "#667781";
 
@@ -123,13 +123,13 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: "row",
         alignItems: "center",
-        paddingLeft: 16,
-        backgroundColor: "#fff",
+        paddingLeft: 10,
+        // backgroundColor: "#fff",
     },
     iconCircle: {
-        width: 38,
-        height: 38,
-        borderRadius: 19,
+        width: 40,
+        height: 40,
+        borderRadius: "50%",
         backgroundColor: WA_GREEN,
         justifyContent: "center",
         alignItems: "center",
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        paddingVertical: 13,
+        paddingVertical: 16,
         paddingLeft: 14,
         paddingRight: 16,
     },

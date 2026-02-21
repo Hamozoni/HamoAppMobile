@@ -3,6 +3,7 @@ import ContactsList from "../../../components/contacts/contacts";
 import TitleForwardIconBtn from "../../../components/buttons/titleForwardIconBtn";
 import { Ionicons } from "@expo/vector-icons";
 import { View, StyleSheet } from "react-native";
+import ThemedViewContainer from "../../../components/themedViews/ThemedViewContainer";
 
 interface ContactButton {
     title: string;
@@ -44,7 +45,7 @@ export default function ContactsPage() {
     return (
         <ContactsList>
             {/* Action buttons group — same rounded card style as contact cards */}
-            <View style={styles.actionsCard}>
+            <ThemedViewContainer>
                 {BUTTONS.map(({ title, iconName, id, link, selected }, index) => (
                     <TitleForwardIconBtn
                         key={id}
@@ -55,22 +56,7 @@ export default function ContactsPage() {
                         isLast={index === BUTTONS.length - 1}
                     />
                 ))}
-            </View>
+            </ThemedViewContainer>
         </ContactsList>
     );
 }
-
-const styles = StyleSheet.create({
-    actionsCard: {
-        marginHorizontal: 12,
-        marginTop: 12,
-        borderRadius: 14,
-        overflow: "hidden",
-        // shadow
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.06,
-        shadowRadius: 4,
-        elevation: 2,
-    },
-});

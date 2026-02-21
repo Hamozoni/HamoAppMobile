@@ -3,7 +3,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { Contact } from "../../db/types/contact.type";
 
-const WA_GREEN = "#25D366";
+const WA_GREEN = "#2585d3ff";
 const TEXT_PRIMARY = "#111B21";
 const TEXT_SECONDARY = "#667781";
 const AVATAR_BG = "#DFE5E7";
@@ -121,16 +121,15 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: "row",
         alignItems: "center",
-        paddingHorizontal: 16,
-        paddingVertical: 10,
+        padding: 10,
         backgroundColor: "#fff",
         gap: 12,
     },
 
     // Avatar
     avatarContainer: {
-        width: 50,
-        height: 50,
+        width: 40,
+        height: 40,
         borderRadius: 25,
         justifyContent: "center",
         alignItems: "center",

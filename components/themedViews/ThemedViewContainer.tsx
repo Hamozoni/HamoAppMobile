@@ -7,9 +7,9 @@ interface ThemedViewContainerProps {
     style?: ViewStyle;
 }
 
-export default function ThemedViewContainer({ children, paddingVertical = 0, style }: ThemedViewContainerProps) {
+export default function ThemedViewContainer({ children, paddingVertical = 10, style }: ThemedViewContainerProps) {
     return (
-        <View style={[{ paddingHorizontal: 10, borderRadius: 10, backgroundColor: "#f8f8f8ff", paddingVertical }, style]}>
+        <View style={[{ paddingHorizontal: 0, borderRadius: 10, backgroundColor: "#f5fcffff", paddingVertical }, style]}>
             {children}
         </View>
     );
