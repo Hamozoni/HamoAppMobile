@@ -1,7 +1,8 @@
 import * as Contacts from "expo-contacts";
 import { normalizePhone } from "../../utils/phoneNormalize";
-import { upsertContacts } from "../repositories/contacts.repo";
+import { upsertContacts, clearContacts } from "../repositories/contacts.repo";
 import { axiosInstance } from "../../lib/axios.config";
+
 
 export async function syncContacts() {
 
@@ -28,7 +29,6 @@ export async function syncContacts() {
     }
 
     upsertContacts(normalized);
-
     // Send to backend
     const { data: registered } = await axiosInstance.post("/contacts/sync", {
         phoneNumbers: normalized.map(n => n.phoneNumber),

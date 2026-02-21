@@ -7,6 +7,7 @@ import { useContactsStore } from "../hooks/store/useContactsStore";
 export function AuthBootstrap() {
 
     const syncedRef = useRef(false);
+
     const { mutateAsync: getProfile } = useGetProfile();
 
     useEffect(() => {

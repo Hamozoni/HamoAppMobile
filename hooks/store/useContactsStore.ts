@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import {
-    clearContacts,
     getAllContacts,
     getRegisteredContacts,
 } from "../../db/repositories/contacts.repo";
@@ -16,12 +15,11 @@ interface ContactsState {
 export const useContactsStore = create<ContactsState>((set) => ({
     contacts: [],
     registered: [],
-    loading: false,
+    loading: true,
 
     loadContacts: async () => {
         set({ loading: true });
 
-        // await clearContacts();
         const [all, registered] = await Promise.all([
             getAllContacts(),
             getRegisteredContacts(),

@@ -8,8 +8,8 @@ export default function Index() {
 
     if (!hydrated) return <ActivityIndicator />;
 
-    if (user) {
-        return <Redirect href="/(auth)/setup-profile" />;
+    if (!user) {
+        return <Redirect href="/(auth)/login" />;
     }
 
     return <Redirect href="/(tabs)/chats" />;
