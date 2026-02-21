@@ -102,7 +102,11 @@ axiosInstance.interceptors.response.use(
 
         try {
             const refreshToken = await SecureStore.getItemAsync("refreshToken");
-            if (!refreshToken) throw new Error("Missing refresh token");
+            if (!refreshToken) {
+                processQueue(null, null);
+                emitAuthFailed();
+                return;
+            }
 
             const { data } = await axios.post(
                 `${process.env.EXPO_PUBLIC_API_URL}/auth/refresh_token`,

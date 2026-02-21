@@ -13,19 +13,26 @@ export function AuthBootstrap() {
     useEffect(() => {
         if (syncedRef.current) return;
         syncedRef.current = true;
-
         async function bootstrap() {
             try {
                 setIsSyncing(true);
                 clearContacts();
 
-                // ✅ Do NOT use Promise.all here — sync must finish before load
-                const user = await getProfile();
-                await useAuthStore.getState().setUser(user);
+                // ✅ Separate try/catch for profile — auth failure is expected when logged out
+                let user = null;
+                try {
+                    user = await getProfile();
+                    await useAuthStore.getState().setUser(user);
+                } catch (profileError: any) {
+                    // No valid session → emitAuthFailed already fired from interceptor
+                    // Just stop bootstrap cleanly, don't crash
+                    console.log("No active session:", profileError.message);
+                    return;
+                }
 
-                await syncContacts(); // wait for BOTH upserts to complete
+                await syncContacts();
+                loadContacts();
 
-                loadContacts(); // now DB has correct isRegistered values
             } catch (e) {
                 console.error("Bootstrap failed:", e);
             } finally {

@@ -5,6 +5,8 @@ import { ActivityIndicator } from "react-native";
 export default function Index() {
     const { user, hydrated } = useAuthStore();
 
+    console.log(user)
+
 
     if (!hydrated) return <ActivityIndicator />;
 

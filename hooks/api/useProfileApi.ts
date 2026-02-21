@@ -45,8 +45,9 @@ export const useUpdateProfile = () => {
 };
 
 const getProfile = async (): Promise<IUser> => {
-    const { data } = await axiosInstance.get('/profile');
-    return data;
+    const response = await axiosInstance.get('/profile');
+    if (!response?.data) throw new Error("No profile data returned");
+    return response.data;
 };
 
 export const useGetProfile = () => {
