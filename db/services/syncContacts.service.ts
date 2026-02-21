@@ -1,6 +1,6 @@
 import * as Contacts from "expo-contacts";
 import { normalizePhone } from "../../utils/phoneNormalize";
-import { upsertContacts, clearContacts } from "../repositories/contacts.repo";
+import { upsertContacts } from "../repositories/contacts.repo";
 import { axiosInstance } from "../../lib/axios.config";
 
 

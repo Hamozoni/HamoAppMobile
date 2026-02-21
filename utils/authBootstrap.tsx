@@ -9,22 +9,24 @@ export function AuthBootstrap() {
     const syncedRef = useRef(false);
 
     const { mutateAsync: getProfile } = useGetProfile();
+    const loadContacts = useContactsStore(state => state.loadContacts)
+    const loadRegistered = useContactsStore(state => state.loadRegistered)
 
     useEffect(() => {
         if (syncedRef.current) return;
         syncedRef.current = true;
 
         async function syncUser() {
+            syncContacts()
             try {
                 const user = await getProfile();
                 await useAuthStore.getState().setUser(user);
+                loadContacts();
+                loadRegistered()
             } catch {
                 // offline / token expired → handled elsewhere
             }
         }
-        syncContacts().then(() => {
-            useContactsStore.getState().loadContacts()
-        });
 
         syncUser();
     }, []);
