@@ -53,10 +53,8 @@ export const executeUpdate = (
     return getDatabase().runSync(sql, params);
 };
 
-export const executeBatch = (
-    sql: string,
-    paramsList: readonly any[][]
-) => {
+export const executeBatch = (sql: string, paramsList: readonly any[][]) => {
+
     const db = getDatabase();
     const stmt = db.prepareSync(sql);
 

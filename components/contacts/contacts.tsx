@@ -1,66 +1,73 @@
-import { ScrollView, Text, View } from "react-native";
-import ContactCard, { ContactCardProps } from "../cards/contactCard";
+import { SectionList, Text, View, StyleSheet, ActivityIndicator } from "react-native";
+import ContactCard from "../cards/contactCard";
 import ThemedSafeAreaView from "../themedViews/safeAreaView";
-import ThemedViewContainer from "../themedViews/ThemedViewContainer";
 import { useContactsStore } from "../../hooks/store/useContactsStore";
-import Separator from "../ui/separator";
+import { Contact } from "../../db/types/contact.type";
 
 interface ContactsListProps {
     children?: React.ReactNode;
 }
 
 export default function ContactsList({ children }: ContactsListProps) {
+    const registered = useContactsStore(state => state.registered);
+    const unregistered = useContactsStore(state => state.unregistered);
+    const isSyncing = useContactsStore(state => state.isSyncing);
 
-    const contacts = useContactsStore(state => state.contacts)
-    const registered = useContactsStore(state => state.registered)
+    const sections = [
+        ...(registered.length > 0
+            ? [{ title: "Contacts on SudaChat", data: registered }]
+            : []
+        ),
+        ...(unregistered.length > 0
+            ? [{ title: "Invite to SudaChat", data: unregistered }]
+            : []
+        ),
+    ];
 
     return (
         <ThemedSafeAreaView>
-            <ScrollView showsVerticalScrollIndicator={false}>
-                <View
-                    style={{
-                        backgroundColor: "#fff",
-                        borderRadius: 10,
-                    }}
-                >
-                    {children}
-                </View>
-                <View >
-                    {
-                        registered?.length > 0 &&
-                        <>
-                            <Separator />
-                            <Text style={{ padding: 15, fontSize: 14, fontWeight: 600 }}>
-                                Contacts on SudaChat
-                            </Text>
-                            <ThemedViewContainer>
-                                {
-                                    registered?.map((contact: ContactCardProps) => (
-                                        <ContactCard key={contact._id} contact={contact} />
-                                    ))
-
-                                }
-                            </ThemedViewContainer>
-                            <Separator />
-                        </>
-
-                    }
-                    <>
-                        <Text style={{ padding: 15, fontSize: 14, fontWeight: 600 }}>
-                            Invite to SudaChat
-                        </Text>
-
-                        <ThemedViewContainer>
-                            {
-                                contacts.map((contact: ContactCardProps) => (
-                                    <ContactCard key={(contact as any)._id} contact={contact as any} />
-                                ))
-                            }
-
-                        </ThemedViewContainer>
-                    </>
-                </View>
-            </ScrollView>
+            <SectionList
+                sections={sections}
+                keyExtractor={(item: Contact, index) => `${item.phoneNumber}-${index}`}
+                showsVerticalScrollIndicator={false}
+                ListHeaderComponent={children ? <View>{children}</View> : null}
+                ListEmptyComponent={
+                    isSyncing
+                        ? <ActivityIndicator style={styles.loader} />
+                        : <Text style={styles.empty}>No contacts found</Text>
+                }
+                renderSectionHeader={({ section }) => (
+                    <Text style={styles.sectionHeader}>{section.title}</Text>
+                )}
+                renderItem={({ item }: { item: Contact }) => (
+                    <ContactCard contact={item} />
+                )}
+                SectionSeparatorComponent={() => <View style={styles.separator} />}
+            // staleWhileRevalidate
+            />
         </ThemedSafeAreaView>
     );
 }
+
+const styles = StyleSheet.create({
+    sectionHeader: {
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        fontSize: 14,
+        fontWeight: "600",
+        backgroundColor: "#f2f2f2",
+    },
+    separator: {
+        height: 8,
+        backgroundColor: "#f2f2f2",
+    },
+    loader: {
+        marginTop: 40,
+    },
+    empty: {
+        textAlign: "center",
+        marginTop: 40,
+        color: "#999",
+        fontSize: 14,
+    },
+});
