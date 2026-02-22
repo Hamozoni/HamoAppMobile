@@ -1,8 +1,9 @@
-import { Text, TouchableOpacity, View, Image, StyleSheet, Share } from "react-native";
+import { Text, TouchableOpacity, View, StyleSheet, Share } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { Contact } from "../../db/types/contact.type";
 import { useAuthStore } from "../../hooks/store/useAuthStore";
+import Avatar from "../ui/avatar";
 
 const WA_GREEN = "#2585d3ff";
 const TEXT_PRIMARY = "#111B21";
@@ -32,20 +33,6 @@ const ContactCard = ({ contact }: ContactCardProps) => {
             });
         } catch (_) { }
     };
-
-    // Generate initials from display name
-    const initials = contact.displayName
-        ?.split(" ")
-        .slice(0, 2)
-        .map(w => w[0])
-        .join("")
-        .toUpperCase() || "?";
-
-    // Deterministic pastel color from name
-    const avatarColor = AVATAR_COLORS[
-        (contact.displayName?.charCodeAt(0) ?? 0) % AVATAR_COLORS.length
-    ];
-
     return (
         <TouchableOpacity
             onPress={handlePress}
@@ -53,18 +40,7 @@ const ContactCard = ({ contact }: ContactCardProps) => {
             style={styles.row}
         >
             {/* Avatar */}
-            <View style={[styles.avatarContainer, { backgroundColor: avatarColor.bg }]}>
-                {isRegistered && contact.profilePicture ? (
-                    <Image
-                        source={{ uri: contact.profilePicture }}
-                        style={styles.avatarImage}
-                    />
-                ) : (
-                    <Text style={[styles.avatarInitials, { color: avatarColor.text }]}>
-                        {initials}
-                    </Text>
-                )}
-            </View>
+            <Avatar profilePicture={contact.profilePicture} displayName={contact.displayName} isRegistered={isRegistered} />
 
             {/* Content */}
             <View style={styles.content}>
@@ -105,17 +81,6 @@ const ContactCard = ({ contact }: ContactCardProps) => {
     );
 };
 
-// Soft pastel pairs (bg + text) — WhatsApp uses these for default avatars
-const AVATAR_COLORS = [
-    { bg: "#F0E6FF", text: "#7C3AED" },
-    { bg: "#FEE2E2", text: "#DC2626" },
-    { bg: "#DBEAFE", text: "#1D4ED8" },
-    { bg: "#D1FAE5", text: "#065F46" },
-    { bg: "#FEF3C7", text: "#92400E" },
-    { bg: "#FCE7F3", text: "#9D174D" },
-    { bg: "#E0F2FE", text: "#0369A1" },
-    { bg: "#F3F4F6", text: "#374151" },
-];
 
 const styles = StyleSheet.create({
     row: {
@@ -125,28 +90,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         gap: 12,
     },
-
-    // Avatar
-    avatarContainer: {
-        width: 40,
-        height: 40,
-        borderRadius: 25,
-        justifyContent: "center",
-        alignItems: "center",
-        overflow: "hidden",
-        flexShrink: 0,
-    },
-    avatarImage: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-    },
-    avatarInitials: {
-        fontSize: 18,
-        fontWeight: "700",
-        letterSpacing: 0.5,
-    },
-
     // Content
     content: {
         flex: 1,

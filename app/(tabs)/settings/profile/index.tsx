@@ -6,6 +6,7 @@ import ThemedViewContainer from "../../../../components/themedViews/ThemedViewCo
 import TitleForwardIconBtn from "../../../../components/buttons/titleForwardIconBtn";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuthStore } from "../../../../hooks/store/useAuthStore";
+import Avatar from "../../../../components/ui/avatar";
 
 type IoniconsName = keyof typeof Ionicons.glyphMap;
 
@@ -32,9 +33,11 @@ export default function Profile() {
             <ScrollView contentInsetAdjustmentBehavior="automatic">
                 <View style={{ alignItems: "center", marginVertical: 20 }}>
                     <TouchableOpacity style={{ alignItems: "center", marginBottom: 10 }}>
-                        <Image
-                            source={{ uri: user?.profilePicture?.secureUrl }}
-                            style={{ width: 150, height: 150, borderRadius: 75, backgroundColor: "#e4f7c2ff" }}
+                        <Avatar
+                            profilePicture={user?.profilePicture?.secureUrl}
+                            displayName={user?.displayName}
+                            width={150}
+                            height={150}
                         />
                     </TouchableOpacity>
                     <TouchableOpacity>

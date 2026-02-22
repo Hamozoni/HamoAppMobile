@@ -11,7 +11,7 @@ export const ChatCard = ({ chat }: ChatCardProps) => {
     return (
         <TouchableOpacity
             onPress={() => router.push(`/chats/${chat?.id}` as any)}
-            style={{ flexDirection: "row", flex: 1, alignItems: "center", gap: 5 }}>
+            style={{ flexDirection: "row", flex: 1, alignItems: "center", gap: 10 }}>
 
             <Image
                 source={require("../../assets/images/pexels-al-amin-muhammad-988616478-29680723.jpg")}

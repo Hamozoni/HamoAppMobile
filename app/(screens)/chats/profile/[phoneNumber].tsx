@@ -7,6 +7,7 @@ import ThemedViewContainer from "../../../../components/themedViews/ThemedViewCo
 import TitleForwardIconBtn from "../../../../components/buttons/titleForwardIconBtn";
 import Separator from "../../../../components/ui/separator";
 import { useAuthStore } from "../../../../hooks/store/useAuthStore";
+import Avatar from "../../../../components/ui/avatar";
 
 const profileSetting = [
     {
@@ -99,7 +100,9 @@ export default function Profile() {
         <ThemedSafeAreaView>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={{ justifyContent: "center", alignItems: 'center', paddingTop: 40, marginBottom: 20 }}>
-                    <Image source={{ uri: findContact()?.profilePicture }} width={150} height={150} style={{ borderRadius: "50%" }} />
+                    {/* <Image source={{ uri: findContact()?.profilePicture }} width={150} height={150} style={{ borderRadius: "50%" }} />
+                     */}
+                    <Avatar profilePicture={findContact()?.profilePicture} displayName={findContact()?.displayName} width={150} height={150} />
                 </View>
                 <View style={{ flexDirection: "column", justifyContent: "center", alignContent: "center" }}>
                     <Text style={{ fontSize: 22, fontWeight: 900, textAlign: 'center' }}>

@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { useContactsStore } from "../../hooks/store/useContactsStore";
 import { useAuthStore } from "../../hooks/store/useAuthStore";
+import Avatar from "../ui/avatar";
 
 interface ChatHeaderProps {
     phoneNumber: string;
@@ -31,10 +32,7 @@ export const ChatHeaderMiddle = ({ phoneNumber }: ChatHeaderProps) => {
 
     return (
         <TouchableOpacity onPress={() => router.push(`chats/profile/${phoneNumber}`)} style={{ flexDirection: "row", alignItems: "center", gap: 10, flex: 1 }}>
-            <Image
-                source={{ uri: findContact()?.profilePicture }}
-                style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: "#ccc" }}
-            />
+            <Avatar profilePicture={findContact()?.profilePicture} displayName={findContact()?.displayName} />
             <TouchableOpacity>
                 <Text style={{ fontSize: 16, fontWeight: "500" }}>
                     {findContact()?.displayName} {user?.phoneNumber === findContact()?.phoneNumber && ' ( You )'}
