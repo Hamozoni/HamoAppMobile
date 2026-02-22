@@ -17,23 +17,23 @@ interface SettingItem {
 }
 
 const settingsData1: SettingItem[] = [
-    { title: "Lists", iconName: "albums-outline", id: 1, link: "/settings/lists" },
-    { title: "Broadcasts messages", iconName: "megaphone-outline", id: 2, link: "/settings/broadcasts" },
-    { title: "Starred", iconName: "star-outline", id: 3, link: "/settings/starred" },
-    { title: "Linked devices", iconName: "laptop-outline", id: 4, link: "/settings/linked" },
+    { title: "Lists", iconName: "albums", id: 1, link: "/settings/lists" },
+    { title: "Broadcasts messages", iconName: "megaphone", id: 2, link: "/settings/broadcasts" },
+    { title: "Starred", iconName: "star", id: 3, link: "/settings/starred" },
+    { title: "Linked devices", iconName: "laptop", id: 4, link: "/settings/linked" },
 ];
 
 const settingsData2: SettingItem[] = [
-    { title: "Account", iconName: "person-outline", id: 5, link: "/settings/account" },
-    { title: "Privacy", iconName: "lock-closed-outline", id: 6, link: "/settings/privacy" },
-    { title: "Chats", iconName: "chatbubbles-outline", id: 7, link: "/settings/chats" },
-    { title: "Notifications", iconName: "notifications-outline", id: 8, link: "/settings/notifications" },
-    { title: "Storage and data", iconName: "file-tray-stacked-outline", id: 9, link: "/settings/storage" },
+    { title: "Account", iconName: "person", id: 5, link: "/settings/account" },
+    { title: "Privacy", iconName: "lock-closed", id: 6, link: "/settings/privacy" },
+    { title: "Chats", iconName: "chatbubbles", id: 7, link: "/settings/chats" },
+    { title: "Notifications", iconName: "notifications", id: 8, link: "/settings/notifications" },
+    { title: "Storage and data", iconName: "file-tray-stacked", id: 9, link: "/settings/storage" },
 ];
 
 const settingsData3: SettingItem[] = [
-    { title: "Help and feedback", iconName: "help-circle-outline", id: 10, link: "/settings/help" },
-    { title: "Invite a friend", iconName: "person-add-outline", id: 11, link: "/settings/invite" },
+    { title: "Help and feedback", iconName: "help-circle", id: 10, link: "/settings/help" },
+    { title: "Invite a friend", iconName: "person-add", id: 11, link: "/settings/invite" },
 ];
 
 const Settings = () => {

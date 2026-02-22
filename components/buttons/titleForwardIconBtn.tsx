@@ -71,7 +71,6 @@ import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
-const WA_GREEN = "#25a2d3ab";
 const TEXT_PRIMARY = "#111B21";
 const TEXT_SECONDARY = "#667781";
 
@@ -92,6 +91,10 @@ export default function TitleForwardIconBtn({
 }: TitleForwardIconBtnProps) {
     const router = useRouter();
 
+    const iconColor = ICON_COLORS[
+        (title?.charCodeAt(0) ?? 0) % ICON_COLORS.length
+    ];
+
     return (
         <TouchableOpacity
             onPress={() => router.push(link as any)}
@@ -100,8 +103,8 @@ export default function TitleForwardIconBtn({
         >
             {/* Green icon circle */}
             {iconName && (
-                <View style={styles.iconCircle}>
-                    <Ionicons name={iconName} size={20} color="#fff" />
+                <View style={[styles.iconCircle, { backgroundColor: iconColor.bg }]}>
+                    <Ionicons name={iconName} size={24} color={iconColor.text} />
                 </View>
             )}
 
@@ -113,11 +116,23 @@ export default function TitleForwardIconBtn({
                         <Text style={styles.subtitle}>{selected}</Text>
                     )}
                 </View>
-                <Ionicons name="chevron-forward" size={17} color="#C8C8C8" />
+                <Ionicons name="chevron-forward" size={16} color="#C8C8C8" />
             </View>
         </TouchableOpacity>
     );
-}
+};
+
+const ICON_COLORS = [
+    { bg: "#F0E6FF", text: "#7C3AED" },
+    { bg: "#FEE2E2", text: "#DC2626" },
+    { bg: "#DBEAFE", text: "#1D4ED8" },
+    { bg: "#D1FAE5", text: "#065F46" },
+    { bg: "#FEF3C7", text: "#92400E" },
+    { bg: "#FCE7F3", text: "#9D174D" },
+    { bg: "#E0F2FE", text: "#0369A1" },
+    { bg: "#F3F4F6", text: "#374151" },
+];
+
 
 const styles = StyleSheet.create({
     row: {
@@ -127,10 +142,9 @@ const styles = StyleSheet.create({
         // backgroundColor: "#fff",
     },
     iconCircle: {
-        width: 40,
-        height: 40,
-        borderRadius: "50%",
-        backgroundColor: WA_GREEN,
+        width: 35,
+        height: 35,
+        borderRadius: 6,
         justifyContent: "center",
         alignItems: "center",
         flexShrink: 0,
