@@ -9,7 +9,7 @@ export default function ChatLayout() {
     const router = useRouter();
 
     return (
-        <Stack>
+        <Stack >
             <Stack.Screen
                 name="index"
                 options={{
@@ -18,17 +18,7 @@ export default function ChatLayout() {
                     headerLargeTitle: true,
                     headerSearchBarOptions: {
                         placeholder: "Search",
-                    },
-                    headerRight: () => (
-                        <View style={{ flexDirection: "row", alignItems: "center" }}>
-                            <RoundedBtn iconName="camera" color="#1078b9ff" size={26} onPress={() => {
-                                router.push("/chats/camera" as any);
-                            }} />
-                            <RoundedBtn iconName="create-outline" color="#1078b9ff" size={26} onPress={() => {
-                                router.push("/chats/contacts" as any);
-                            }} />
-                        </View>
-                    ),
+                    }
                 }}
             />
             <Stack.Screen

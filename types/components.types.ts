@@ -27,13 +27,25 @@ export interface Message {
     status?: string;
 }
 
+export type MessageType = "text" | "audio" | "image" | "video" | "location" | "contact";
+
+export interface LastMessage {
+    text?: string;
+    type: MessageType;
+    createdAt: string;
+    isRead?: boolean;
+    isMine?: boolean;
+}
+
 export interface Chat {
     id: string;
-    contact?: Contact;
-    lastMessage?: Message;
+    contact: {
+        displayName: string;
+        photoURL: string | any;
+    };
+    lastMessage: LastMessage;
     unreadCount?: number;
-    isPinned?: boolean;
-    isMuted?: boolean;
+    isOnline?: boolean;
 }
 
 // ============ Call Types ============
