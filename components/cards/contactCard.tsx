@@ -2,6 +2,7 @@ import { Text, TouchableOpacity, View, Image, StyleSheet, Share } from "react-na
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { Contact } from "../../db/types/contact.type";
+import { useAuthStore } from "../../hooks/store/useAuthStore";
 
 const WA_GREEN = "#2585d3ff";
 const TEXT_PRIMARY = "#111B21";
@@ -15,6 +16,8 @@ interface ContactCardProps {
 const ContactCard = ({ contact }: ContactCardProps) => {
     const router = useRouter();
     const isRegistered = contact.isRegistered === 1;
+
+    const user = useAuthStore(state => state.user)
 
     const handlePress = () => {
         if (isRegistered) {
@@ -67,13 +70,8 @@ const ContactCard = ({ contact }: ContactCardProps) => {
             <View style={styles.content}>
                 <View style={styles.nameRow}>
                     <Text style={styles.name} numberOfLines={1}>
-                        {contact.displayName}
+                        {contact.displayName} {user?.phoneNumber === contact.phoneNumber && ' ( You )'}
                     </Text>
-                    {isRegistered && (
-                        <View style={styles.badge}>
-                            <Ionicons name="chatbubble" size={10} color="#fff" />
-                        </View>
-                    )}
                 </View>
 
                 <Text style={styles.sub} numberOfLines={1}>
@@ -98,7 +96,9 @@ const ContactCard = ({ contact }: ContactCardProps) => {
                     style={styles.chatBtn}
                     activeOpacity={0.7}
                 >
-                    <Ionicons name="chatbubble-ellipses" size={20} color={WA_GREEN} />
+                    <View style={styles.badge}>
+                        <Ionicons name="chatbubble" size={16} color="#fff" />
+                    </View>
                 </TouchableOpacity>
             )}
         </TouchableOpacity>
@@ -167,8 +167,8 @@ const styles = StyleSheet.create({
     badge: {
         backgroundColor: WA_GREEN,
         borderRadius: 10,
-        width: 18,
-        height: 18,
+        width: 22,
+        height: 22,
         justifyContent: "center",
         alignItems: "center",
     },

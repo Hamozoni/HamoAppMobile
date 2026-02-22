@@ -3,6 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 import { useContactsStore } from "../../hooks/store/useContactsStore";
+import { useAuthStore } from "../../hooks/store/useAuthStore";
 
 interface ChatHeaderProps {
     phoneNumber: string;
@@ -21,7 +22,7 @@ export const ChatHeaderLeft = ({ phoneNumber }: ChatHeaderProps) => {
 export const ChatHeaderMiddle = ({ phoneNumber }: ChatHeaderProps) => {
 
     const { registered } = useContactsStore();
-
+    const user = useAuthStore(state => state.user)
     const findContact = () => {
         return registered?.find(e => e.phoneNumber === phoneNumber)
     };
@@ -35,7 +36,9 @@ export const ChatHeaderMiddle = ({ phoneNumber }: ChatHeaderProps) => {
                 style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: "#ccc" }}
             />
             <TouchableOpacity>
-                <Text style={{ fontSize: 16, fontWeight: "500" }}>{findContact()?.displayName}</Text>
+                <Text style={{ fontSize: 16, fontWeight: "500" }}>
+                    {findContact()?.displayName} {user?.phoneNumber === findContact()?.phoneNumber && ' ( You )'}
+                </Text>
                 <Text style={{ fontSize: 14, color: "#666" }}>on line</Text>
             </TouchableOpacity>
         </TouchableOpacity>

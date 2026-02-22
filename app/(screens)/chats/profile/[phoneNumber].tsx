@@ -6,6 +6,7 @@ import ThemedSafeAreaView from "../../../../components/themedViews/safeAreaView"
 import ThemedViewContainer from "../../../../components/themedViews/ThemedViewContainer";
 import TitleForwardIconBtn from "../../../../components/buttons/titleForwardIconBtn";
 import Separator from "../../../../components/ui/separator";
+import { useAuthStore } from "../../../../hooks/store/useAuthStore";
 
 const profileSetting = [
     {
@@ -89,7 +90,7 @@ export default function Profile() {
 
     const { phoneNumber } = useLocalSearchParams<{ phoneNumber: string }>();
     const { registered } = useContactsStore();
-
+    const user = useAuthStore(state => state.user)
     const findContact = () => {
         return registered?.find(e => e.phoneNumber === phoneNumber)
     };
@@ -102,7 +103,7 @@ export default function Profile() {
                 </View>
                 <View style={{ flexDirection: "column", justifyContent: "center", alignContent: "center" }}>
                     <Text style={{ fontSize: 22, fontWeight: 900, textAlign: 'center' }}>
-                        {findContact()?.displayName}
+                        {findContact()?.displayName}  {user?.phoneNumber === findContact()?.phoneNumber && ' ( You )'}
                     </Text>
                     <Text style={{ fontSize: 18, textAlign: 'center', color: "gray", marginTop: 3, marginBottom: 5 }}>
                         {findContact()?.phoneNumber}
