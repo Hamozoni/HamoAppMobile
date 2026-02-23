@@ -4,6 +4,7 @@ import { useGetProfile } from "../hooks/api/useProfileApi";
 import { syncContacts } from "../db/services/syncContacts.service";
 import { useContactsStore } from "../hooks/store/useContactsStore";
 import { clearContacts } from "../db/repositories/contacts.repo";
+import { runMigrations } from "../db/runMigration";
 
 export function AuthBootstrap() {
 
@@ -16,9 +17,8 @@ export function AuthBootstrap() {
         syncedRef.current = true;
         async function bootstrap() {
             try {
+                runMigrations()
                 setIsSyncing(true);
-                clearContacts();
-
                 // ✅ Separate try/catch for profile — auth failure is expected when logged out
                 let user = null;
                 try {
