@@ -90,3 +90,4 @@ export default function ChatFooter({ phoneNumber }: ChatFooterProps) {
         </KeyboardAvoidingView>
     );
 }
+

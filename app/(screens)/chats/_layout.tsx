@@ -54,9 +54,6 @@ export default function ChatWindowLayout() {
                             <Text style={{ color: "black", fontSize: 16, fontWeight: "bold" }}>Next</Text>
                         </TouchableOpacity>
                     ),
-                    headerSearchBarOptions: {
-                        placeholder: "Search",
-                    },
                 }}
             />
             <Stack.Screen
@@ -65,6 +62,12 @@ export default function ChatWindowLayout() {
                     title: "Send Location",
                     headerShown: false,
                     presentation: "modal",
+                }}
+            />
+            <Stack.Screen
+                name="camera"
+                options={{
+                    headerShown: false,
                 }}
             />
 

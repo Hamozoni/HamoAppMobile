@@ -21,16 +21,6 @@ export default function ChatLayout() {
                     }
                 }}
             />
-            <Stack.Screen
-                name="camera"
-                options={{
-                    headerTransparent: true,
-                    presentation: "fullScreenModal",
-                    animation: "flip",
-                    headerShown: false,
-                    gestureEnabled: false,
-                }}
-            />
         </Stack>
     );
 }
