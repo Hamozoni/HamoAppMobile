@@ -2,9 +2,10 @@ import React from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import { Tabs, useGlobalSearchParams } from "expo-router";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import AnimatedBorder from "../../components/ui/animatedBorder";
 
 const WA_GREEN = "#ffffffff";
-const WA_DARK = "#1b7fc2ff";
+const WA_DARK = "#acc6f8ff";
 const INACTIVE = "#526169ff";
 const TAB_BG = "#FFFFFF";
 
@@ -22,7 +23,7 @@ const RootLayout = () => {
                     display: isEdit === "true" ? "none" : "flex",
                     backgroundColor: TAB_BG,
                     borderTopWidth: 3,
-                    borderTopColor: "#acc6f8ff",
+                    borderTopColor: WA_DARK,
                     height: Platform.OS === "ios" ? 85 : 65,
                     paddingBottom: Platform.OS === "ios" ? 25 : 8,
                     paddingTop: 8,
@@ -41,11 +42,11 @@ const RootLayout = () => {
                     tabBarIcon: ({ focused, color }) => (
                         <View style={[
                             styles.centerBtn,
-                            { borderColor: focused ? WA_DARK : WA_GREEN }
+                            { backgroundColor: focused ? WA_DARK : WA_GREEN }
                         ]}>
                             <MaterialCommunityIcons
                                 name={focused ? "contacts" : "contacts-outline"}
-                                size={28}
+                                size={focused ? 36 : 28}
                                 color={focused ? TAB_BG : INACTIVE}
                             />
                         </View>
@@ -60,11 +61,11 @@ const RootLayout = () => {
                     tabBarIcon: ({ focused }) => (
                         <View style={[
                             styles.centerBtn,
-                            { borderColor: focused ? WA_DARK : WA_GREEN }
+                            { backgroundColor: focused ? WA_DARK : WA_GREEN }
                         ]}>
                             <Ionicons
                                 name={focused ? "call" : "call-outline"}
-                                size={28}
+                                size={focused ? 38 : 28}
                                 color={focused ? TAB_BG : INACTIVE}
                             />
                         </View>
@@ -79,11 +80,11 @@ const RootLayout = () => {
                     tabBarIcon: ({ focused }) => (
                         <View style={[
                             styles.centerBtn,
-                            { borderColor: focused ? WA_DARK : WA_GREEN }
+                            { backgroundColor: focused ? WA_DARK : WA_GREEN }
                         ]}>
                             <Ionicons
                                 name={focused ? "chatbubbles" : "chatbubbles-outline"}
-                                size={28}
+                                size={focused ? 38 : 28}
                                 color={focused ? TAB_BG : INACTIVE}
                             />
                         </View>
@@ -97,11 +98,11 @@ const RootLayout = () => {
                     tabBarIcon: ({ focused }) => (
                         <View style={[
                             styles.centerBtn,
-                            { borderColor: focused ? WA_DARK : WA_GREEN }
+                            { backgroundColor: focused ? WA_DARK : WA_GREEN }
                         ]}>
                             <Ionicons
                                 name={focused ? "cog" : "cog-outline"}
-                                size={28}
+                                size={focused ? 48 : 28}
                                 color={focused ? TAB_BG : INACTIVE}
                             />
                         </View>
@@ -132,9 +133,9 @@ const styles = StyleSheet.create({
         height: 56,
         borderRadius: 28,
         justifyContent: "center",
+        borderWidth: 3,
+        borderColor: WA_GREEN,
         alignItems: "center",
-        borderWidth: 2,
-        borderStyle: "dashed",
         marginBottom: Platform.OS === "ios" ? 10 : 20,
         shadowColor: WA_GREEN,
         shadowOffset: { width: 0, height: 4 },
