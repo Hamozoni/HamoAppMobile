@@ -3,18 +3,14 @@ import { ScrollView, Text } from "react-native";
 import { StatusPanel } from "../../../components/status/statusPanel";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import ContactsList from "../../../components/contacts/contacts";
+import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";
+import ContactsPage from "../../(screens)/chats/contacts";
 
 const Updates = () => {
     return (
-        <SafeAreaProvider>
-            <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-                <ScrollView style={{ flex: 1 }}>
-                    <StatusPanel />
-                    <Text style={{ fontSize: 20, fontWeight: "bold", margin: 20 }}>Contacts</Text>
-                    <ContactsList />
-                </ScrollView>
-            </SafeAreaView>
-        </SafeAreaProvider>
+        <ContactsList>
+            <StatusPanel />
+        </ContactsList>
     );
 };
 

@@ -1,7 +1,19 @@
 import { useEffect, useRef } from "react";
 import { Animated, View, StyleSheet } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 
-export default function AnimatedBorder({ children, style }: { children: React.ReactNode, style: any }) {
+interface AnimatedBorderProps {
+    children: React.ReactNode;
+    size?: number;
+    borderWidth?: number;
+    borderRadius?: number;
+}
+
+export default function AnimatedBorder({
+    children,
+    borderWidth = 3,
+    borderRadius = 12,
+}: AnimatedBorderProps) {
     const anim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
@@ -9,27 +21,57 @@ export default function AnimatedBorder({ children, style }: { children: React.Re
             Animated.timing(anim, {
                 toValue: 1,
                 duration: 3000,
-                useNativeDriver: false,
+                useNativeDriver: true,
             })
         ).start();
     }, []);
 
-    const borderColor = anim.interpolate({
-        inputRange: [0, 0.33, 0.66, 1],
-        outputRange: ["#25D366", "#075E54", "#128C7E", "#25D366"],
+    const rotate = anim.interpolate({
+        inputRange: [0, 1],
+        outputRange: ["0deg", "360deg"],
     });
 
     return (
-        <Animated.View style={[styles.border, { borderColor }, ...style]}>
-            {children}
-        </Animated.View>
+        <View style={[styles.wrapper, { borderRadius, padding: borderWidth }]}>
+            {/* Spinning gradient sits behind */}
+            <Animated.View
+                style={[
+                    styles.gradient,
+                    {
+                        borderRadius,
+                        transform: [{ rotate }],
+                    },
+                ]}
+            >
+                <LinearGradient
+                    colors={["#FF3B30", "#FF9F0A", "#25D366", "#007AFF"]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={StyleSheet.absoluteFillObject}
+                />
+            </Animated.View>
+
+            {/* Content sits on top */}
+            <View style={[styles.inner, { borderRadius: borderRadius - borderWidth }]}>
+                {children}
+            </View>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
-    border: {
-        borderWidth: 3,
-        borderRadius: 12,
-        padding: 4,
+    wrapper: {
+        overflow: "hidden",
+        backgroundColor: "transparent",
+    },
+    gradient: {
+        ...StyleSheet.absoluteFillObject,
+        // Make it bigger than the container so rotation doesn't show corners
+        margin: -50,
+    },
+    inner: {
+        backgroundColor: "#fff",
+        overflow: "hidden",
+        flex: 1,
     },
 });

@@ -9,6 +9,20 @@ const WA_DARK = "#acc6f8ff";
 const INACTIVE = "#526169ff";
 const TAB_BG = "#FFFFFF";
 
+const TabBtn = (
+    { children, focused }:
+        { children: React.ReactElement, focused: boolean }
+) => {
+    return (
+        <View style={[
+            styles.centerBtn,
+            { backgroundColor: focused ? WA_DARK : WA_GREEN, transform: focused ? "" : "" }
+        ]}>
+            {children}
+        </View>
+    )
+}
+
 const RootLayout = () => {
     const { isEdit } = useGlobalSearchParams<{ isEdit?: string }>();
 
@@ -40,16 +54,13 @@ const RootLayout = () => {
                 name="contacts"
                 options={{
                     tabBarIcon: ({ focused, color }) => (
-                        <View style={[
-                            styles.centerBtn,
-                            { backgroundColor: focused ? WA_DARK : WA_GREEN }
-                        ]}>
+                        <TabBtn focused={focused}>
                             <MaterialCommunityIcons
                                 name={focused ? "contacts" : "contacts-outline"}
                                 size={focused ? 36 : 28}
                                 color={focused ? TAB_BG : INACTIVE}
                             />
-                        </View>
+                        </TabBtn>
                     ),
                 }}
             />
@@ -59,16 +70,13 @@ const RootLayout = () => {
                 name="calls"
                 options={{
                     tabBarIcon: ({ focused }) => (
-                        <View style={[
-                            styles.centerBtn,
-                            { backgroundColor: focused ? WA_DARK : WA_GREEN }
-                        ]}>
+                        <TabBtn focused={focused}>
                             <Ionicons
                                 name={focused ? "call" : "call-outline"}
                                 size={focused ? 38 : 28}
                                 color={focused ? TAB_BG : INACTIVE}
                             />
-                        </View>
+                        </TabBtn>
                     ),
                 }}
             />
@@ -78,16 +86,13 @@ const RootLayout = () => {
                 name="chats"
                 options={{
                     tabBarIcon: ({ focused }) => (
-                        <View style={[
-                            styles.centerBtn,
-                            { backgroundColor: focused ? WA_DARK : WA_GREEN }
-                        ]}>
+                        <TabBtn focused={focused}>
                             <Ionicons
                                 name={focused ? "chatbubbles" : "chatbubbles-outline"}
                                 size={focused ? 38 : 28}
                                 color={focused ? TAB_BG : INACTIVE}
                             />
-                        </View>
+                        </TabBtn>
                     ),
                 }}
             />
@@ -96,22 +101,21 @@ const RootLayout = () => {
                 name="settings"
                 options={{
                     tabBarIcon: ({ focused }) => (
-                        <View style={[
-                            styles.centerBtn,
-                            { backgroundColor: focused ? WA_DARK : WA_GREEN }
-                        ]}>
+                        <TabBtn focused={focused}>
                             <Ionicons
                                 name={focused ? "cog" : "cog-outline"}
                                 size={focused ? 48 : 28}
                                 color={focused ? TAB_BG : INACTIVE}
                             />
-                        </View>
+                        </TabBtn>
                     ),
                 }}
             />
         </Tabs>
     );
 };
+
+
 
 const styles = StyleSheet.create({
     tabIcon: {
@@ -131,7 +135,7 @@ const styles = StyleSheet.create({
     centerBtn: {
         width: 56,
         height: 56,
-        borderRadius: 28,
+        borderRadius: '50%',
         justifyContent: "center",
         borderWidth: 3,
         borderColor: WA_GREEN,
@@ -141,7 +145,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.35,
         shadowRadius: 8,
-        elevation: 8,
+        elevation: 8
     },
 });
 

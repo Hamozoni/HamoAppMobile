@@ -10,18 +10,21 @@ export const StatusPanel = () => {
 
     const user = useAuthStore((state) => state.user);
     return (
-        <View >
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 10, paddingHorizontal: 20 }}>
+        <View style={{ marginBottom: 20 }}>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 10 }}>
                 <Text style={{ fontSize: 20, fontWeight: "bold" }}>Status</Text>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
                     <RoundedBtn iconName="camera" />
                     <RoundedBtn iconName="pencil" />
                 </View>
             </View>
-            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 5, paddingHorizontal: 20 }}>
+            <ScrollView
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ gap: 8 }}>
                 <View style={{ width: 100, height: 180, borderRadius: 15, borderWidth: 1, borderColor: "#ccc", flexDirection: "column", justifyContent: "space-around", alignItems: "center", }}>
                     <View style={{ padding: 10, alignItems: "center", justifyContent: "center", position: "relative" }}>
-                        <Image source={{ uri: user?.profilePictureFileId?.secureUrl }}
+                        <Image source={{ uri: user?.profilePicture?.secureUrl }}
                             style={{ width: 60, height: 60, borderRadius: 30 }}
                         />
                         <TouchableOpacity style={{ position: "absolute", bottom: 10, right: 10, borderRadius: 12, backgroundColor: "#4ef16aff", borderWidth: 2, borderColor: "#ffffffff" }}>
