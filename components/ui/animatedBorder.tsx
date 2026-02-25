@@ -12,7 +12,7 @@ interface AnimatedBorderProps {
 export default function AnimatedBorder({
     children,
     borderWidth = 3,
-    borderRadius = 12,
+    borderRadius = 100,
 }: AnimatedBorderProps) {
     const anim = useRef(new Animated.Value(0)).current;
 
@@ -72,6 +72,5 @@ const styles = StyleSheet.create({
     inner: {
         backgroundColor: "#fff",
         overflow: "hidden",
-        flex: 1,
     },
 });

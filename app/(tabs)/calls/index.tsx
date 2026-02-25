@@ -105,11 +105,10 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-around",
         backgroundColor: "#fff",
-        // marginHorizontal: 12,
         marginTop: 14,
         borderRadius: 16,
         paddingVertical: 18,
-        // paddingHorizontal: 8,
+        margin: 18,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.06,
@@ -160,7 +159,7 @@ const styles = StyleSheet.create({
     // ── Call cards grouped ───────────────────────
     cardWrapper: {
         backgroundColor: "#fff",
-        // marginHorizontal: 12,
+        marginHorizontal: 12,
         overflow: "hidden",
     },
     cardFirst: {

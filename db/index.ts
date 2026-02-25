@@ -34,23 +34,23 @@ export const executeTransaction = <T>(
 
 export const executeQuery = <T = any>(
     sql: string,
-    params?: readonly any[]
+    params?: any[]
 ): T[] => {
-    return getDatabase().getAllSync<T>(sql, params);
+    return getDatabase().getAllSync<T>(sql, params ?? []);
 };
 
 export const executeQueryFirst = <T = any>(
     sql: string,
-    params?: readonly any[]
+    params?: any[]
 ): T | null => {
-    return getDatabase().getFirstSync<T>(sql, params);
+    return getDatabase().getFirstSync<T>(sql, params ?? []);
 };
 
 export const executeUpdate = (
     sql: string,
-    params?: readonly any[]
+    params?: any[]
 ) => {
-    return getDatabase().runSync(sql, params);
+    return getDatabase().runSync(sql, params ?? []);
 };
 
 export const executeBatch = (sql: string, paramsList: readonly any[][]) => {

@@ -8,8 +8,20 @@ import TitleForwardIconBtn from "../../../../components/buttons/titleForwardIcon
 import Separator from "../../../../components/ui/separator";
 import { useAuthStore } from "../../../../hooks/store/useAuthStore";
 import Avatar from "../../../../components/ui/avatar";
+import AnimatedBorder from "../../../../components/ui/animatedBorder";
 
-const profileSetting = [
+interface ProfileButton {
+    id: any;
+    data: {
+        id: number;
+        iconName: keyof typeof Ionicons.glyphMap; // ✅ not string
+        title: string;
+        link: string;
+        selected?: string | null;
+    }[];
+}
+
+const profileSetting: ProfileButton[] = [
     {
         id: "first",
         data: [{
@@ -82,9 +94,6 @@ const profileSetting = [
                 },
             ]
     },
-
-
-
 ]
 
 export default function Profile() {
@@ -99,58 +108,55 @@ export default function Profile() {
     return (
         <ThemedSafeAreaView>
             <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={{ justifyContent: "center", alignItems: 'center', paddingTop: 40, marginBottom: 20 }}>
-                    {/* <Image source={{ uri: findContact()?.profilePicture }} width={150} height={150} style={{ borderRadius: "50%" }} />
-                     */}
-                    <Avatar profilePicture={findContact()?.profilePicture} displayName={findContact()?.displayName} width={150} height={150} />
-                </View>
-                <View style={{ flexDirection: "column", justifyContent: "center", alignContent: "center" }}>
-                    <Text style={{ fontSize: 22, fontWeight: 900, textAlign: 'center' }}>
-                        {findContact()?.displayName}  {user?.phoneNumber === findContact()?.phoneNumber && ' ( You )'}
-                    </Text>
-                    <Text style={{ fontSize: 18, textAlign: 'center', color: "gray", marginTop: 3, marginBottom: 5 }}>
-                        {findContact()?.phoneNumber}
-                    </Text>
-                    {
-                        findContact()?.about &&
-                        <Text style={{ fontSize: 16, textAlign: 'center', color: "gray" }}>
-                            {findContact()?.about}
+                <Separator />
+                <ThemedViewContainer>
+                    <View style={{ justifyContent: "center", alignItems: 'center', paddingTop: 40, marginBottom: 20 }}>
+                        <AnimatedBorder>
+                            <Avatar profilePicture={findContact()?.profilePicture} displayName={findContact()?.displayName} width={150} height={150} />
+                        </AnimatedBorder>
+                    </View>
+                    <View style={{ flexDirection: "column", justifyContent: "center", alignContent: "center" }}>
+                        <Text style={{ fontSize: 22, fontWeight: 900, textAlign: 'center' }}>
+                            {findContact()?.displayName}  {user?.phoneNumber === findContact()?.phoneNumber && ' ( You )'}
                         </Text>
-                    }
-                </View>
-                <View style={{ flexDirection: "row", gap: 5, justifyContent: "center", alignItems: "center", marginVertical: 15 }}>
-                    <TouchableOpacity style={styles.infoBtn}>
-                        <Ionicons name="call-outline" size={24} color="#65a52aff" />
-                        <Text style={{ paddingTop: 5 }}>
-                            Audio
+                        <Text style={{ fontSize: 18, textAlign: 'center', color: "gray", marginTop: 3, marginBottom: 5 }}>
+                            {findContact()?.phoneNumber}
                         </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.infoBtn}>
-                        <Ionicons name="videocam-outline" size={24} color="#65a52aff" />
-                        <Text style={{ paddingTop: 5 }}>
-                            Video
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.infoBtn}>
-                        <Ionicons name="search" size={24} color="#65a52aff" />
-                        <Text style={{ paddingTop: 5 }}>
-                            Search
-                        </Text>
-                    </TouchableOpacity>
-                </View>
+                        {
+                            findContact()?.about &&
+                            <Text style={{ fontSize: 16, textAlign: 'center', color: "gray" }}>
+                                {findContact()?.about}
+                            </Text>
+                        }
+                    </View>
+
+                    <View style={{ flexDirection: "row", gap: 5, justifyContent: "center", alignItems: "center", margin: 15 }}>
+                        <TouchableOpacity style={[styles.infoBtn, { backgroundColor: "#cdfdffff", }]}>
+                            <Ionicons name="call-outline" size={28} color="#073d30ff" />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.infoBtn, { backgroundColor: "#fed8ffff", }]}>
+                            <Ionicons name="videocam-outline" size={28} color="#8d2084ff" />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.infoBtn, { backgroundColor: "#f2ffc4ff", }]}>
+                            <Ionicons name="search" size={28} color="#5c3b10ff" />
+                        </TouchableOpacity>
+                    </View>
+
+                </ThemedViewContainer>
+                <Separator />
                 <View>
                     {
                         profileSetting.map((e) => (
                             <>
                                 <ThemedViewContainer key={e.id}>
                                     {
-                                        e.data.map((item) => (
+                                        e.data.map((item, index) => (
                                             <TitleForwardIconBtn
                                                 key={item.id}
                                                 iconName={item.iconName}
                                                 title={item.title}
                                                 link={item.link}
-                                                isLast={item.id === item.length}
+                                                isLast={e.data.length - 1 === index}
                                                 selected={item.selected}
                                             />
                                         ))
@@ -172,8 +178,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#eee",
         padding: 10,
-        borderRadius: 8
+        borderRadius: 6
     }
 })

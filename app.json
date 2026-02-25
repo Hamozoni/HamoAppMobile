@@ -17,6 +17,10 @@
       "supportsTablet": true
     },
     "android": {
+      "permissions": [
+        "android.permission.READ_CONTACTS",
+        "android.permission.WRITE_CONTACTS"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/sudaChat.jpg",
         "backgroundColor": "#ffffff"

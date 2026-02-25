@@ -11,7 +11,7 @@ export const StatusPanel = () => {
     const user = useAuthStore((state) => state.user);
     return (
         <View style={{ marginBottom: 20 }}>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 10 }}>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 10, paddingHorizontal: 20 }}>
                 <Text style={{ fontSize: 20, fontWeight: "bold" }}>Status</Text>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
                     <RoundedBtn iconName="camera" />
@@ -21,8 +21,8 @@ export const StatusPanel = () => {
             <ScrollView
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ gap: 8 }}>
-                <View style={{ width: 100, height: 180, borderRadius: 15, borderWidth: 1, borderColor: "#ccc", flexDirection: "column", justifyContent: "space-around", alignItems: "center", }}>
+                contentContainerStyle={{ gap: 8, paddingHorizontal: 20 }}>
+                <View style={{ width: 100, height: 180, borderRadius: 15, borderWidth: 1, borderColor: "#ccc", flexDirection: "column", paddingHorizontal: 20, justifyContent: "space-around", alignItems: "center", }}>
                     <View style={{ padding: 10, alignItems: "center", justifyContent: "center", position: "relative" }}>
                         <Image source={{ uri: user?.profilePicture?.secureUrl }}
                             style={{ width: 60, height: 60, borderRadius: 30 }}
@@ -41,6 +41,6 @@ export const StatusPanel = () => {
                     ))
                 }
             </ScrollView>
-        </View>
+        </View >
     );
 };

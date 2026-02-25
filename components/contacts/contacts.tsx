@@ -68,7 +68,7 @@ export default function ContactsList({ children }: ContactsListProps) {
     const total = registered.length + unregistered.length;
 
     return (
-        <ThemedSafeAreaView style={styles.safe}>
+        <ThemedSafeAreaView>
 
             {/* ── Search bar ── */}
             <View style={styles.searchWrapper}>
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     // ── Search ──────────────────────────────────────
     searchWrapper: {
         backgroundColor: "#fff",
-        paddingHorizontal: 0,
+        paddingHorizontal: 16,
         paddingVertical: 8,
         borderBottomWidth: StyleSheet.hairlineWidth,
         borderBottomColor: "#E5E7EB",
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
 
     // ── List layout ─────────────────────────────────
     listContent: {
-        paddingBottom: 40,
+        paddingBottom: 40
     },
     totalLabel: {
         paddingHorizontal: 16,
@@ -255,6 +255,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#ffffffff",
         marginHorizontal: 0,
         overflow: "hidden",
+        paddingHorizontal: 15
     },
     cardFirst: {
         borderTopLeftRadius: 14,

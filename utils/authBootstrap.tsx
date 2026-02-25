@@ -5,18 +5,23 @@ import { syncContacts } from "../db/services/syncContacts.service";
 import { useContactsStore } from "../hooks/store/useContactsStore";
 import { clearContacts } from "../db/repositories/contacts.repo";
 import { runMigrations } from "../db/runMigration";
-
+import { useRouter } from "expo-router";
+import { onAuthFailed } from "./authEvents";
+import * as SecureStore from "expo-secure-store";
 export function AuthBootstrap() {
 
     const syncedRef = useRef(false);
     const { mutateAsync: getProfile } = useGetProfile();
     const { loadContacts, setIsSyncing } = useContactsStore();
+    const router = useRouter();
 
     useEffect(() => {
         if (syncedRef.current) return;
         syncedRef.current = true;
         async function bootstrap() {
             try {
+                // ✅ 1. Hydrate FIRST — unblocks the Index screen spinner
+                await useAuthStore.getState().hydrate();
                 runMigrations()
                 setIsSyncing(true);
                 // ✅ Separate try/catch for profile — auth failure is expected when logged out
@@ -25,9 +30,15 @@ export function AuthBootstrap() {
                     user = await getProfile();
                     await useAuthStore.getState().setUser(user);
                 } catch (profileError: any) {
-                    // No valid session → emitAuthFailed already fired from interceptor
-                    // Just stop bootstrap cleanly, don't crash
+
                     console.log("No active session:", profileError.message);
+                    onAuthFailed(async () => {
+                        await SecureStore.deleteItemAsync("accessToken");
+                        await SecureStore.deleteItemAsync("refreshToken");
+                        await useAuthStore.getState().clearUser();
+
+                        router.replace("/(auth)/login")
+                    });
                     return;
                 }
 

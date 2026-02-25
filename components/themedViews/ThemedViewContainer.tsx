@@ -9,7 +9,7 @@ interface ThemedViewContainerProps {
 
 export default function ThemedViewContainer({
     children,
-    paddingVertical = 10,
+    paddingVertical = 0,
     style,
 }: ThemedViewContainerProps) {
     return (
@@ -24,7 +24,8 @@ export default function ThemedViewContainer({
 const styles = StyleSheet.create({
     // Outer wrapper carries the shadow (Android needs elevation on its own layer)
     shadow: {
-        borderRadius: 14,
+        borderRadius: 12,
+        marginHorizontal: 15,
         backgroundColor: "#fff",
         ...Platform.select({
             ios: {
@@ -42,6 +43,5 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         backgroundColor: "#fff",
         overflow: "hidden", // clips children to rounded corners
-        paddingHorizontal: 0,
     },
 });

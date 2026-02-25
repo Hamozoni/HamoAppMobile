@@ -11,6 +11,8 @@ import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";
 import { CHATS } from "../../../constants/chats";
 import { Chat } from "../../../types/components.types";
 import { RoundedBtn } from "../../../components/buttons/roundedBtn";
+import ThemedViewContainer from "../../../components/themedViews/ThemedViewContainer";
+import Separator from "../../../components/ui/separator";
 
 const { width } = Dimensions.get("window");
 const WA_GREEN = "#25D366";
@@ -63,7 +65,6 @@ const Chats = () => {
                     ) : null,
                 }}
             />
-
             <FlatList
                 data={filteredChats as Chat[]}
                 keyExtractor={(item) => item.id.toString()}
@@ -71,7 +72,7 @@ const Chats = () => {
                 contentContainerStyle={styles.listContent}
 
                 ListHeaderComponent={() => (
-                    <View>
+                    <>
                         {/* ── Filter pills ── */}
                         <ScrollView
                             horizontal
@@ -108,7 +109,7 @@ const Chats = () => {
                                 {filteredChats.length} CONVERSATION{filteredChats.length !== 1 ? "S" : ""}
                             </Text>
                         </View>
-                    </View>
+                    </>
                 )}
 
                 renderItem={({ item, index }) => (
@@ -124,6 +125,7 @@ const Chats = () => {
                             onSelect={() => handleSelect(item.id.toString())}
                         />
                     </View>
+
                 )}
 
                 ListEmptyComponent={
@@ -168,6 +170,8 @@ const Chats = () => {
                 </Animated.View>
             )}
 
+            <Separator />
+
         </ThemedSafeAreaView>
     );
 };
@@ -182,12 +186,12 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: WA_DARK,
         fontWeight: "600",
-        paddingHorizontal: 10
+        paddingHorizontal: 5
     },
 
     // ── Filters ──────────────────────────────────
     filtersRow: {
-        paddingHorizontal: 12,
+        paddingHorizontal: 20,
         paddingVertical: 10,
         gap: 8,
     },
@@ -217,8 +221,9 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: 8,
-        paddingHorizontal: 16,
+        paddingHorizontal: 20,
         paddingBottom: 8,
+        marginBottom: 15
     },
     sectionDot: {
         width: 7,
@@ -236,7 +241,7 @@ const styles = StyleSheet.create({
     // ── Card grouping ─────────────────────────────
     cardWrapper: {
         backgroundColor: "#fff",
-        // marginHorizontal: 12,
+        marginHorizontal: 10,
         overflow: "hidden",
     },
     cardFirst: {

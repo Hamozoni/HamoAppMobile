@@ -21,15 +21,16 @@ interface HelpSection {
 
 const HELPDATA: HelpSection[] = [
     {
-        id: 1, data: [
+        id: 1,
+        data: [
             {
-                id: 1,
+                id: 2,
                 title: "Help Center",
                 selected: "Get help, contact us",
                 link: "https://hamoapp.com/help-center",
             },
             {
-                id: 2,
+                id: 3,
                 title: "Send feedback",
                 selected: "Report Technical issues",
                 link: "settings/help/feedback",
@@ -37,19 +38,20 @@ const HELPDATA: HelpSection[] = [
         ]
     },
     {
-        id: 2, data: [
+        id: 4,
+        data: [
             {
-                id: 1,
+                id: 5,
                 title: "Terms and Privacy Policy",
                 link: "https://hamoapp.com/terms-and-privacy-policy",
             },
             {
-                id: 2,
+                id: 6,
                 title: "Channel reports",
                 link: "settings/help/channel-reports",
             },
             {
-                id: 3,
+                id: 7,
                 title: "Licenses",
                 link: "settings/help/licenses",
             },

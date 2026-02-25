@@ -5,6 +5,15 @@ import { axiosInstance } from "../../lib/axios.config";
 import type { Contact } from "../types/contact.type";
 
 export async function syncContacts(): Promise<void> {
+
+    // ✅ Request permission first
+    const { status } = await Contacts.requestPermissionsAsync();
+
+    if (status !== "granted") {
+        console.log("Contacts permission denied");
+        return; // exit cleanly, don't crash bootstrap
+    }
+
     const { data } = await Contacts.getContactsAsync({
         fields: [Contacts.Fields.PhoneNumbers],
     });
@@ -13,7 +22,7 @@ export async function syncContacts(): Promise<void> {
 
     for (const c of data) {
         for (const p of c.phoneNumbers ?? []) {
-            const phoneNumber = normalizePhone(p.number, p.countryCode ?? "SA");
+            const phoneNumber = normalizePhone(p.number ?? "", p.countryCode ?? "SA");
             if (!phoneNumber) continue;
             normalized.push({
                 _id: c.id ?? phoneNumber,
