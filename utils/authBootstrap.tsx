@@ -8,6 +8,7 @@ import { runMigrations } from "../db/runMigration";
 import { useRouter } from "expo-router";
 import { onAuthFailed } from "./authEvents";
 import * as SecureStore from "expo-secure-store";
+import { getDatabase } from "../db";
 export function AuthBootstrap() {
 
     const syncedRef = useRef(false);
@@ -23,6 +24,11 @@ export function AuthBootstrap() {
                 // ✅ 1. Hydrate FIRST — unblocks the Index screen spinner
                 await useAuthStore.getState().hydrate();
                 runMigrations()
+                console.log(
+                    getDatabase().getAllSync(
+                        "SELECT name FROM sqlite_master WHERE type='table';"
+                    )
+                );
                 setIsSyncing(true);
                 // ✅ Separate try/catch for profile — auth failure is expected when logged out
                 let user = null;

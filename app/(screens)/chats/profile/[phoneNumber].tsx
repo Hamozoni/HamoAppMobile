@@ -147,8 +147,8 @@ export default function Profile() {
                 <View>
                     {
                         profileSetting.map((e) => (
-                            <>
-                                <ThemedViewContainer key={e.id}>
+                            <View key={e.id}>
+                                <ThemedViewContainer >
                                     {
                                         e.data.map((item, index) => (
                                             <TitleForwardIconBtn
@@ -163,7 +163,7 @@ export default function Profile() {
                                     }
                                 </ThemedViewContainer>
                                 <Separator />
-                            </>
+                            </View>
                         ))
                     }
                 </View>

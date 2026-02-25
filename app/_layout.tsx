@@ -5,11 +5,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 
 import { AuthBootstrap } from "../utils/authBootstrap";
 
-
-
 export default function RootLayout() {
-
-
     return (
         <GestureHandlerRootView>
             <QueryClientProvider client={queryClient}>
