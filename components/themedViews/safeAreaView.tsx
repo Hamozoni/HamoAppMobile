@@ -5,17 +5,17 @@ import { SafeAreaInsetsContext, SafeAreaProvider, SafeAreaView, useSafeAreaInset
 interface ThemedSafeAreaViewProps {
     children: React.ReactNode;
     style?: object;
+    paddingTop?: number
 }
 
-export default function ThemedSafeAreaView({ children, style }: ThemedSafeAreaViewProps) {
+export default function ThemedSafeAreaView({ children, style, paddingTop = 30 }: ThemedSafeAreaViewProps) {
 
     const insets = useSafeAreaInsets();
     return (
         <SafeAreaProvider>
-
             <SafeAreaView
                 edges={["top", "bottom"]}
-                style={[styles.container, style, { paddingTop: Platform.OS === "android" ? insets.top + 20 : 0 }]}>
+                style={[styles.container, style, { paddingTop: Platform.OS === "android" ? insets.top + paddingTop : 0 }]}>
                 {children}
             </SafeAreaView>
         </SafeAreaProvider>

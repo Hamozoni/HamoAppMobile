@@ -45,10 +45,10 @@ export default function ChatFooter({ phoneNumber }: ChatFooterProps) {
 
     return (
         <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={100}
+            behavior={Platform.OS === "ios" ? "padding" : "position"}
+            keyboardVerticalOffset={80}
         >
-            <View style={{ paddingHorizontal: 10, paddingTop: 10, backgroundColor: "#fff" }}>
+            <View style={{ padding: 16, backgroundColor: "#fff", borderTopWidth: 1, borderTopColor: "#eee" }}>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
                     <TouchableOpacity
                         style={{
@@ -59,22 +59,22 @@ export default function ChatFooter({ phoneNumber }: ChatFooterProps) {
                         }} onPress={toggleAttachment}>
                         {
                             isAttachment ?
-                                <FontAwesome6 name="keyboard" size={25} color="#1fa105" />
-                                : <Entypo name="attachment" size={24} color="#1fa105" />
+                                <FontAwesome6 name="keyboard" size={25} color="#76787aff" />
+                                : <Entypo name="attachment" size={24} color="#76787aff" />
                         }
                     </TouchableOpacity>
                     <TextInput
                         ref={textInputRef}
                         onFocus={() => setIsAttachment(false)}
                         placeholder="Type a message"
-                        style={{ height: 30, flex: 1, borderWidth: 1, borderColor: "#1fa105", borderRadius: 20, paddingHorizontal: 10 }}
+                        style={{ height: 40, paddingVertical: 0, flex: 1, borderWidth: 1, fontSize: 14, textAlignVertical: "center", borderColor: "#76787aff", borderRadius: 20, paddingHorizontal: 10 }}
                     />
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
                         <TouchableOpacity onPress={() => router.push("/chats/camera" as any)}>
-                            <Ionicons name="camera-outline" size={28} color="#1fa105" />
+                            <Ionicons name="camera-outline" size={28} color="#76787aff" />
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => setIsAudioRecorder(true)}>
-                            <Ionicons name="mic-outline" size={28} color="#1fa105" />
+                            <Ionicons name="mic-outline" size={28} color="#76787aff" />
                         </TouchableOpacity>
                     </View>
                 </View>

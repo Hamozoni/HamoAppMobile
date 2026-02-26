@@ -170,7 +170,6 @@ const Chats = () => {
                 </Animated.View>
             )}
 
-            <Separator />
 
         </ThemedSafeAreaView>
     );
@@ -179,6 +178,7 @@ const Chats = () => {
 const styles = StyleSheet.create({
     listContent: {
         paddingBottom: 100,
+        // flex: 1
     },
 
     // ── Header ───────────────────────────────────

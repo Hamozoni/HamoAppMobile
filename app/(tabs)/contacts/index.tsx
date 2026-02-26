@@ -5,12 +5,9 @@ import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";
 
 const Updates = () => {
     return (
-        <ThemedSafeAreaView>
-            <ContactsList>
-                <StatusPanel />
-            </ContactsList>
-
-        </ThemedSafeAreaView>
+        <ContactsList>
+            <StatusPanel />
+        </ContactsList>
     );
 };
 

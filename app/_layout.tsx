@@ -6,15 +6,15 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { AuthBootstrap } from "../utils/authBootstrap";
 import { useAuthStore } from "../hooks/store/useAuthStore";
 import { ActivityIndicator, StatusBar } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function RootLayout() {
 
     const { user, hydrated } = useAuthStore();
 
     return (
-        <SafeAreaProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <SafeAreaProvider>
                 <QueryClientProvider client={queryClient}>
                     <AuthBootstrap />
                     {!hydrated ? <ActivityIndicator /> :
@@ -29,8 +29,8 @@ export default function RootLayout() {
                         </Stack>
                     }
                 </QueryClientProvider>
-            </GestureHandlerRootView>
+            </SafeAreaProvider>
+        </GestureHandlerRootView>
 
-        </SafeAreaProvider>
     );
 }

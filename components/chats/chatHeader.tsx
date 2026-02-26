@@ -15,7 +15,7 @@ export const ChatHeaderLeft = ({ phoneNumber }: ChatHeaderProps) => {
     const router = useRouter();
     return (
         <TouchableOpacity onPress={() => router.back()}>
-            <Ionicons name="chevron-back" size={24} color="#1fa105" />
+            <Ionicons name="chevron-back" size={28} color="#76787aff" />
         </TouchableOpacity>
     );
 };
@@ -47,10 +47,10 @@ export const ChatHeaderRight = ({ phoneNumber }: ChatHeaderProps) => {
     return (
         <View style={{ flexDirection: "row", alignItems: "center", gap: 15 }}>
             <TouchableOpacity>
-                <Ionicons name="videocam-outline" size={24} color="#1fa105" />
+                <Ionicons name="videocam-outline" size={26} color="#76787aff" />
             </TouchableOpacity>
             <TouchableOpacity>
-                <Ionicons name="call-outline" size={24} color="#1fa105" />
+                <Ionicons name="call-outline" size={26} color="#76787aff" />
             </TouchableOpacity>
         </View>
     );

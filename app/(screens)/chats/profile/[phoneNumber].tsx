@@ -106,7 +106,7 @@ export default function Profile() {
     };
 
     return (
-        <ThemedSafeAreaView>
+        <ThemedSafeAreaView paddingTop={0}>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <Separator />
                 <ThemedViewContainer>

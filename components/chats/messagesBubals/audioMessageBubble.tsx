@@ -19,6 +19,7 @@ interface AudioMessageBubbleProps {
 }
 
 export default function AudioMessageBubble({ message }: AudioMessageBubbleProps) {
+
     const player = useAudioPlayer(message?.metadata?.url || '');
     const [isPlaying, setIsPlaying] = useState(false);
 
