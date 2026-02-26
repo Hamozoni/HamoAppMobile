@@ -39,7 +39,7 @@ const settingsData3: SettingItem[] = [
 const Settings = () => {
     return (
         <ThemedSafeAreaView>
-            <ScrollView contentInsetAdjustmentBehavior="automatic" showsVerticalScrollIndicator={false}>
+            <ScrollView showsVerticalScrollIndicator={false}>
                 <ProfileInfo />
                 <Seprater />
                 <ThemedViewContainer>
