@@ -13,6 +13,7 @@ export default function ThemedSafeAreaView({ children }: ThemedSafeAreaViewProps
                 style={{ flex: 1, backgroundColor: "#ffffffff" }}>
                 {children}
             </SafeAreaView>
+
         </SafeAreaProvider>
     );
 }

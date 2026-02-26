@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     profileImage: {
-        borderRadius: "50%",
+        borderRadius: 28,
         backgroundColor: "#fff",
         width: 130,
         height: 130,
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     imagePlaceholder: {
         width: 130,
         height: 130,
-        borderRadius: "50%",
+        borderRadius: 28,
         backgroundColor: "#fff",
         justifyContent: "center",
         alignItems: "center",
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
         right: 5,
         width: 38,
         height: 38,
-        borderRadius: "50%",
+        borderRadius: 28,
         backgroundColor: "#259cd3",
         justifyContent: "center",
         alignItems: "center",

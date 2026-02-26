@@ -1,6 +1,5 @@
 import React from "react";
 import { Text, View, FlatList, TouchableOpacity, StyleSheet } from "react-native";
-import { RoundedBtn } from "../../../components/buttons/roundedBtn";
 import { CALLS } from "../../../constants/call";
 import { CallCard } from "../../../components/cards/callCard";
 import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";

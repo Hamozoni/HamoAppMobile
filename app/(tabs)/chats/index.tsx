@@ -49,7 +49,7 @@ const Chats = () => {
 
     return (
         <ThemedSafeAreaView >
-            <Stack.Screen
+            {/* <Stack.Screen
                 options={{
                     headerLeft: () => (
                         <TouchableOpacity onPress={handleEdit}>
@@ -64,7 +64,7 @@ const Chats = () => {
                         </TouchableOpacity>
                     ) : null,
                 }}
-            />
+            /> */}
             <FlatList
                 data={filteredChats as Chat[]}
                 keyExtractor={(item) => item.id.toString()}

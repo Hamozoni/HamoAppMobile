@@ -48,14 +48,14 @@ const AVATAR_COLORS = [
 
 const styles = StyleSheet.create({
     avatarContainer: {
-        borderRadius: "50%",
+        borderRadius: 28,
         justifyContent: "center",
         alignItems: "center",
         overflow: "hidden",
         flexShrink: 0,
     },
     avatarImage: {
-        borderRadius: "50%",
+        borderRadius: 28,
     },
     avatarInitials: {
         fontWeight: "700",

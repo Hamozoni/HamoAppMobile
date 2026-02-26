@@ -16,7 +16,7 @@ const TabBtn = (
     return (
         <View style={[
             styles.centerBtn,
-            { backgroundColor: focused ? WA_DARK : WA_GREEN, transform: focused ? "" : "" }
+            { backgroundColor: focused ? WA_DARK : WA_GREEN, transform: `${focused ? 1.1 : 1}` }
         ]}>
             {children}
         </View>
@@ -24,17 +24,16 @@ const TabBtn = (
 }
 
 const RootLayout = () => {
-    const { isEdit } = useGlobalSearchParams<{ isEdit?: string }>();
 
     return (
         <Tabs
+            initialRouteName="chats"
             screenOptions={{
                 headerShown: false,
                 tabBarActiveTintColor: WA_DARK,
                 tabBarInactiveTintColor: INACTIVE,
                 tabBarShowLabel: false,
                 tabBarStyle: {
-                    display: isEdit === "true" ? "none" : "flex",
                     backgroundColor: TAB_BG,
                     borderTopWidth: 3,
                     borderTopColor: WA_DARK,
@@ -135,7 +134,7 @@ const styles = StyleSheet.create({
     centerBtn: {
         width: 56,
         height: 56,
-        borderRadius: '50%',
+        borderRadius: 28,
         justifyContent: "center",
         borderWidth: 3,
         borderColor: WA_GREEN,
