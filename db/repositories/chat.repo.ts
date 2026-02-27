@@ -3,6 +3,7 @@ import { Chat, Message, MessageType, MessageStatus } from "../types/chat.type";
 
 
 export function upsertChat(chat: Partial<Chat> & { id: string; phoneNumber: string }): void {
+
     executeUpdate(`
         INSERT INTO chats (
             id, phoneNumber, displayName, profilePicture,
