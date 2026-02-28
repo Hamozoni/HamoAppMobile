@@ -1,14 +1,15 @@
 import { useEffect, useRef } from "react";
+import { useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 import { useAuthStore } from "../hooks/store/useAuthStore";
 import { useGetProfile } from "../hooks/api/useProfileApi";
 import { syncContacts } from "../db/services/syncContacts.service";
 import { useContactsStore } from "../hooks/store/useContactsStore";
 import { clearContacts } from "../db/repositories/contacts.repo";
 import { runMigrations } from "../db/runMigration";
-import { useRouter } from "expo-router";
 import { onAuthFailed } from "./authEvents";
-import * as SecureStore from "expo-secure-store";
 import { getDatabase } from "../db";
+
 export function AuthBootstrap() {
 
     const syncedRef = useRef(false);

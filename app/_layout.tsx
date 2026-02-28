@@ -12,6 +12,8 @@ export default function RootLayout() {
 
     const { user, hydrated } = useAuthStore();
 
+    console.log('hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii')
+
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <SafeAreaProvider>
