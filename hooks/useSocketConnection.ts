@@ -4,7 +4,9 @@ import socketService, { SOCKET_EVENTS } from "../services/socket.service";
 import { useSocketStore } from "./store/useSocketStore";
 
 export function useSocketConnection() {
+
     const user = useAuthStore(state => state.user);
+
     const { setConnected, setUserTyping } = useSocketStore();
 
     useEffect(() => {

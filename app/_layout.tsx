@@ -7,12 +7,13 @@ import { AuthBootstrap } from "../utils/authBootstrap";
 import { useAuthStore } from "../hooks/store/useAuthStore";
 import { ActivityIndicator, StatusBar } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { useSocketConnection } from "../hooks/useSocketConnection";
 
 export default function RootLayout() {
 
-    const { user, hydrated } = useAuthStore();
+    const { user, hydrated } = useAuthStore(state => ({ user: state.user, hydrated: state.hydrate }));
 
-    console.log('hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii')
+    useSocketConnection();
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
