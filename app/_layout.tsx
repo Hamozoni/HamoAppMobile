@@ -11,7 +11,7 @@ import { useSocketConnection } from "../hooks/useSocketConnection";
 
 export default function RootLayout() {
 
-    const { user, hydrated } = useAuthStore(state => ({ user: state.user, hydrated: state.hydrate }));
+    const { user, hydrated } = useAuthStore();
 
     useSocketConnection();
 
