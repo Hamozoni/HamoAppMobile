@@ -1,5 +1,7 @@
 import { io, Socket } from "socket.io-client";
 import * as SecureStore from "expo-secure-store";
+import { NewMessageData, SendMessagePayload } from "../types/message.types";
+
 
 const SOCKET_URL = process.env.EXPO_PUBLIC_SOCKET_URL!;
 
@@ -145,6 +147,34 @@ class SocketService {
 
     getSocketId(): string | undefined {
         return this.socket?.id;
+    }
+
+    sendMessage(payload: SendMessagePayload): void {
+        this.emit(SOCKET_EVENTS.MESSAGE_SEND, payload);
+    }
+
+    onNewMessage(callback: (data: NewMessageData) => void): void {
+        this.on(SOCKET_EVENTS.MESSAGE_NEW, callback);
+    }
+
+    offNewMessage(): void {
+        this.off(SOCKET_EVENTS.MESSAGE_NEW);
+    }
+
+    onMessageDelivered(callback: (data: any) => void): void {
+        this.on(SOCKET_EVENTS.MESSAGE_DELIVERED, callback);
+    }
+
+    offMessageDelivered(): void {
+        this.off(SOCKET_EVENTS.MESSAGE_DELIVERED);
+    }
+
+    onMessageRead(callback: (data: any) => void): void {
+        this.on(SOCKET_EVENTS.MESSAGE_READ, callback);
+    }
+
+    offMessageRead(): void {
+        this.off(SOCKET_EVENTS.MESSAGE_READ);
     }
 }
 
