@@ -2,9 +2,8 @@ import React, { useRef, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import ChatFooter from "../../../components/chats/chatWindowFooter/chatFooter";
 import MessageCard from "../../../components/cards/messageCard";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 import { MESSAGES } from "../../../constants/messages";
-import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";
 import { ChatMessage } from "../../../components/cards/messageCard";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
