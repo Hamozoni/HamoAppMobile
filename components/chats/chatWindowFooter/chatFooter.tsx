@@ -89,11 +89,16 @@ export default function ChatFooter(
                 </View>
                 {
                     isAttachment &&
-                    <FooterAttachment keyboardHeight={keyboardHeight} setIsAttachment={setIsAttachment} />
+                    <FooterAttachment
+                        keyboardHeight={keyboardHeight}
+                        setIsAttachment={setIsAttachment}
+                    />
                 }
                 {
                     isAudioRecorder &&
-                    <AudioRecorder setIsAudioRecorder={setIsAudioRecorder} />
+                    <AudioRecorder
+                        setIsAudioRecorder={setIsAudioRecorder}
+                    />
                 }
             </View>
         </KeyboardAvoidingView>
