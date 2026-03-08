@@ -1,17 +1,25 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { useLocalSearchParams } from "expo-router";
 import ChatFooter from "../../../components/chats/chatWindowFooter/chatFooter";
 import MessageCard from "../../../components/cards/messageCard";
-import { FlatList, StyleSheet } from "react-native";
-import { MESSAGES } from "../../../constants/messages";
-import { ChatMessage } from "../../../components/cards/messageCard";
+import { FlatList, StyleSheet } from "react-native";;
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { useMessages } from "../../../hooks/useMessage";
 
 export default function ChatDetails() {
 
-    const { phoneNumber } = useLocalSearchParams<{ phoneNumber: string }>();
+    const { chatId, phoneNumber, receiverId } = useLocalSearchParams<{
+        chatId: string;
+        phoneNumber: string;
+        receiverId: string;
+    }>();
     const messagesFlatListRef = useRef<FlatList>(null);
-    const [messages] = useState<ChatMessage[]>(MESSAGES);
+
+
+    const { messages, sendTextMessage, sendMediaMessage } = useMessages({
+        chatId,
+        receiverId,
+    });
 
     const handleScroll = () => {
         if (messagesFlatListRef.current) {
@@ -35,7 +43,11 @@ export default function ChatDetails() {
                     ref={messagesFlatListRef}
                     style={{ padding: 16 }}
                 />
-                <ChatFooter phoneNumber={phoneNumber} />
+                <ChatFooter
+                    phoneNumber={phoneNumber}
+                    onSendText={sendTextMessage}
+                    onSendMedia={sendMediaMessage}
+                />
 
             </SafeAreaView>
 
