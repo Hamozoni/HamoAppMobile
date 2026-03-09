@@ -16,7 +16,7 @@ export default function ChatDetails() {
     const messagesFlatListRef = useRef<FlatList>(null);
 
 
-    const { messages, sendTextMessage, sendMediaMessage } = useMessages({
+    const { messages, sendMessage } = useMessages({
         chatId,
         receiverId,
     });
@@ -45,8 +45,7 @@ export default function ChatDetails() {
                 />
                 <ChatFooter
                     phoneNumber={phoneNumber}
-                    onSendText={sendTextMessage}
-                    onSendMedia={sendMediaMessage}
+                    sendMessage={sendMessage}
                 />
 
             </SafeAreaView>

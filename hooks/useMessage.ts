@@ -1,9 +1,10 @@
 import { useEffect, useCallback } from "react";
-import { v4 as uuidv4 } from "uuid";
+import * as Crypto from "expo-crypto";
 import { useAuthStore } from "./store/useAuthStore";
 import {
     ILocalMessage, SendMessagePayload,
-    MessageType, NewMessageData
+    MessageType, NewMessageData,
+    MessageDraft
 } from "../types/message.types";
 import { useMessagesStore } from "./store/useMessageStore";
 import { axiosInstance } from "../lib/axios.config";
@@ -15,6 +16,7 @@ interface UseSendMessageOptions {
 }
 
 export function useMessages({ chatId, receiverId }: UseSendMessageOptions) {
+
     const user = useAuthStore(state => state.user);
     const {
         messages, addMessage, replaceOptimistic,
@@ -82,64 +84,28 @@ export function useMessages({ chatId, receiverId }: UseSendMessageOptions) {
         };
     }, [chatId]);
 
-    // ── Send text message ────────────────────────
-    const sendTextMessage = useCallback((text: string) => {
-        if (!text.trim() || !user) return;
-
-        const clientMessageId = uuidv4();
-
-        // ✅ Optimistic message — show immediately
-        const optimistic: ILocalMessage = {
-            _id: clientMessageId,
-            chatId: chatId ?? "",
-            senderId: user._id,
-            receiverId,
-            type: "text",
-            text,
-            status: "pending",
-            isDeleted: false,
-            isEdited: false,
-            isStarred: false,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            clientMessageId,
-            isOptimistic: true,
-        };
-
-        addMessage(chatId ?? "", optimistic);
-
-        // ✅ Emit to server
-        socketService.emit(SOCKET_EVENTS.MESSAGE_SEND, {
-            chatId,
-            receiverId,
-            type: "text",
-            text,
-            clientMessageId,
-        } as SendMessagePayload);
-
-    }, [chatId, receiverId, user]);
-
-    // ── Send media message ───────────────────────
-    const sendMediaMessage = useCallback(async (
-        asset: any,   // expo ImagePicker asset
-        type: MessageType,
-    ) => {
+    // ── Single send function handles everything ──────
+    const sendMessage = useCallback(async (draft: MessageDraft) => {
         if (!user) return;
-        const clientMessageId = uuidv4();
+        if (!draft.text?.trim() && !draft.asset && !draft.location && !draft.contact) return;
 
-        // ✅ Show optimistic message with local URI
+        const clientMessageId = Crypto.randomUUID();
+
+        // ── Determine message type ───────────────────
+        const type: MessageType =
+            draft.asset ? (draft.assetType ?? "image") :
+                draft.location ? "location" :
+                    draft.contact ? "contact" :
+                        "text";
+
+        // ── Build optimistic message ─────────────────
         const optimistic: ILocalMessage = {
             _id: clientMessageId,
             chatId: chatId ?? "",
             senderId: user._id,
             receiverId,
             type,
-            file: {
-                _id: clientMessageId,
-                secureUrl: asset.uri,    // local URI for instant preview
-                type,
-                metadata: {},
-            },
+            text: draft.text?.trim() ?? null,
             status: "pending",
             isDeleted: false,
             isEdited: false,
@@ -148,60 +114,101 @@ export function useMessages({ chatId, receiverId }: UseSendMessageOptions) {
             updatedAt: new Date().toISOString(),
             clientMessageId,
             isOptimistic: true,
+
+            // Show local URI instantly for media
+            ...(draft.asset && {
+                file: {
+                    _id: clientMessageId,
+                    secureUrl: draft.asset.uri,
+                    type,
+                    metadata: {},
+                },
+            }),
+            ...(draft.location && { location: draft.location }),
+            ...(draft.contact && { contact: draft.contact }),
+            ...(draft.replyTo && { replyTo: draft.replyTo }),
         };
 
+        // ✅ Show message instantly
         addMessage(chatId ?? "", optimistic);
 
         try {
-            // ✅ Step 1 — Get upload signature
-            const { data: signature } = await axiosInstance.post("/files/signature", { type });
+            let fileId: string | undefined;
 
-            // ✅ Step 2 — Upload to Cloudinary (same pattern as profile picture)
-            const formData = new FormData() as any;
-            formData.append("file", {
-                uri: asset.uri,
-                type: asset.mimeType,
-                name: asset.fileName ?? `file.${asset.uri.split(".").pop()}`,
-            });
-            formData.append("signature", signature.signature);
-            formData.append("timestamp", signature.timestamp);
-            formData.append("api_key", signature.apiKey);
-            formData.append("folder", signature.folder);
-            formData.append("cloud_name", signature.cloudName);
+            // ── Upload media if exists ───────────────
+            if (draft.asset) {
+                // Step 1 — Get signature
+                const { data: signature } = await axiosInstance.post(
+                    "/files/signature",
+                    { type }
+                );
 
-            const { data: cloudinaryData } = await axiosInstance.post(
-                signature.uploadUrl,
-                formData,
-                { headers: { "Content-Type": "multipart/form-data" } }
-            );
+                // Step 2 — Upload to Cloudinary
+                const formData = new FormData() as any;
+                formData.append("file", {
+                    uri: draft.asset.uri,
+                    type: draft.asset.mimeType,
+                    name: draft.asset.fileName ?? `file.${draft.asset.uri.split(".").pop()}`,
+                });
+                formData.append("signature", signature.signature);
+                formData.append("timestamp", signature.timestamp);
+                formData.append("api_key", signature.apiKey);
+                formData.append("folder", signature.folder);
+                formData.append("cloud_name", signature.cloudName);
 
-            // ✅ Step 3 — Confirm file with server
-            const { data: fileData } = await axiosInstance.post("/files/confirm", {
-                cloudinaryData,
-                type,
-                chatId,
-            });
+                const { data: cloudinaryData } = await axiosInstance.post(
+                    signature.uploadUrl,
+                    formData,
+                    { headers: { "Content-Type": "multipart/form-data" } }
+                );
 
-            // ✅ Step 4 — Emit message with real fileId
+                // Step 3 — Confirm with server
+                const { data: fileData } = await axiosInstance.post("/files/confirm", {
+                    cloudinaryData,
+                    type,
+                    chatId,
+                });
+
+                fileId = fileData.fileId;
+
+                // ✅ Update optimistic message with real URL
+                replaceOptimistic(chatId ?? "", clientMessageId, {
+                    ...optimistic,
+                    file: {
+                        _id: fileId!,
+                        secureUrl: fileData.secureUrl,
+                        thumbnailUrl: fileData.thumbnailUrl,
+                        type,
+                        metadata: fileData.metadata,
+                    },
+                    isOptimistic: true, // still optimistic until server confirms
+                });
+            }
+
+            // ── Emit to server ───────────────────────
             socketService.emit(SOCKET_EVENTS.MESSAGE_SEND, {
                 chatId,
                 receiverId,
                 type,
-                fileId: fileData.fileId,
+                text: draft.text?.trim(),    // ✅ text alongside any type
+                fileId,
+                location: draft.location,
+                contact: draft.contact,
+                replyTo: draft.replyTo,
                 clientMessageId,
             } as SendMessagePayload);
 
         } catch (err) {
-            console.error("Failed to send media:", err);
-            // Mark optimistic message as failed
+            console.error("Failed to send message:", err);
+            // ✅ Mark as failed
             updateMessageStatus(chatId ?? "", clientMessageId, "failed");
         }
+
     }, [chatId, receiverId, user]);
 
     return {
         messages: chatMessages,
-        sendTextMessage,
-        sendMediaMessage,
+        sendMessage, // ✅ single function for everything
         fetchMessages,
     };
 }

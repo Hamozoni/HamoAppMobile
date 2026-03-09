@@ -4,19 +4,17 @@ import { Ionicons, FontAwesome6, Entypo } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import FooterAttachment from "./footerAttachment";
 import AudioRecorder from "./audioRecorder";
-import { MessageType } from "../../../types/components.types";
+import { MessageDraft } from "../../../types/message.types";
 
 interface ChatFooterProps {
     phoneNumber: string;
-    onSendText: (text: string) => void;
-    onSendMedia: (asset: any, type: MessageType) => void;
+    sendMessage: (draft: MessageDraft) => void;;
 }
 
 export default function ChatFooter(
     {
         phoneNumber,
-        onSendText,
-        onSendMedia
+        sendMessage
     }: ChatFooterProps) {
 
     const [keyboardHeight, setKeyboardHeight] = useState(336);
@@ -26,12 +24,6 @@ export default function ChatFooter(
     const router = useRouter();
 
     const [text, setText] = useState("");
-
-    const handleSend = () => {
-        if (!text.trim()) return;
-        onSendText(text.trim());
-        setText("");
-    };
 
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener(
