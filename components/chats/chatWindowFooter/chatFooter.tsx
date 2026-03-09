@@ -4,11 +4,11 @@ import { Ionicons, FontAwesome6, Entypo } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import FooterAttachment from "./footerAttachment";
 import AudioRecorder from "./audioRecorder";
-import { MessageDraft } from "../../../types/message.types";
+import { MessageDraft, MessageType } from "../../../types/message.types";
 
 interface ChatFooterProps {
     phoneNumber: string;
-    sendMessage: (draft: MessageDraft) => void;;
+    sendMessage: (draft: MessageDraft) => void;
 }
 
 export default function ChatFooter(
@@ -24,6 +24,22 @@ export default function ChatFooter(
     const router = useRouter();
 
     const [text, setText] = useState("");
+    const [asset, setAsset] = useState<any>(null);
+    const [assetType, setAssetType] = useState<MessageType>("image");
+
+    const handleSend = () => {
+        if (!text.trim() && !asset) return;
+
+        sendMessage({
+            text: text.trim() || undefined,
+            asset,
+            assetType,
+        });
+
+        // Reset
+        setText("");
+        setAsset(null);
+    };
 
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener(
