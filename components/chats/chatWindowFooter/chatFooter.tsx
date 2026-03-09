@@ -25,6 +25,14 @@ export default function ChatFooter(
     const textInputRef = useRef<TextInput>(null);
     const router = useRouter();
 
+    const [text, setText] = useState("");
+
+    const handleSend = () => {
+        if (!text.trim()) return;
+        onSendText(text.trim());
+        setText("");
+    };
+
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener(
             'keyboardDidShow',
@@ -74,6 +82,7 @@ export default function ChatFooter(
                     </TouchableOpacity>
                     <TextInput
                         ref={textInputRef}
+                        onChangeText={setText}
                         onFocus={() => setIsAttachment(false)}
                         placeholder="Type a message"
                         style={{ height: 40, paddingVertical: 0, flex: 1, borderWidth: 1, fontSize: 14, textAlignVertical: "center", borderColor: "#76787aff", borderRadius: 20, paddingHorizontal: 10 }}
