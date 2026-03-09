@@ -5,17 +5,28 @@ export type MessageType =
 export type MessageStatus =
     | "pending" | "sent" | "delivered" | "read" | "failed";
 
+
 export interface SendMessagePayload {
     chatId?: string;
     receiverId: string;
     type: MessageType;
-    text?: string;
+    text?: string;        // ✅ text can exist with any type
     fileId?: string;
     location?: { latitude: number; longitude: number; name?: string };
     contact?: { displayName: string; phoneNumber: string; avatar?: string };
     link?: { url: string; title?: string; description?: string; thumbnail?: string };
     replyTo?: { messageId: string; text?: string; type: string; senderId: string; fileId?: string };
     clientMessageId: string;
+}
+
+// What the user builds before sending
+export interface MessageDraft {
+    text?: string;
+    asset?: any;        // expo image/video/audio/document asset
+    assetType?: MessageType;
+    location?: { latitude: number; longitude: number; name?: string };
+    contact?: { displayName: string; phoneNumber: string; avatar?: string };
+    replyTo?: any;
 }
 
 export interface NewMessageData {
