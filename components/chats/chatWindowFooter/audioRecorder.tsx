@@ -15,9 +15,10 @@ const MISSED_RED = "#FF3B30";
 
 interface AudioRecorderProps {
     setIsAudioRecorder: (value: boolean) => void;
+    onSendAudio: (uri: string) => void; // ✅ new
 }
 
-export default function AudioRecorder({ setIsAudioRecorder }: AudioRecorderProps) {
+export default function AudioRecorder({ setIsAudioRecorder, onSendAudio }: AudioRecorderProps) {
     const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
     const recorderState = useAudioRecorderState(audioRecorder);
     const [recordUri, setRecordUri] = useState<string | null>(null);
@@ -137,7 +138,12 @@ export default function AudioRecorder({ setIsAudioRecorder }: AudioRecorderProps
 
                 {/* Send */}
                 <TouchableOpacity
-                    onPress={() => setIsAudioRecorder(false)}
+                    onPress={() => {
+                        if (recordUri) {
+                            onSendAudio(recordUri); // ✅ pass URI up
+                            setIsAudioRecorder(false);
+                        }
+                    }}
                     style={[styles.controlBtn, styles.sendBtn]}
                     disabled={!recordUri}
                     hitSlop={8}
