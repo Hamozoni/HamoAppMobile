@@ -5,11 +5,7 @@ import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import { useRouter } from "expo-router";
 import { Alert } from "react-native";
-
-interface FooterAttachmentProps {
-    keyboardHeight: number;
-    setIsAttachment: (value: boolean) => void;
-}
+import { MessageType } from "../../../types/message.types";
 
 interface AttachmentItem {
     id: number;
@@ -18,13 +14,23 @@ interface AttachmentItem {
     bgColor: string;
     icon: React.ReactNode;
     onPress: () => void;
+};
+
+interface FooterAttachmentProps {
+    keyboardHeight: number;
+    setIsAttachment: (value: boolean) => void;
+    onAssetPicked: (asset: any, type: MessageType) => void; // ✅ new
+    onLocationPick: () => void;                               // ✅ new
+    onContactPick: () => void;                               // ✅ new
 }
 
-export default function FooterAttachment(
-    {
-        keyboardHeight,
-        setIsAttachment
-    }: FooterAttachmentProps) {
+export default function FooterAttachment({
+    keyboardHeight,
+    setIsAttachment,
+    onAssetPicked,
+    onLocationPick,
+    onContactPick,
+}: FooterAttachmentProps) {
 
     const router = useRouter();
 
@@ -36,19 +42,31 @@ export default function FooterAttachment(
         }
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ["images", "videos"],
-            allowsMultipleSelection: true,
+            allowsMultipleSelection: false,
             quality: 1,
         });
         if (!result.canceled) {
-            // handle result.assets
+            const asset = result.assets[0];
+            const type = asset.type === "video" ? "video" : "image";
+            onAssetPicked(asset, type); // ✅ pass up
+            setIsAttachment(false);
         }
     };
 
     const pickDocument = async () => {
         try {
-            const result = await DocumentPicker.getDocumentAsync({ type: "application/pdf" });
+            const result = await DocumentPicker.getDocumentAsync({
+                type: "*/*",
+            });
             if (!result.canceled) {
-                // handle result.assets[0]
+                const doc = result.assets[0];
+                onAssetPicked({
+                    uri: doc.uri,
+                    mimeType: doc.mimeType,
+                    fileName: doc.name,
+                    size: doc.size,
+                }, "document"); // ✅ pass up
+                setIsAttachment(false);
             }
         } catch (e) {
             console.error("Document pick error:", e);
@@ -72,13 +90,13 @@ export default function FooterAttachment(
             id: 3, label: "Location",
             color: "#25D366", bgColor: "#D1FAE5",
             icon: <FontAwesome6 name="location-dot" size={24} color="#25D366" />,
-            onPress: () => router.push("/chats/location" as any),
+            onPress: () => { onLocationPick(); setIsAttachment(false); },
         },
         {
             id: 4, label: "Contact",
             color: "#8B5CF6", bgColor: "#EDE9FE",
             icon: <FontAwesome6 name="contact-book" size={24} color="#8B5CF6" />,
-            onPress: () => router.push("/chats/shareContacts" as any),
+            onPress: () => { onContactPick(); setIsAttachment(false); },
         },
         {
             id: 5, label: "Document",
