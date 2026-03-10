@@ -22,7 +22,14 @@ const ContactCard = ({ contact }: ContactCardProps) => {
 
     const handlePress = () => {
         if (isRegistered) {
-            router.push(`/chats/${contact.phoneNumber}`);
+            router.push({
+                pathname: "/chats/[phoneNumber]",
+                params: {
+                    phoneNumber: contact.phoneNumber,
+                    receiverId: contact._id,      // ✅ user's MongoDB _id
+                    chatId: contact.chatId! ?? "", // ✅ existing chatId or empty for new chat
+                }
+            } as any);
         }
     };
 

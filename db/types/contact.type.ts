@@ -7,4 +7,5 @@ export interface Contact {
     about: string | null;
     profilePicture: string | null;
     isRegistered: 0 | 1;
+    chatId?: string | null; // existing chat if any
 }
