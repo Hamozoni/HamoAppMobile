@@ -12,10 +12,11 @@ import socketService, { SOCKET_EVENTS } from "../services/socket.service";
 
 interface UseSendMessageOptions {
     chatId?: string;
-    receiverId: string;
+    receiverId?: string;
+    phoneNumber: string;  // ✅ always pass this
 }
 
-export function useMessages({ chatId, receiverId }: UseSendMessageOptions) {
+export function useMessages({ chatId, receiverId, phoneNumber }: UseSendMessageOptions) {
 
     const user = useAuthStore(state => state.user);
     const {
@@ -91,19 +92,17 @@ export function useMessages({ chatId, receiverId }: UseSendMessageOptions) {
 
         const clientMessageId = Crypto.randomUUID();
 
-        // ── Determine message type ───────────────────
         const type: MessageType =
             draft.asset ? (draft.assetType ?? "image") :
                 draft.location ? "location" :
                     draft.contact ? "contact" :
                         "text";
 
-        // ── Build optimistic message ─────────────────
         const optimistic: ILocalMessage = {
             _id: clientMessageId,
             chatId: chatId ?? "",
             senderId: user._id,
-            receiverId,
+            receiverId: receiverId ?? "",
             type,
             text: draft.text?.trim() ?? null,
             status: "pending",
@@ -114,8 +113,6 @@ export function useMessages({ chatId, receiverId }: UseSendMessageOptions) {
             updatedAt: new Date().toISOString(),
             clientMessageId,
             isOptimistic: true,
-
-            // Show local URI instantly for media
             ...(draft.asset && {
                 file: {
                     _id: clientMessageId,
@@ -129,21 +126,14 @@ export function useMessages({ chatId, receiverId }: UseSendMessageOptions) {
             ...(draft.replyTo && { replyTo: draft.replyTo }),
         };
 
-        // ✅ Show message instantly
-        addMessage(chatId ?? "", optimistic);
+        addMessage(chatId ?? phoneNumber, optimistic); // ✅ use phoneNumber as key if no chatId
 
         try {
             let fileId: string | undefined;
 
-            // ── Upload media if exists ───────────────
             if (draft.asset) {
-                // Step 1 — Get signature
-                const { data: signature } = await axiosInstance.post(
-                    "/files/signature",
-                    { type }
-                );
+                const { data: signature } = await axiosInstance.post("/files/signature", { type });
 
-                // Step 2 — Upload to Cloudinary
                 const formData = new FormData() as any;
                 formData.append("file", {
                     uri: draft.asset.uri,
@@ -157,40 +147,24 @@ export function useMessages({ chatId, receiverId }: UseSendMessageOptions) {
                 formData.append("cloud_name", signature.cloudName);
 
                 const { data: cloudinaryData } = await axiosInstance.post(
-                    signature.uploadUrl,
-                    formData,
+                    signature.uploadUrl, formData,
                     { headers: { "Content-Type": "multipart/form-data" } }
                 );
 
-                // Step 3 — Confirm with server
                 const { data: fileData } = await axiosInstance.post("/files/confirm", {
-                    cloudinaryData,
-                    type,
-                    chatId,
+                    cloudinaryData, type, chatId,
                 });
 
                 fileId = fileData.fileId;
-
-                // ✅ Update optimistic message with real URL
-                replaceOptimistic(chatId ?? "", clientMessageId, {
-                    ...optimistic,
-                    file: {
-                        _id: fileId!,
-                        secureUrl: fileData.secureUrl,
-                        thumbnailUrl: fileData.thumbnailUrl,
-                        type,
-                        metadata: fileData.metadata,
-                    },
-                    isOptimistic: true, // still optimistic until server confirms
-                });
             }
 
-            // ── Emit to server ───────────────────────
+            // ✅ Emit with both receiverId AND phoneNumber
             socketService.emit(SOCKET_EVENTS.MESSAGE_SEND, {
                 chatId,
                 receiverId,
+                phoneNumber,    // ✅ server uses this if no receiverId
                 type,
-                text: draft.text?.trim(),    // ✅ text alongside any type
+                text: draft.text?.trim(),
                 fileId,
                 location: draft.location,
                 contact: draft.contact,
@@ -200,15 +174,10 @@ export function useMessages({ chatId, receiverId }: UseSendMessageOptions) {
 
         } catch (err) {
             console.error("Failed to send message:", err);
-            // ✅ Mark as failed
-            updateMessageStatus(chatId ?? "", clientMessageId, "failed");
+            updateMessageStatus(chatId ?? phoneNumber, clientMessageId, "failed");
         }
 
-    }, [chatId, receiverId, user]);
+    }, [chatId, receiverId, phoneNumber, user]);
 
-    return {
-        messages: chatMessages,
-        sendMessage, // ✅ single function for everything
-        fetchMessages,
-    };
-}
+    return { messages: chatMessages, sendMessage, fetchMessages };
+};

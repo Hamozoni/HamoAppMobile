@@ -6,6 +6,7 @@ import { FlatList, StyleSheet, View } from "react-native";
 import { useMessages } from "../../../hooks/useMessage";
 
 export default function ChatDetails() {
+    const messagesFlatListRef = useRef<FlatList>(null);
 
     const { chatId, phoneNumber, receiverId } = useLocalSearchParams<{
         chatId: string;
@@ -13,11 +14,10 @@ export default function ChatDetails() {
         receiverId: string;
     }>();
 
-    const messagesFlatListRef = useRef<FlatList>(null);
-
     const { messages, sendMessage } = useMessages({
-        chatId,
-        receiverId,
+        chatId: chatId || undefined,
+        receiverId: receiverId || undefined,
+        phoneNumber,  // ✅ always passed
     });
 
     return (
