@@ -23,11 +23,9 @@ const ContactCard = ({ contact }: ContactCardProps) => {
     const handlePress = () => {
         if (isRegistered) {
             router.push({
-                pathname: `/chats/${contact.phoneNumber}`,
+                pathname: "/chats/[phoneNumber]",
                 params: {
-                    phoneNumber: contact.phoneNumber,
-                    receiverId: contact._id ?? "",
-                    chatId: contact.chatId ?? "",
+                    phoneNumber: contact.phoneNumber, // ✅ only this
                 }
             } as any);
         }

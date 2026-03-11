@@ -7,18 +7,11 @@ import { useMessages } from "../../../hooks/useMessage";
 
 export default function ChatDetails() {
     const messagesFlatListRef = useRef<FlatList>(null);
-
-    const { chatId, phoneNumber, receiverId } = useLocalSearchParams<{
-        chatId: string;
+    const { phoneNumber } = useLocalSearchParams<{
         phoneNumber: string;
-        receiverId: string;
     }>();
 
-    const { messages, sendMessage } = useMessages({
-        chatId: chatId || undefined,
-        receiverId: receiverId || undefined,
-        phoneNumber,  // ✅ always passed
-    });
+    const { messages, sendMessage } = useMessages({ phoneNumber });
 
     return (
         <View style={{ flex: 1, backgroundColor: "#fff" }}>

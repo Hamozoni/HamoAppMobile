@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import * as Crypto from "expo-crypto";
 import { useAuthStore } from "./store/useAuthStore";
 import {
@@ -9,67 +9,84 @@ import {
 import { useMessagesStore } from "./store/useMessageStore";
 import { axiosInstance } from "../lib/axios.config";
 import socketService, { SOCKET_EVENTS } from "../services/socket.service";
+import axios from "axios";
 
 interface UseSendMessageOptions {
-    chatId?: string;
-    receiverId?: string;
-    phoneNumber: string;  // ✅ always pass this
+    phoneNumber: string;
 }
 
-export function useMessages({ chatId, receiverId, phoneNumber }: UseSendMessageOptions) {
+export function useMessages({ phoneNumber }: UseSendMessageOptions) {
 
     const user = useAuthStore(state => state.user);
+    const [currentChatId, setCurrentChatId] = useState<string | undefined>(undefined);
+
     const {
         messages, addMessage, replaceOptimistic,
         updateMessageStatus, setMessages,
     } = useMessagesStore();
 
-    const chatMessages = messages[chatId ?? ""] ?? [];
+    const chatMessages = messages[currentChatId ?? phoneNumber] ?? [];
 
-    // ── Fetch initial messages ───────────────────
+    // ── Fetch messages ───────────────────────────
     const fetchMessages = useCallback(async () => {
-        if (!chatId) return;
-        try {
-            const { data } = await axiosInstance.get(`/messages/${chatId}`);
-            setMessages(chatId, data.messages);
-        } catch (err) {
-            console.error("Failed to fetch messages:", err);
+        if (!currentChatId) {
+            console.log("⚠️ No chatId yet — new chat");
+            return;
         }
-    }, [chatId]);
+        try {
+            console.log("📤 Fetching messages:", currentChatId);
+            const { data } = await axiosInstance.get(`/messages/${currentChatId}`);
+            console.log("✅ Messages fetched:", data.messages.length);
+            setMessages(currentChatId, data.messages);
+        } catch (err: any) {
+            console.error("Failed to fetch messages:", err.response?.status, err.response?.data);
+        }
+    }, [currentChatId]);
 
-    // ── Listen for incoming messages ─────────────
+    // ── New chat listener ────────────────────────
     useEffect(() => {
-        if (!chatId) return;
+        const handleNewChat = (chat: any) => {
+            console.log("🆕 New chat created:", chat._id);
+            setCurrentChatId(chat._id);
+            socketService.joinChat(chat._id);
+        };
 
-        // Join chat room
-        socketService.joinChat(chatId);
-        fetchMessages();
+        socketService.on("chat:new", handleNewChat);
+        return () => socketService.off("chat:new", handleNewChat);
+    }, []);
 
-        // Listen for new messages
+    // ── Message listeners ────────────────────────
+    useEffect(() => {
+        if (currentChatId) {
+            socketService.joinChat(currentChatId);
+            fetchMessages();
+        }
+
         const handleNewMessage = (data: NewMessageData) => {
-            if (data.chatId !== chatId) return;
+            if (data.chatId !== currentChatId) return;
+            const activeChatId = currentChatId ?? phoneNumber;
 
             if (data.clientMessageId) {
-                // ✅ Replace our optimistic message with real one
-                replaceOptimistic(chatId, data.clientMessageId, data.message);
+                replaceOptimistic(activeChatId, data.clientMessageId, {
+                    ...data.message,
+                    chatId: data.chatId,
+                });
             } else {
-                // ✅ Incoming message from other user
-                addMessage(chatId, data.message);
+                addMessage(activeChatId, data.message);
             }
         };
 
-        // Listen for status updates
         const handleDelivered = (data: any) => {
-            if (data.chatId !== chatId) return;
+            if (data.chatId !== currentChatId) return;
             if (data.messageId) {
-                updateMessageStatus(chatId, data.messageId, data.status);
+                updateMessageStatus(currentChatId ?? phoneNumber, data.messageId, data.status);
             }
         };
 
         const handleRead = (data: any) => {
-            if (data.chatId !== chatId) return;
+            if (data.chatId !== currentChatId) return;
             if (data.messageId) {
-                updateMessageStatus(chatId, data.messageId, "read");
+                updateMessageStatus(currentChatId ?? phoneNumber, data.messageId, "read");
             }
         };
 
@@ -78,14 +95,37 @@ export function useMessages({ chatId, receiverId, phoneNumber }: UseSendMessageO
         socketService.on(SOCKET_EVENTS.MESSAGE_READ, handleRead);
 
         return () => {
-            socketService.leaveChat(chatId);
+            if (currentChatId) socketService.leaveChat(currentChatId);
             socketService.off(SOCKET_EVENTS.MESSAGE_NEW, handleNewMessage);
             socketService.off(SOCKET_EVENTS.MESSAGE_DELIVERED, handleDelivered);
             socketService.off(SOCKET_EVENTS.MESSAGE_READ, handleRead);
         };
-    }, [chatId]);
+    }, [currentChatId]);
 
-    // ── Single send function handles everything ──────
+    // ── Fetch chat by phoneNumber on mount ───────
+    useEffect(() => {
+        const fetchChatByPhone = async () => {
+            try {
+                console.log("📤 Looking up chat for:", phoneNumber);
+                const { data } = await axiosInstance.get(`/chats/phone/${phoneNumber}`);
+                if (data?.chatId) {
+                    console.log("✅ Existing chat found:", data.chatId);
+                    setCurrentChatId(data.chatId);
+                } else {
+                    console.log("💬 No existing chat — will create on first message");
+                }
+            } catch (err: any) {
+                // 404 = no chat yet, that's fine
+                if (err.response?.status !== 404) {
+                    console.error("Failed to look up chat:", err.response?.status);
+                }
+            }
+        };
+
+        fetchChatByPhone();
+    }, [phoneNumber]);
+
+    // ── Send message ─────────────────────────────
     const sendMessage = useCallback(async (draft: MessageDraft) => {
         if (!user) return;
         if (!draft.text?.trim() && !draft.asset && !draft.location && !draft.contact) return;
@@ -100,9 +140,9 @@ export function useMessages({ chatId, receiverId, phoneNumber }: UseSendMessageO
 
         const optimistic: ILocalMessage = {
             _id: clientMessageId,
-            chatId: chatId ?? "",
+            chatId: currentChatId ?? "",
             senderId: user._id,
-            receiverId: receiverId ?? "",
+            receiverId: "",
             type,
             text: draft.text?.trim() ?? null,
             status: "pending",
@@ -113,26 +153,21 @@ export function useMessages({ chatId, receiverId, phoneNumber }: UseSendMessageO
             updatedAt: new Date().toISOString(),
             clientMessageId,
             isOptimistic: true,
-            ...(draft.asset && {
-                file: {
-                    _id: clientMessageId,
-                    secureUrl: draft.asset.uri,
-                    type,
-                    metadata: {},
-                },
-            }),
+            ...(draft.asset && { file: { _id: clientMessageId, secureUrl: draft.asset.uri, type, metadata: {} } }),
             ...(draft.location && { location: draft.location }),
             ...(draft.contact && { contact: draft.contact }),
             ...(draft.replyTo && { replyTo: draft.replyTo }),
         };
 
-        addMessage(chatId ?? phoneNumber, optimistic); // ✅ use phoneNumber as key if no chatId
+        addMessage(currentChatId ?? phoneNumber, optimistic);
 
         try {
             let fileId: string | undefined;
 
             if (draft.asset) {
+                console.log("📤 Getting signature...");
                 const { data: signature } = await axiosInstance.post("/files/signature", { type });
+                console.log("✅ Signature:", signature);
 
                 const formData = new FormData() as any;
                 formData.append("file", {
@@ -146,23 +181,25 @@ export function useMessages({ chatId, receiverId, phoneNumber }: UseSendMessageO
                 formData.append("folder", signature.folder);
                 formData.append("cloud_name", signature.cloudName);
 
-                const { data: cloudinaryData } = await axiosInstance.post(
-                    signature.uploadUrl, formData,
-                    { headers: { "Content-Type": "multipart/form-data" } }
-                );
+                console.log("📤 Uploading to Cloudinary...", signature.uploadUrl);
+                const { data: cloudinaryData } = await axios.post(signature.uploadUrl, formData);
+                console.log("✅ Cloudinary upload:", cloudinaryData.secure_url);
 
+                console.log("📤 Confirming file...");
                 const { data: fileData } = await axiosInstance.post("/files/confirm", {
-                    cloudinaryData, type, chatId,
+                    cloudinaryData,
+                    type,
+                    chatId: currentChatId,
                 });
+                console.log("✅ File confirmed:", fileData.fileId);
 
                 fileId = fileData.fileId;
             }
 
-            // ✅ Emit with both receiverId AND phoneNumber
+            console.log("📤 Emitting message...", { phoneNumber, type, fileId, clientMessageId });
             socketService.emit(SOCKET_EVENTS.MESSAGE_SEND, {
-                chatId,
-                receiverId,
-                phoneNumber,    // ✅ server uses this if no receiverId
+                chatId: currentChatId,
+                phoneNumber,                    // ✅ server resolves receiverId from this
                 type,
                 text: draft.text?.trim(),
                 fileId,
@@ -171,13 +208,19 @@ export function useMessages({ chatId, receiverId, phoneNumber }: UseSendMessageO
                 replyTo: draft.replyTo,
                 clientMessageId,
             } as SendMessagePayload);
+            console.log("✅ Message emitted");
 
         } catch (err) {
             console.error("Failed to send message:", err);
-            updateMessageStatus(chatId ?? phoneNumber, clientMessageId, "failed");
+            updateMessageStatus(currentChatId ?? phoneNumber, clientMessageId, "failed");
         }
 
-    }, [chatId, receiverId, phoneNumber, user]);
+    }, [currentChatId, phoneNumber, user]);
 
-    return { messages: chatMessages, sendMessage, fetchMessages };
-};
+    return {
+        messages: chatMessages,
+        sendMessage,
+        fetchMessages,
+        currentChatId,
+    };
+}

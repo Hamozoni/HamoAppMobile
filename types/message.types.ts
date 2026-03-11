@@ -8,9 +8,10 @@ export type MessageStatus =
 
 export interface SendMessagePayload {
     chatId?: string;
-    receiverId: string;
+    receiverId?: string;      // ✅ optional — server resolves from phoneNumber
+    phoneNumber?: string;      // ✅ optional — used when no receiverId
     type: MessageType;
-    text?: string;        // ✅ text can exist with any type
+    text?: string;
     fileId?: string;
     location?: { latitude: number; longitude: number; name?: string };
     contact?: { displayName: string; phoneNumber: string; avatar?: string };
