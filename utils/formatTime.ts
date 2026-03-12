@@ -8,3 +8,12 @@ export const formatTime = (seconds: number): string => {
     const remainingSeconds = Math.floor(seconds % 60);
     return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
 };
+
+export const formatMessageTime = (createdAt: string): string => {
+    const date = new Date(createdAt);
+    return date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+    });
+};

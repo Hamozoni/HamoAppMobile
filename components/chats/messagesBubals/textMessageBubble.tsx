@@ -11,7 +11,7 @@ interface TextMessageBubbleProps {
 export default function TextMessageBubble({ message, isMine }: TextMessageBubbleProps) {
     return (
         <View >
-            <Text style={{ color: message?.senderId ? "white" : "black", fontSize: 18, marginBottom: 10 }}>{message?.text}</Text>
+            <Text style={{ color: isMine ? "white" : "black", fontSize: 18, marginBottom: 10 }}>{message?.text}</Text>
         </View>
     );
 }

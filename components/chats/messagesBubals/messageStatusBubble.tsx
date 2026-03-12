@@ -2,6 +2,7 @@ import React from "react";
 import { Text, View } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { ILocalMessage } from "../../../types/message.types";
+import { formatMessageTime } from "../../../utils";
 
 
 
@@ -41,9 +42,9 @@ export default function MessageStatusBubble({ message, isMine }: MessageStatusBu
                     style={{
                         fontSize: 10,
                         fontWeight: "bold",
-                        color: "#ffffffff"
+                        color: isMine ? "#ecececff" : "#353535ff"
                     }}
-                >{message?.createdAt}
+                >{formatMessageTime(message?.createdAt)}
                 </Text>
                 <View >
                     {
