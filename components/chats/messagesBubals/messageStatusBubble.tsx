@@ -1,22 +1,19 @@
 import React from "react";
 import { Text, View } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { ILocalMessage } from "../../../types/message.types";
 
-interface Message {
-    type?: string;
-    senderId: number;
-    timestamp?: string;
-    status?: string;
-}
+
 
 interface MessageStatusBubbleProps {
-    message: Message;
+    message: ILocalMessage;
+    isMine: boolean
 }
 
-export default function MessageStatusBubble({ message }: MessageStatusBubbleProps) {
+export default function MessageStatusBubble({ message, isMine }: MessageStatusBubbleProps) {
     const isMedia = message?.type === "image" || message?.type === "video" || message?.type === "location";
 
-    if (message?.senderId === 1) {
+    if (message?.senderId) {
         return (
             <View
                 style={{
@@ -46,7 +43,7 @@ export default function MessageStatusBubble({ message }: MessageStatusBubbleProp
                         fontWeight: "bold",
                         color: "#ffffffff"
                     }}
-                >{message?.timestamp}
+                >{message?.createdAt}
                 </Text>
                 <View >
                     {

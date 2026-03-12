@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Image, ImageSourcePropType } from "react-native";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import Slider from "@react-native-community/slider";
 import { useAudioPlayer } from 'expo-audio';
 import { Ionicons } from "@expo/vector-icons";
 import MessageStatusBubble from "./messageStatusBubble";
+import { ILocalMessage } from "../../../types/message.types";
 
 interface Message {
     metadata?: {
@@ -15,12 +16,13 @@ interface Message {
 }
 
 interface AudioMessageBubbleProps {
-    message: Message;
+    message: ILocalMessage;
+    isMine: boolean
 }
 
-export default function AudioMessageBubble({ message }: AudioMessageBubbleProps) {
+export default function AudioMessageBubble({ message, isMine }: AudioMessageBubbleProps) {
 
-    const player = useAudioPlayer(message?.metadata?.url || '');
+    const player = useAudioPlayer(message?.file?.metadata?.url || '');
     const [isPlaying, setIsPlaying] = useState(false);
 
     function togglePlay() {
@@ -67,7 +69,8 @@ export default function AudioMessageBubble({ message }: AudioMessageBubbleProps)
                         {Math.floor(player.duration)}s
                     </Text>
                     <MessageStatusBubble
-                        message={message as any}
+                        message={message}
+                        isMine={isMine}
                     />
                 </View>
             </View>

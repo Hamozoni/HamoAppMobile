@@ -19,6 +19,8 @@ interface MessageCardProps {
 }
 
 export default function MessageCard({ message }: MessageCardProps) {
+
+    console.log({ message })
     const user = useAuthStore(state => state.user);
 
     // ✅ Compare senderId to logged-in user's _id

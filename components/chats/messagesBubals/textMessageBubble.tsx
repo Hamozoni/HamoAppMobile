@@ -1,19 +1,17 @@
 import React from "react";
 import { Text, View } from "react-native";
+import { ILocalMessage } from "../../../types/message.types";
 
-interface Message {
-    senderId: number;
-    text?: string;
-}
 
 interface TextMessageBubbleProps {
-    message: Message;
+    message: ILocalMessage;
+    isMine: boolean
 }
 
-export default function TextMessageBubble({ message }: TextMessageBubbleProps) {
+export default function TextMessageBubble({ message, isMine }: TextMessageBubbleProps) {
     return (
         <View >
-            <Text style={{ color: message?.senderId === 1 ? "white" : "black", fontSize: 18, marginBottom: 10 }}>{message?.text}</Text>
+            <Text style={{ color: message?.senderId ? "white" : "black", fontSize: 18, marginBottom: 10 }}>{message?.text}</Text>
         </View>
     );
 }

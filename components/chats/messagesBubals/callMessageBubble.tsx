@@ -1,66 +1,17 @@
-// import React from "react";
-// import { Text, View, TouchableOpacity } from "react-native";
-// import { RoundedBtn } from "../../buttons/roundedBtn";
-
-// interface Message {
-//     metadata?: {
-//         type: 'video' | 'voice';
-//         status: 'missed' | 'completed';
-//         duration?: string;
-//     };
-// }
-
-// interface CallMessageBubbleProps {
-//     message: Message;
-// }
-
-// export default function CallMessageBubble({ message }: CallMessageBubbleProps) {
-//     return (
-//         <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", gap: 10, minWidth: 180 }}>
-//             <View>
-//                 {
-//                     message?.metadata?.type === "video" ? (
-//                         <RoundedBtn
-//                             iconName="videocam"
-//                             size={24}
-//                         />
-//                     ) : (
-//                         <RoundedBtn
-//                             iconName="call"
-//                             size={24}
-//                         />
-//                     )
-//                 }
-//             </View>
-//             <View>
-//                 <Text style={{ fontSize: 16, fontWeight: "bold" }}>{message?.metadata?.type === "video" ? "Video Call" : "Voice Call"}</Text>
-//                 <Text style={{ fontSize: 12, fontWeight: "bold" }}>{message?.metadata?.status === "missed" ? "No Answer" : message?.metadata?.duration}</Text>
-//             </View>
-//         </TouchableOpacity>
-//     );
-// }
 
 import React from "react";
 import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { ILocalMessage } from "../../../types/message.types";
 
 const WA_GREEN = "#25D366";
 const MISSED_RED = "#FF3B30";
 
-interface Message {
-    metadata?: {
-        type: "video" | "voice";
-        status: "missed" | "completed";
-        duration?: string;
-    };
-    senderId?: number;
-    timestamp?: string;
-}
 
-export default function CallMessageBubble({ message }: { message: Message }) {
-    const isVideo = message?.metadata?.type === "video";
-    const isMissed = message?.metadata?.status === "missed";
-    const isMine = message?.senderId === 1;
+export default function CallMessageBubble({ message, isMine }: { message: ILocalMessage, isMine: boolean }) {
+    const isVideo = message?.file?.metadata?.type === "video";
+    const isMissed = message?.file?.metadata?.status === "missed";
+
 
     const iconColor = isMissed ? MISSED_RED : WA_GREEN;
     const arrowIcon = isMine ? "arrow-up" : "arrow-down";
@@ -84,7 +35,7 @@ export default function CallMessageBubble({ message }: { message: Message }) {
                 <View style={styles.statusRow}>
                     <Ionicons name={arrowIcon as any} size={12} color={iconColor} />
                     <Text style={[styles.statusText, { color: iconColor }]}>
-                        {isMissed ? "No answer" : message?.metadata?.duration}
+                        {isMissed ? "No answer" : message?.file?.metadata?.duration}
                     </Text>
                 </View>
             </View>
