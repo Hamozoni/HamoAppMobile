@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 import * as Crypto from "expo-crypto";
 import { useAuthStore } from "./store/useAuthStore";
 import {
@@ -55,6 +55,9 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
         return () => socketService.off("chat:new", handleNewChat);
     }, []);
 
+    const currentChatIdRef = useRef<string | undefined>(undefined);
+
+
     // ── Message listeners ────────────────────────
     useEffect(() => {
         if (currentChatId) {
@@ -62,19 +65,46 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
             fetchMessages();
         }
 
+        currentChatIdRef.current = currentChatId;
         const handleNewMessage = (data: NewMessageData) => {
-            if (data.chatId !== currentChatId) return;
-            const activeChatId = currentChatId ?? phoneNumber;
+            const activeChatId = currentChatIdRef.current; // ✅ always fresh value
 
-            if (data.clientMessageId) {
-                replaceOptimistic(activeChatId, data.clientMessageId, {
+            console.log("📨 MESSAGE_NEW received:", {
+                dataChatId: data.chatId,
+                currentChatId: activeChatId,
+                isOwnMessage: !!data.clientMessageId,
+            });
+
+            const isOwnMessage = !!data.clientMessageId;
+
+            if (isOwnMessage) {
+                const key = activeChatId ?? phoneNumber;
+                replaceOptimistic(key, data.clientMessageId!, {
                     ...data.message,
                     chatId: data.chatId,
                 });
-            } else {
+                if (!activeChatId && data.chatId) {
+                    setCurrentChatId(data.chatId);
+                    currentChatIdRef.current = data.chatId;
+                    socketService.joinChat(data.chatId);
+                }
+                return;
+            }
+
+            // Incoming from other user
+            if (!activeChatId) {
+                // New chat — accept and set chatId
+                setCurrentChatId(data.chatId);
+                currentChatIdRef.current = data.chatId;
+                socketService.joinChat(data.chatId);
+                addMessage(data.chatId, data.message);
+            } else if (data.chatId === activeChatId) {
                 addMessage(activeChatId, data.message);
+            } else {
+                console.log("⚠️ Ignoring — different chat");
             }
         };
+
 
         const handleDelivered = (data: any) => {
             if (data.chatId !== currentChatId) return;
