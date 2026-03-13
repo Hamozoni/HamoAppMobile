@@ -19,7 +19,7 @@ export default function ChatDetails() {
                 ref={messagesFlatListRef}
                 data={messages}
                 inverted
-                renderItem={({ item }) => <MessageCard message={item} />}
+                renderItem={({ item, index }) => <MessageCard message={item} prevMessage={messages[index + 1]} />}
                 keyExtractor={(item) =>
                     item.clientMessageId ?? item._id  // ✅ fixed — was item.id
                 }

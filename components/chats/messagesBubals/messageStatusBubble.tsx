@@ -46,17 +46,20 @@ export default function MessageStatusBubble({ message, isMine }: MessageStatusBu
                     }}
                 >{formatMessageTime(message?.createdAt)}
                 </Text>
-                <View >
-                    {
-                        message?.status === "sent" ? (
-                            <Ionicons name="checkmark-sharp" size={16} color="white" />
-                        ) : message?.status === "delivered" || message?.status === "readed" ? (
-                            <Ionicons name="checkmark-done-sharp" size={16} color={message?.status === "delivered" ? "white" : "#80e280ff"} />
-                        ) : (
-                            <Ionicons name="stopwatch-outline" size={16} color="white" />
-                        )
-                    }
-                </View>
+                {
+                    isMine &&
+                    <View >
+                        {
+                            message?.status === "sent" ? (
+                                <Ionicons name="checkmark-sharp" size={16} color="white" />
+                            ) : message?.status === "delivered" || message?.status === "readed" ? (
+                                <Ionicons name="checkmark-done-sharp" size={16} color={message?.status === "delivered" ? "white" : "#80e280ff"} />
+                            ) : (
+                                <Ionicons name="stopwatch-outline" size={16} color="white" />
+                            )
+                        }
+                    </View>
+                }
             </View>
         );
     }

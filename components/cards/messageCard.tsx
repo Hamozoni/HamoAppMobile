@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import {
     TextMessageBubble,
     ImageMessageBubble,
@@ -14,18 +14,21 @@ import React from "react";
 import { ILocalMessage } from "../../types/message.types";
 import { useAuthStore } from "../../hooks/store/useAuthStore";
 
+import { formatMessageDate, isSameDay } from "../../utils/formatTime";
+
 interface MessageCardProps {
     message: ILocalMessage;
+    prevMessage: ILocalMessage
 }
 
-export default function MessageCard({ message }: MessageCardProps) {
+export default function MessageCard({ message, prevMessage }: MessageCardProps) {
 
-    console.log({ message })
     const user = useAuthStore(state => state.user);
-
-    // ✅ Compare senderId to logged-in user's _id
     const isMine = message.senderId === user?._id ||
         (message.senderId as any)?._id === user?._id;
+
+    const showDateSeparator = !prevMessage ||
+        !isSameDay(message.createdAt, prevMessage.createdAt);
 
     const isMedia = ["image", "video", "sticker", "document", "location"].includes(message.type);
 
@@ -45,34 +48,61 @@ export default function MessageCard({ message }: MessageCardProps) {
     };
 
     return (
-        <View
-            style={{
-                marginVertical: 2,
-                alignSelf: isMine ? "flex-end" : "flex-start",  // ✅ side
-            }}
-        >
+
+        <>
+            {showDateSeparator && (
+                <View style={styles.dateSeparator}>
+                    <Text style={styles.dateText}>
+                        {formatMessageDate(message.createdAt)}
+                    </Text>
+                </View>
+            )}
             <View
                 style={{
-                    backgroundColor:
-                        message.type === "sticker" ? "transparent" :
-                            isMine ? "#25D366" : "#fff",              // ✅ color
-                    borderRadius: 10,
-                    padding: isMedia ? 0 : 10,
-                    minWidth: 30,
-                    maxWidth: "88%",
-                    // ✅ shadow for received messages
-                    shadowColor: "#000",
-                    shadowOffset: { width: 0, height: 1 },
-                    shadowOpacity: 0.08,
-                    shadowRadius: 2,
-                    elevation: 1,
+                    marginVertical: 2,
+                    alignSelf: isMine ? "flex-end" : "flex-start",  // ✅ side
                 }}
             >
-                <MessagesBubble />
-                {(message.type !== "call" && message.type !== "audio") && (
-                    <MessageStatusBubble message={message} isMine={isMine} />
-                )}
+                <View
+                    style={{
+                        backgroundColor:
+                            message.type === "sticker" ? "transparent" :
+                                isMine ? "#0c5679ff" : "#fff",              // ✅ color
+                        borderRadius: 10,
+                        padding: isMedia ? 0 : 10,
+                        minWidth: 30,
+                        maxWidth: "88%",
+                        // ✅ shadow for received messages
+                        shadowColor: "#000",
+                        shadowOffset: { width: 0, height: 1 },
+                        shadowOpacity: 0.08,
+                        shadowRadius: 2,
+                        elevation: 1,
+                    }}
+                >
+                    <MessagesBubble />
+                    {(message.type !== "call" && message.type !== "audio") && (
+                        <MessageStatusBubble message={message} isMine={isMine} />
+                    )}
+                </View>
             </View>
-        </View>
+        </>
     );
-}
+};
+
+
+const styles = StyleSheet.create({
+    dateSeparator: {
+        alignSelf: "center",
+        backgroundColor: "#e2e8f0",
+        borderRadius: 12,
+        paddingHorizontal: 12,
+        paddingVertical: 4,
+        marginVertical: 12,
+    },
+    dateText: {
+        fontSize: 12,
+        fontWeight: "600",
+        color: "#667781",
+    },
+});
