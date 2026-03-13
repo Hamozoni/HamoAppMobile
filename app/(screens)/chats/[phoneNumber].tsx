@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import { useLocalSearchParams } from "expo-router";
 import ChatFooter from "../../../components/chats/chatWindowFooter/chatFooter";
 import MessageCard from "../../../components/cards/messageCard";
@@ -12,20 +12,28 @@ export default function ChatDetails() {
     }>();
 
     const { messages, sendMessage } = useMessages({ phoneNumber });
-
     return (
         <View style={{ flex: 1, backgroundColor: "#fff" }}>
+
             <FlatList
-                ref={messagesFlatListRef}
                 data={messages}
-                inverted
-                renderItem={({ item, index }) => <MessageCard message={item} prevMessage={messages[index + 1]} />}
-                keyExtractor={(item) =>
-                    item.clientMessageId ?? item._id  // ✅ fixed — was item.id
-                }
+                renderItem={({ item, index }) => (
+                    <MessageCard
+                        message={item}
+                        prevMessage={messages[index - 1]}  // ✅ use reversedMessages directly
+                    />
+                )}
+                keyExtractor={(item) => item.clientMessageId ?? item._id}
                 contentContainerStyle={styles.container}
                 showsVerticalScrollIndicator={false}
+                ref={messagesFlatListRef}
                 style={{ flex: 1, padding: 16 }}
+                onContentSizeChange={() =>
+                    messagesFlatListRef.current?.scrollToEnd({ animated: false })
+                }
+                onLayout={() =>
+                    messagesFlatListRef.current?.scrollToEnd({ animated: false })
+                }
             />
             <ChatFooter
                 phoneNumber={phoneNumber}
