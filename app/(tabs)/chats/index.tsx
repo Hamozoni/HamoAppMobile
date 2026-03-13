@@ -3,21 +3,16 @@ import {
     View, Text, ScrollView, TouchableOpacity,
     StyleSheet, Dimensions, FlatList,
 } from "react-native";
-import Animated, { useAnimatedStyle, withSpring, FadeIn, FadeOut } from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { Stack, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { ChatCard } from "../../../components/cards/chatCard";
 import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";
-import { CHATS } from "../../../constants/chats";
-import { Chat } from "../../../types/components.types";
-import { RoundedBtn } from "../../../components/buttons/roundedBtn";
-import ThemedViewContainer from "../../../components/themedViews/ThemedViewContainer";
-import Separator from "../../../components/ui/separator";
+import { useChats, IChat } from "../../../hooks/api/useChatsApi";
 
 const { width } = Dimensions.get("window");
 const WA_GREEN = "#25D366";
 const WA_DARK = "#075E54";
-const PAGE_BG = "#F0F2F5";
 const TEXT_PRIMARY = "#111B21";
 const TEXT_SECONDARY = "#667781";
 
@@ -28,6 +23,8 @@ const Chats = () => {
     const [activeFilter, setActiveFilter] = useState("All");
     const [isEdit, setIsEdit] = useState(false);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+    const { chats, loading, fetchChats } = useChats();
 
     const handleEdit = () => {
         setIsEdit(prev => !prev);
@@ -43,12 +40,13 @@ const Chats = () => {
     };
 
     const filteredChats = useMemo(() => {
-        if (activeFilter === "Unread") return CHATS.filter(c => (c.unreadCount ?? 0) > 0);
-        return CHATS;
-    }, [activeFilter]);
+        if (activeFilter === "Unread") return chats.filter(c => c.unreadCount > 0);
+        if (activeFilter === "Groups") return chats.filter(c => c.isGroup);
+        return chats;
+    }, [activeFilter, chats]);
 
     return (
-        <ThemedSafeAreaView >
+        <ThemedSafeAreaView>
             <Stack.Screen
                 options={{
                     headerLeft: () => (
@@ -59,17 +57,23 @@ const Chats = () => {
                         </TouchableOpacity>
                     ),
                     headerRight: () => !isEdit ? (
-                        <TouchableOpacity style={{ paddingHorizontal: 5 }} onPress={() => router.push("/chats/contacts" as any)}>
+                        <TouchableOpacity
+                            style={{ paddingHorizontal: 5 }}
+                            onPress={() => router.push("/chats/contacts" as any)}
+                        >
                             <Ionicons name="create-outline" size={24} color={WA_DARK} />
                         </TouchableOpacity>
                     ) : null,
                 }}
             />
+
             <FlatList
-                data={filteredChats as Chat[]}
-                keyExtractor={(item) => item.id.toString()}
+                data={filteredChats}
+                keyExtractor={(item) => item._id}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.listContent}
+                refreshing={loading}
+                onRefresh={fetchChats}
 
                 ListHeaderComponent={() => (
                     <>
@@ -119,23 +123,24 @@ const Chats = () => {
                         index === filteredChats.length - 1 && styles.cardLast,
                     ]}>
                         <ChatCard
-                            chat={item}
-                            isSelected={selectedIds.has(item.id.toString())}
+                            chat={item as any}
+                            isSelected={selectedIds.has(item._id)}
                             isEditMode={isEdit}
-                            onSelect={() => handleSelect(item.id.toString())}
+                            onSelect={() => handleSelect(item._id)}
                         />
                     </View>
-
                 )}
 
                 ListEmptyComponent={
-                    <View style={styles.empty}>
-                        <Ionicons name="chatbubbles-outline" size={64} color="#CBD5E1" />
-                        <Text style={styles.emptyTitle}>No chats yet</Text>
-                        <Text style={styles.emptySubtitle}>
-                            Start a conversation by tapping the compose icon
-                        </Text>
-                    </View>
+                    !loading ? (
+                        <View style={styles.empty}>
+                            <Ionicons name="chatbubbles-outline" size={64} color="#CBD5E1" />
+                            <Text style={styles.emptyTitle}>No chats yet</Text>
+                            <Text style={styles.emptySubtitle}>
+                                Start a conversation by tapping the compose icon
+                            </Text>
+                        </View>
+                    ) : null
                 }
             />
 
@@ -154,7 +159,10 @@ const Chats = () => {
                         <Ionicons name="checkmark-done-outline" size={20} color={WA_GREEN} />
                         <Text style={[styles.editActionText, { color: WA_GREEN }]}>Read all</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.editAction} disabled={selectedIds.size === 0}>
+                    <TouchableOpacity
+                        style={styles.editAction}
+                        disabled={selectedIds.size === 0}
+                    >
                         <Ionicons
                             name="trash-outline"
                             size={20}
@@ -162,15 +170,13 @@ const Chats = () => {
                         />
                         <Text style={[
                             styles.editActionText,
-                            { color: selectedIds.size > 0 ? "#FF3B30" : "#C8C8C8" }
+                            { color: selectedIds.size > 0 ? "#FF3B30" : "#C8C8C8" },
                         ]}>
                             Delete {selectedIds.size > 0 ? `(${selectedIds.size})` : ""}
                         </Text>
                     </TouchableOpacity>
                 </Animated.View>
             )}
-
-
         </ThemedSafeAreaView>
     );
 };
@@ -178,18 +184,13 @@ const Chats = () => {
 const styles = StyleSheet.create({
     listContent: {
         paddingBottom: 100,
-        // flex: 1
     },
-
-    // ── Header ───────────────────────────────────
     headerBtn: {
         fontSize: 18,
         color: WA_DARK,
         fontWeight: "600",
-        paddingHorizontal: 5
+        paddingHorizontal: 5,
     },
-
-    // ── Filters ──────────────────────────────────
     filtersRow: {
         paddingHorizontal: 20,
         paddingVertical: 10,
@@ -215,15 +216,13 @@ const styles = StyleSheet.create({
     filterTextActive: {
         color: "#fff",
     },
-
-    // ── Section label ─────────────────────────────
     sectionHeader: {
         flexDirection: "row",
         alignItems: "center",
         gap: 8,
         paddingHorizontal: 20,
         paddingBottom: 8,
-        marginBottom: 15
+        marginBottom: 15,
     },
     sectionDot: {
         width: 7,
@@ -237,8 +236,6 @@ const styles = StyleSheet.create({
         color: TEXT_SECONDARY,
         letterSpacing: 0.5,
     },
-
-    // ── Card grouping ─────────────────────────────
     cardWrapper: {
         backgroundColor: "#fff",
         marginHorizontal: 10,
@@ -252,8 +249,6 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: 14,
         borderBottomRightRadius: 14,
     },
-
-    // ── Empty ─────────────────────────────────────
     empty: {
         alignItems: "center",
         paddingTop: 80,
@@ -272,8 +267,6 @@ const styles = StyleSheet.create({
         textAlign: "center",
         lineHeight: 20,
     },
-
-    // ── Edit bar ──────────────────────────────────
     editBar: {
         position: "absolute",
         bottom: 0,

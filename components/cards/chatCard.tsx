@@ -66,7 +66,10 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect }: ChatCardPro
 
     return (
         <TouchableOpacity
-            onPress={() => isEditMode ? onSelect?.() : router.push(`/chats/${chat.id}` as any)}
+            onPress={() => isEditMode ? onSelect?.() : router.push({
+                pathname: "/chats/[phoneNumber]",
+                params: { phoneNumber: chat?.contact?.phoneNumber },
+            } as any)}
             onLongPress={onSelect}
             activeOpacity={0.6}
             style={styles.row}
