@@ -10,6 +10,8 @@ import { useMessagesStore } from "./store/useMessageStore";
 import { axiosInstance } from "../lib/axios.config";
 import socketService, { SOCKET_EVENTS } from "../services/socket.service";
 import axios from "axios";
+import { formatMessageTime } from "../utils";
+import { useChatsStore } from "./store/useChatsStore";
 
 interface UseSendMessageOptions {
     phoneNumber: string;
@@ -19,35 +21,83 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
 
     const user = useAuthStore(state => state.user);
     const [currentChatId, setCurrentChatId] = useState<string | undefined>(undefined);
+    const currentChatIdRef = useRef<string | undefined>(undefined);
 
     const {
         messages, addMessage, replaceOptimistic,
         updateMessageStatus, setMessages,
     } = useMessagesStore();
 
+    const { updateLastMessage, incrementUnread } = useChatsStore();
+
     const chatMessages = messages[currentChatId ?? phoneNumber] ?? [];
 
-    // ── Fetch messages ───────────────────────────
+    // ── Keep ref in sync with state ──────────────
+    useEffect(() => {
+        currentChatIdRef.current = currentChatId;
+    }, [currentChatId]);
+
+    // ── Helper: update chat list preview ─────────
+    const updateChatPreview = useCallback((
+        chatId: string,
+        message: ILocalMessage,
+        isMine: boolean
+    ) => {
+        updateLastMessage(chatId, {
+            type: message.type,
+            text: message.text ?? null,
+            createdAt: formatMessageTime(message.createdAt),
+            rawTime: new Date(message.createdAt).getTime(),
+            isMine,
+            isRead: false,
+        });
+    }, [updateLastMessage]);
+
+    // ── Fetch messages ────────────────────────────
     const fetchMessages = useCallback(async () => {
-        if (!currentChatId) {
+        if (!currentChatIdRef.current) {
             console.log("⚠️ No chatId yet — new chat");
             return;
         }
         try {
-            console.log("📤 Fetching messages:", currentChatId);
-            const { data } = await axiosInstance.get(`/messages/${currentChatId}`);
+            console.log("📤 Fetching messages:", currentChatIdRef.current);
+            const { data } = await axiosInstance.get(`/messages/${currentChatIdRef.current}`);
             console.log("✅ Messages fetched:", data.messages.length);
-            setMessages(currentChatId, data.messages);
+            setMessages(currentChatIdRef.current, data.messages);
         } catch (err: any) {
             console.error("Failed to fetch messages:", err.response?.status, err.response?.data);
         }
-    }, [currentChatId]);
+    }, []);
 
-    // ── New chat listener ────────────────────────
+    // ── Fetch chat by phoneNumber on mount ────────
+    useEffect(() => {
+        const fetchChatByPhone = async () => {
+            try {
+                console.log("📤 Looking up chat for:", phoneNumber);
+                const { data } = await axiosInstance.get(`/chats/phone/${phoneNumber}`);
+                if (data?.chatId) {
+                    console.log("✅ Existing chat found:", data.chatId);
+                    setCurrentChatId(data.chatId);
+                    currentChatIdRef.current = data.chatId;
+                } else {
+                    console.log("💬 No existing chat — will create on first message");
+                }
+            } catch (err: any) {
+                if (err.response?.status !== 404) {
+                    console.error("Failed to look up chat:", err.response?.status);
+                }
+            }
+        };
+
+        fetchChatByPhone();
+    }, [phoneNumber]);
+
+    // ── New chat created listener ─────────────────
     useEffect(() => {
         const handleNewChat = (chat: any) => {
             console.log("🆕 New chat created:", chat._id);
             setCurrentChatId(chat._id);
+            currentChatIdRef.current = chat._id;
             socketService.joinChat(chat._id);
         };
 
@@ -55,23 +105,19 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
         return () => socketService.off("chat:new", handleNewChat);
     }, []);
 
-    const currentChatIdRef = useRef<string | undefined>(undefined);
-
-
-    // ── Message listeners ────────────────────────
+    // ── Message listeners ─────────────────────────
     useEffect(() => {
         if (currentChatId) {
             socketService.joinChat(currentChatId);
             fetchMessages();
         }
 
-        currentChatIdRef.current = currentChatId;
         const handleNewMessage = (data: NewMessageData) => {
-            const activeChatId = currentChatIdRef.current; // ✅ always fresh value
+            const activeChatId = currentChatIdRef.current;
 
             console.log("📨 MESSAGE_NEW received:", {
                 dataChatId: data.chatId,
-                currentChatId: activeChatId,
+                activeChatId,
                 isOwnMessage: !!data.clientMessageId,
             });
 
@@ -83,6 +129,9 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
                     ...data.message,
                     chatId: data.chatId,
                 });
+                // ✅ update chat preview for sent message
+                updateChatPreview(data.chatId, data.message, true);
+
                 if (!activeChatId && data.chatId) {
                     setCurrentChatId(data.chatId);
                     currentChatIdRef.current = data.chatId;
@@ -91,9 +140,8 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
                 return;
             }
 
-            // Incoming from other user
+            // ── Incoming from other user ──────────
             if (!activeChatId) {
-                // New chat — accept and set chatId
                 setCurrentChatId(data.chatId);
                 currentChatIdRef.current = data.chatId;
                 socketService.joinChat(data.chatId);
@@ -102,21 +150,27 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
                 addMessage(activeChatId, data.message);
             } else {
                 console.log("⚠️ Ignoring — different chat");
+                return;
             }
+
+            // ✅ update chat preview for received message
+            updateChatPreview(data.chatId, data.message, false);
+            incrementUnread(data.chatId);
         };
 
-
         const handleDelivered = (data: any) => {
-            if (data.chatId !== currentChatId) return;
+            const activeChatId = currentChatIdRef.current;
+            if (!activeChatId || data.chatId !== activeChatId) return;
             if (data.messageId) {
-                updateMessageStatus(currentChatId ?? phoneNumber, data.messageId, data.status);
+                updateMessageStatus(activeChatId, data.messageId, data.status);
             }
         };
 
         const handleRead = (data: any) => {
-            if (data.chatId !== currentChatId) return;
+            const activeChatId = currentChatIdRef.current;
+            if (!activeChatId || data.chatId !== activeChatId) return;
             if (data.messageId) {
-                updateMessageStatus(currentChatId ?? phoneNumber, data.messageId, "read");
+                updateMessageStatus(activeChatId, data.messageId, "read");
             }
         };
 
@@ -132,45 +186,23 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
         };
     }, [currentChatId]);
 
-    // ── Fetch chat by phoneNumber on mount ───────
-    useEffect(() => {
-        const fetchChatByPhone = async () => {
-            try {
-                console.log("📤 Looking up chat for:", phoneNumber);
-                const { data } = await axiosInstance.get(`/chats/phone/${phoneNumber}`);
-                if (data?.chatId) {
-                    console.log("✅ Existing chat found:", data.chatId);
-                    setCurrentChatId(data.chatId);
-                } else {
-                    console.log("💬 No existing chat — will create on first message");
-                }
-            } catch (err: any) {
-                // 404 = no chat yet, that's fine
-                if (err.response?.status !== 404) {
-                    console.error("Failed to look up chat:", err.response?.status);
-                }
-            }
-        };
-
-        fetchChatByPhone();
-    }, [phoneNumber]);
-
-    // ── Send message ─────────────────────────────
+    // ── Send message ──────────────────────────────
     const sendMessage = useCallback(async (draft: MessageDraft) => {
         if (!user) return;
         if (!draft.text?.trim() && !draft.asset && !draft.location && !draft.contact) return;
 
         const clientMessageId = Crypto.randomUUID();
-
         const type: MessageType =
             draft.asset ? (draft.assetType ?? "image") :
                 draft.location ? "location" :
                     draft.contact ? "contact" :
                         "text";
 
+        const now = new Date().toISOString();
+
         const optimistic: ILocalMessage = {
             _id: clientMessageId,
-            chatId: currentChatId ?? "",
+            chatId: currentChatIdRef.current ?? "",
             senderId: user._id,
             receiverId: "",
             type,
@@ -179,8 +211,8 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
             isDeleted: false,
             isEdited: false,
             isStarred: false,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            createdAt: now,
+            updatedAt: now,
             clientMessageId,
             isOptimistic: true,
             ...(draft.asset && { file: { _id: clientMessageId, secureUrl: draft.asset.uri, type, metadata: {} } }),
@@ -189,7 +221,20 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
             ...(draft.replyTo && { replyTo: draft.replyTo }),
         };
 
-        addMessage(currentChatId ?? phoneNumber, optimistic);
+        const storeKey = currentChatIdRef.current ?? phoneNumber;
+        addMessage(storeKey, optimistic);
+
+        // ✅ Optimistically update chat list preview
+        if (currentChatIdRef.current) {
+            updateLastMessage(currentChatIdRef.current, {
+                type,
+                text: draft.text?.trim() ?? null,
+                createdAt: formatMessageTime(now),
+                rawTime: Date.now(),
+                isMine: true,
+                isRead: false,
+            });
+        }
 
         try {
             let fileId: string | undefined;
@@ -219,7 +264,7 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
                 const { data: fileData } = await axiosInstance.post("/files/confirm", {
                     cloudinaryData,
                     type,
-                    chatId: currentChatId,
+                    chatId: currentChatIdRef.current,
                 });
                 console.log("✅ File confirmed:", fileData.fileId);
 
@@ -228,8 +273,8 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
 
             console.log("📤 Emitting message...", { phoneNumber, type, fileId, clientMessageId });
             socketService.emit(SOCKET_EVENTS.MESSAGE_SEND, {
-                chatId: currentChatId,
-                phoneNumber,                    // ✅ server resolves receiverId from this
+                chatId: currentChatIdRef.current,
+                phoneNumber,
                 type,
                 text: draft.text?.trim(),
                 fileId,
@@ -242,10 +287,10 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
 
         } catch (err) {
             console.error("Failed to send message:", err);
-            updateMessageStatus(currentChatId ?? phoneNumber, clientMessageId, "failed");
+            updateMessageStatus(storeKey, clientMessageId, "failed");
         }
 
-    }, [currentChatId, phoneNumber, user]);
+    }, [phoneNumber, user]);
 
     return {
         messages: chatMessages,

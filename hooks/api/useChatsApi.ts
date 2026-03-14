@@ -1,20 +1,17 @@
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { axiosInstance } from "../../lib/axios.config";
+import { useChatsStore } from "../store/useChatsStore";
 
 export interface IChat {
     _id: string;
     isGroup: boolean;
     groupName?: string;
-    contact: {
-        _id: string;
-        displayName: string;
-        phoneNumber: string;
-        photoURL: string | null;
-    };
+    contactId: string | null;
     lastMessage: {
         type: string;
         text: string | null;
         createdAt: string;
+        rawTime: number;        // ✅ timestamp for sorting
         isMine: boolean;
         isRead: boolean;
     };
@@ -25,9 +22,8 @@ export interface IChat {
 }
 
 export function useChats() {
-    const [chats, setChats] = useState<IChat[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const { chats, setChats } = useChatsStore();
+    const [loading, setLoading] = useState(false);
 
     const fetchChats = useCallback(async () => {
         try {
@@ -36,7 +32,6 @@ export function useChats() {
             setChats(data.chats);
         } catch (err: any) {
             console.error("Failed to fetch chats:", err.response?.status);
-            setError("Failed to load chats");
         } finally {
             setLoading(false);
         }
@@ -46,5 +41,5 @@ export function useChats() {
         fetchChats();
     }, []);
 
-    return { chats, loading, error, fetchChats };
+    return { chats, loading, fetchChats };
 }

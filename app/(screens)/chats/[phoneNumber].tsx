@@ -18,9 +18,7 @@ export default function ChatDetails() {
     // ✅ Scroll to bottom when messages change
     useEffect(() => {
         if (reversedMessages.length > 0) {
-            setTimeout(() => {
-                flatListRef.current?.scrollToEnd({ animated: true });
-            }, 100);
+            flatListRef.current?.scrollToEnd({ animated: false });
         }
     }, [reversedMessages.length]);
     return (
