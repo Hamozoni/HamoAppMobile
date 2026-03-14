@@ -21,7 +21,7 @@ export const useMessagesStore = create<MessagesState>((set) => ({
         set(state => ({
             messages: {
                 ...state.messages,
-                [chatId]: [message, ...(state.messages[chatId] ?? [])],
+                [chatId]: [...(state.messages[chatId] ?? []), message],
             },
         })),
 

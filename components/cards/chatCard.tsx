@@ -94,7 +94,7 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: Ch
             <View style={styles.content}>
                 <View style={styles.topRow}>
                     <Text style={styles.name} numberOfLines={1}>
-                        {contact.displayName || chat.contact.displayName}
+                        {contact?.displayName || chat.contact.displayName}
                     </Text>
                     <Text style={[styles.time, hasUnread && styles.timeUnread]}>
                         {chat.lastMessage?.createdAt}
