@@ -9,6 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { ChatCard } from "../../../components/cards/chatCard";
 import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";
 import { useChats, IChat } from "../../../hooks/api/useChatsApi";
+import { useContactsStore } from "../../../hooks/store/useContactsStore";
 
 const { width } = Dimensions.get("window");
 const WA_GREEN = "#25D366";
@@ -25,6 +26,7 @@ const Chats = () => {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
     const { chats, loading, fetchChats } = useChats();
+    const registered = useContactsStore(state => state.registered);
 
     const handleEdit = () => {
         setIsEdit(prev => !prev);
@@ -125,6 +127,7 @@ const Chats = () => {
                         <ChatCard
                             chat={item as any}
                             isSelected={selectedIds.has(item._id)}
+                            contact={registered.find(e => e?._id === item.contact?._id)}
                             isEditMode={isEdit}
                             onSelect={() => handleSelect(item._id)}
                         />

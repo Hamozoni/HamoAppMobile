@@ -12,6 +12,7 @@ interface ChatCardProps {
     isSelected?: boolean;
     isEditMode?: boolean;
     onSelect?: () => void;
+    contact: any
 }
 
 // Config for each message type
@@ -60,7 +61,9 @@ const MessagePreview = ({ lastMessage }: { lastMessage: Chat["lastMessage"] }) =
     );
 };
 
-export const ChatCard = ({ chat, isSelected, isEditMode, onSelect }: ChatCardProps) => {
+export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: ChatCardProps) => {
+
+    console.log(contact)
     const router = useRouter();
     const hasUnread = (chat.unreadCount ?? 0) > 0;
 
@@ -83,7 +86,7 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect }: ChatCardPro
 
             {/* Avatar + online dot */}
             <View style={styles.avatarWrapper}>
-                <Image source={{ uri: chat.contact.photoURL as string }} style={styles.avatar} />
+                <Image source={{ uri: contact?.profilePicture as string }} style={styles.avatar} />
                 {chat.isOnline && <View style={styles.onlineDot} />}
             </View>
 
@@ -91,7 +94,7 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect }: ChatCardPro
             <View style={styles.content}>
                 <View style={styles.topRow}>
                     <Text style={styles.name} numberOfLines={1}>
-                        {chat.contact.displayName}
+                        {contact.displayName || chat.contact.displayName}
                     </Text>
                     <Text style={[styles.time, hasUnread && styles.timeUnread]}>
                         {chat.lastMessage?.createdAt}
