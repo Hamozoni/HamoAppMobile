@@ -127,13 +127,16 @@ export default function LocationScreen() {
 
     // Send current location
     const sendLocation = () => {
-        if (location) {
-            console.log('Sending location:', {
+        if (!location) return;
+
+        router.back();
+        router.setParams({
+            pendingLocation: JSON.stringify({
                 latitude: location.coords.latitude,
                 longitude: location.coords.longitude,
-            });
-            router.back();
-        }
+                name: `${location.coords.latitude.toFixed(5)}, ${location.coords.longitude.toFixed(5)}`,
+            }),
+        });
     };
 
     // Go to user's current location

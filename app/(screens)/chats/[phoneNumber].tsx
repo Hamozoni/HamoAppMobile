@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef } from "react";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import ChatFooter from "../../../components/chats/chatWindowFooter/chatFooter";
 import MessageCard from "../../../components/cards/messageCard";
 import { FlatList, StyleSheet, View } from "react-native";
@@ -7,9 +7,12 @@ import { useMessages } from "../../../hooks/useMessage";
 
 export default function ChatDetails() {
 
-    const { phoneNumber } = useLocalSearchParams<{
+    const { phoneNumber, pendingLocation } = useLocalSearchParams<{
         phoneNumber: string;
+        pendingLocation: string;
     }>();
+
+    const router = useRouter()
 
     const { messages, sendMessage } = useMessages({ phoneNumber });
 
@@ -21,6 +24,18 @@ export default function ChatDetails() {
             flatListRef.current?.scrollToEnd({ animated: false });
         }
     }, [reversedMessages.length]);
+
+    useEffect(() => {
+        if (!pendingLocation) return;
+        try {
+            const location = JSON.parse(pendingLocation);
+            sendMessage({ location });
+            router.setParams({ pendingLocation: "" }); // ✅ clear after sending
+        } catch (e) {
+            console.error("Failed to parse location:", e);
+        }
+    }, [pendingLocation]);
+
     return (
         <View style={{ flex: 1, backgroundColor: "#fff" }}>
 
