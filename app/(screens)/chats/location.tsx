@@ -15,6 +15,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
+import { usePendingStore } from '../../../hooks/store/usePendingStore';
 
 interface Place {
     id: string;
@@ -126,18 +127,17 @@ export default function LocationScreen() {
     };
 
     // Send current location
+    const { setPendingLocation } = usePendingStore();
+
     const sendLocation = () => {
         if (!location) return;
-
-        router.back();
-        router.setParams({
-            pendingLocation: JSON.stringify({
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
-                name: `${location.coords.latitude.toFixed(5)}, ${location.coords.longitude.toFixed(5)}`,
-            }),
+        setPendingLocation({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            name: `${location.coords.latitude.toFixed(5)}, ${location.coords.longitude.toFixed(5)}`,
         });
-    };
+        router.back();
+    }
 
     // Go to user's current location
     const goToMyLocation = () => {

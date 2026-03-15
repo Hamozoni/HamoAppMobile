@@ -4,12 +4,12 @@ import ChatFooter from "../../../components/chats/chatWindowFooter/chatFooter";
 import MessageCard from "../../../components/cards/messageCard";
 import { FlatList, StyleSheet, View } from "react-native";
 import { useMessages } from "../../../hooks/useMessage";
+import { usePendingStore } from "../../../hooks/store/usePendingStore";
 
 export default function ChatDetails() {
 
-    const { phoneNumber, pendingLocation } = useLocalSearchParams<{
+    const { phoneNumber } = useLocalSearchParams<{
         phoneNumber: string;
-        pendingLocation: string;
     }>();
 
     const router = useRouter()
@@ -25,15 +25,18 @@ export default function ChatDetails() {
         }
     }, [reversedMessages.length]);
 
+    const { pendingLocation, clearPendingLocation } = usePendingStore();
+
     useEffect(() => {
         if (!pendingLocation) return;
-        try {
-            const location = JSON.parse(pendingLocation);
-            sendMessage({ location });
-            router.setParams({ pendingLocation: "" }); // ✅ clear after sending
-        } catch (e) {
-            console.error("Failed to parse location:", e);
-        }
+        sendMessage({
+            location: {
+                latitude: pendingLocation.latitude,
+                longitude: pendingLocation.longitude,
+                name: pendingLocation.name,
+            },
+        });
+        clearPendingLocation();
     }, [pendingLocation]);
 
     return (

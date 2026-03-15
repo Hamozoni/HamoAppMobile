@@ -8,7 +8,7 @@ import { Stack, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { ChatCard } from "../../../components/cards/chatCard";
 import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";
-import { useChats, IChat } from "../../../hooks/api/useChatsApi";
+import { useChats } from "../../../hooks/api/useChatsApi";
 import { useContactsStore } from "../../../hooks/store/useContactsStore";
 
 const { width } = Dimensions.get("window");
