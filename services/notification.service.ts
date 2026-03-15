@@ -1,6 +1,6 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
-
+import Constants from "expo-constants";
 // ✅ How notifications appear when app is foregrounded
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -25,7 +25,17 @@ class NotificationService {
             const granted = await this.requestPermissions();
             if (!granted) return null;
 
-            const token = await Notifications.getExpoPushTokenAsync();
+            // ✅ Get projectId from app config
+            const projectId =
+                Constants.expoConfig?.extra?.eas?.projectId ??
+                Constants.easConfig?.projectId;
+
+            if (!projectId) {
+                console.warn("⚠️ No projectId found — skipping push token");
+                return null;
+            }
+
+            const token = await Notifications.getExpoPushTokenAsync({ projectId });
             console.log("📲 Push token:", token.data);
             return token.data;
         } catch (err) {
