@@ -5,10 +5,11 @@ import { useAuthStore } from "../hooks/store/useAuthStore";
 import { useGetProfile } from "../hooks/api/useProfileApi";
 import { syncContacts } from "../db/services/syncContacts.service";
 import { useContactsStore } from "../hooks/store/useContactsStore";
-import { clearContacts } from "../db/repositories/contacts.repo";
 import { runMigrations } from "../db/runMigration";
 import { onAuthFailed } from "./authEvents";
 import { getDatabase } from "../db";
+import notificationService from "../services/notification.service";
+import { axiosInstance } from "../lib/axios.config";
 
 export function AuthBootstrap() {
 
@@ -25,17 +26,27 @@ export function AuthBootstrap() {
                 // ✅ 1. Hydrate FIRST — unblocks the Index screen spinner
                 await useAuthStore.getState().hydrate();
                 runMigrations()
-                console.log(
-                    getDatabase().getAllSync(
-                        "SELECT name FROM sqlite_master WHERE type='table';"
-                    )
-                );
                 setIsSyncing(true);
                 // ✅ Separate try/catch for profile — auth failure is expected when logged out
                 let user = null;
                 try {
                     user = await getProfile();
                     await useAuthStore.getState().setUser(user);
+                    // After successful login:
+                    const token = await notificationService.registerPushToken();
+                    if (token) {
+                        // ✅ Save token to server
+                        await axiosInstance.post("/profile/push-token", { token });
+                    };
+
+                    // ✅ Handle notification taps — navigate to chat
+                    notificationService.addNotificationResponseListener((chatId, phoneNumber) => {
+                        router.push({
+                            pathname: "/chats/[phoneNumber]",
+                            params: { phoneNumber },
+                        } as any);
+                    });
+
                 } catch (profileError: any) {
 
                     console.log("No active session:", profileError.message);

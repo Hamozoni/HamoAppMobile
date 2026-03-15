@@ -12,9 +12,27 @@ import socketService, { SOCKET_EVENTS } from "../services/socket.service";
 import axios from "axios";
 import { formatMessageTime } from "../utils";
 import { useChatsStore } from "./store/useChatsStore";
+import soundService from "../services/sound.service";
+import { AppState } from "react-native";
+import notificationService from "../services/notification.service";
 
 interface UseSendMessageOptions {
     phoneNumber: string;
+
+
+};
+
+export function getMessagePreview(message: ILocalMessage): string {
+    switch (message.type) {
+        case "text": return message.text ?? "";
+        case "image": return "📷 Photo";
+        case "video": return "🎥 Video";
+        case "audio": return "🎵 Voice message";
+        case "document": return "📄 Document";
+        case "location": return "📍 Location";
+        case "contact": return "👤 Contact";
+        default: return "New message";
+    }
 }
 
 export function useMessages({ phoneNumber }: UseSendMessageOptions) {
@@ -112,15 +130,8 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
             fetchMessages();
         }
 
-        const handleNewMessage = (data: NewMessageData) => {
-            const activeChatId = currentChatIdRef.current;
-
-            console.log("📨 MESSAGE_NEW received:", {
-                dataChatId: data.chatId,
-                activeChatId,
-                isOwnMessage: !!data.clientMessageId,
-            });
-
+        const handleNewMessage = async (data: NewMessageData) => {
+            const activeChatId = currentChatIdRef.current
             const isOwnMessage = !!data.clientMessageId;
 
             if (isOwnMessage) {
@@ -151,6 +162,25 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
             } else {
                 console.log("⚠️ Ignoring — different chat");
                 return;
+            }
+
+            // ✅ Play sound always
+            await soundService.playMessageSound();
+
+            // ✅ Show notification only when app is backgrounded
+            // or when user is in a different chat
+            const isInThisChat = activeChatId === data.chatId;
+            const isForegrounded = AppState.currentState === "active";
+
+            if (!isInThisChat || !isForegrounded) {
+                const sender = data.message.senderId as any;
+                await notificationService.showMessageNotification({
+                    senderName: sender?.displayName ?? "New Message",
+                    messageText: getMessagePreview(data.message),
+                    chatId: data.chatId,
+                    phoneNumber: phoneNumber,
+                    avatar: sender?.profilePicture?.secureUrl,
+                });
             }
 
             // ✅ update chat preview for received message
