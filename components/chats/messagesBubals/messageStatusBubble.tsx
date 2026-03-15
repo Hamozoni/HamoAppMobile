@@ -18,9 +18,7 @@ export default function MessageStatusBubble({ message, isMine }: MessageStatusBu
         return (
             <View
                 style={{
-                    position: isMedia ? "absolute" : undefined,
-                    bottom: 0,
-                    right: 0,
+                    width: "auto",
                     paddingHorizontal: 5,
                     borderRadius: 10,
                     flexDirection: "row",
@@ -34,7 +32,6 @@ export default function MessageStatusBubble({ message, isMine }: MessageStatusBu
                     shadowOpacity: 0.1,
                     shadowRadius: 10,
                     elevation: 10,
-                    backgroundColor: isMedia ? "#00000011" : "transparent",
                     gap: 5
                 }}
             >

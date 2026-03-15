@@ -59,7 +59,7 @@ export default function MessageCard({ message, prevMessage }: MessageCardProps) 
             )}
             <View
                 style={{
-                    marginVertical: 2,
+                    marginVertical: 5,
                     alignSelf: isMine ? "flex-end" : "flex-start",  // ✅ side
                 }}
             >

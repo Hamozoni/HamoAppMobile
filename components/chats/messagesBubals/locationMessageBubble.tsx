@@ -19,6 +19,7 @@ interface MapApp {
 }
 
 export default function LocationMessageBubble({ message, isMine }: LocationMessageBubbleProps) {
+    console.log({ message })
     const [showPicker, setShowPicker] = useState(false);
 
     const { latitude, longitude, name } = message?.location ?? {};
@@ -121,7 +122,6 @@ export default function LocationMessageBubble({ message, isMine }: LocationMessa
                         <Text style={styles.labelText} numberOfLines={1}>
                             {name ?? `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`}
                         </Text>
-                        <Ionicons name="open-outline" size={12} color="#667781" />
                     </View>
                 </View>
             </TouchableOpacity>

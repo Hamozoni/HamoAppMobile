@@ -22,7 +22,9 @@ interface AudioMessageBubbleProps {
 
 export default function AudioMessageBubble({ message, isMine }: AudioMessageBubbleProps) {
 
-    const player = useAudioPlayer(message?.file?.metadata?.url || '');
+    console.log({ Audio: message })
+
+    const player = useAudioPlayer(message?.file?.secureUrl || '');
     const [isPlaying, setIsPlaying] = useState(false);
 
     function togglePlay() {
@@ -43,7 +45,7 @@ export default function AudioMessageBubble({ message, isMine }: AudioMessageBubb
     return (
         <View style={{ flexDirection: "row", gap: 10, minWidth: "100%" }}>
             <Image
-                source={require("../../../assets/images/pexels-nati-87264186-34295251.jpg")}
+                source={{ uri: message?.senderId?.profilePicture }}
                 style={{ width: 40, height: 40, borderRadius: 20 }}
             />
             <View style={{ flex: 1 }}>
