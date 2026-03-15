@@ -22,16 +22,22 @@ class NotificationService {
 
     async registerPushToken(): Promise<string | null> {
         try {
+            // ✅ Skip on Android Expo Go — not supported in SDK 53+
+            const isExpoGo = Constants.appOwnership === "expo";
+            if (Platform.OS === "android" && isExpoGo) {
+                console.log("⚠️ Push notifications not supported in Expo Go Android — skipping");
+                return null;
+            }
+
             const granted = await this.requestPermissions();
             if (!granted) return null;
 
-            // ✅ Get projectId from app config
             const projectId =
                 Constants.expoConfig?.extra?.eas?.projectId ??
                 Constants.easConfig?.projectId;
 
             if (!projectId) {
-                console.warn("⚠️ No projectId found — skipping push token");
+                console.warn("⚠️ No projectId — skipping push token");
                 return null;
             }
 
@@ -40,7 +46,7 @@ class NotificationService {
             return token.data;
         } catch (err) {
             console.error("Failed to get push token:", err);
-            return null;
+            return null;  // ✅ don't crash app if this fails
         }
     }
 
