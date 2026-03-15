@@ -4,6 +4,7 @@ import { IChat } from "../api/useChatsApi";
 interface ChatsState {
     chats: IChat[];
     setChats: (chats: IChat[]) => void;
+    updateChat: (chatId: string, update: Partial<IChat>) => void;
     updateLastMessage: (chatId: string, lastMessage: IChat["lastMessage"]) => void;
     incrementUnread: (chatId: string) => void;
     resetUnread: (chatId: string) => void;
@@ -14,16 +15,22 @@ export const useChatsStore = create<ChatsState>((set) => ({
 
     setChats: (chats) => set({ chats }),
 
+    updateChat: (chatId, update) =>
+        set(state => ({
+            chats: state.chats
+                .map(c => c._id === chatId ? { ...c, ...update } : c)
+                .sort((a, b) =>
+                    (b.lastMessage?.rawTime ?? 0) - (a.lastMessage?.rawTime ?? 0)
+                ),
+        })),
+
     updateLastMessage: (chatId, lastMessage) =>
         set(state => ({
             chats: state.chats
                 .map(c => c._id === chatId ? { ...c, lastMessage } : c)
-                // ✅ re-sort by newest
-                .sort((a, b) => {
-                    const at = a.lastMessage?.rawTime ?? 0;
-                    const bt = b.lastMessage?.rawTime ?? 0;
-                    return bt - at;
-                }),
+                .sort((a, b) =>
+                    (b.lastMessage?.rawTime ?? 0) - (a.lastMessage?.rawTime ?? 0)
+                ),
         })),
 
     incrementUnread: (chatId) =>

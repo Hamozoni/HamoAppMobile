@@ -1,81 +1,129 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import Slider from "@react-native-community/slider";
-import { useAudioPlayer } from 'expo-audio';
+import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import { Ionicons } from "@expo/vector-icons";
 import MessageStatusBubble from "./messageStatusBubble";
 import { ILocalMessage } from "../../../types/message.types";
+import { formatTime } from "../../../utils/formatTime";
 
-interface Message {
-    metadata?: {
-        url: string;
-    };
-    senderId?: number;
-    status?: string;
-    timestamp?: string;
-}
+const WA_GREEN = "#25D366";
 
 interface AudioMessageBubbleProps {
     message: ILocalMessage;
-    isMine: boolean
+    isMine: boolean;
 }
 
 export default function AudioMessageBubble({ message, isMine }: AudioMessageBubbleProps) {
+    const player = useAudioPlayer(message?.file?.secureUrl ?? "");
+    const status = useAudioPlayerStatus(player); // ✅ reactive status
 
-    console.log({ Audio: message })
+    const isPlaying = status.playing;
+    const duration = status.duration ?? 0;
+    const current = status.currentTime ?? 0;
 
-    const player = useAudioPlayer(message?.file?.secureUrl || '');
-    const [isPlaying, setIsPlaying] = useState(false);
-
-    function togglePlay() {
+    const togglePlay = () => {
         if (isPlaying) {
             player.pause();
-            setIsPlaying(false);
         } else {
             player.play();
-            setIsPlaying(true);
         }
-    }
+    };
 
-    function onSeek(val: number) {
+    const onSeek = (val: number) => {
         player.seekTo(val);
-        player.play();
-    }
+        if (!isPlaying) player.play();
+    };
+
+    const textColor = isMine ? "#fff" : "#111B21";
+    const trackColor = isMine ? "rgba(255,255,255,0.9)" : WA_GREEN;
+    const trackBg = isMine ? "rgba(255,255,255,0.3)" : "#DFE5E7";
 
     return (
-        <View style={{ flexDirection: "row", gap: 10, minWidth: "100%" }}>
+        <View style={styles.container}>
+            {/* Avatar */}
             <Image
-                source={{ uri: message?.senderId?.profilePicture }}
-                style={{ width: 40, height: 40, borderRadius: 20 }}
+                source={{ uri: (message?.senderId as any)?.profilePicture?.secureUrl }}
+                style={styles.avatar}
             />
-            <View style={{ flex: 1 }}>
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-                    <TouchableOpacity onPress={togglePlay}>
-                        <Ionicons name={isPlaying ? "pause" : "play"} size={30} />
+
+            <View style={styles.content}>
+                {/* Play + Slider */}
+                <View style={styles.row}>
+                    <TouchableOpacity onPress={togglePlay} hitSlop={8}>
+                        <Ionicons
+                            name={isPlaying ? "pause" : "play"}
+                            size={28}
+                            color={textColor}
+                        />
                     </TouchableOpacity>
-                    <View style={{ flex: 1 }}>
+
+                    <View style={styles.sliderWrap}>
                         <Slider
                             minimumValue={0}
-                            maximumValue={player.duration}
-                            value={player.currentTime}
+                            maximumValue={duration || 1}
+                            value={current}                          // ✅ reactive
                             onSlidingComplete={onSeek}
-                            minimumTrackTintColor="#FFFFFF"
-                            maximumTrackTintColor="#252121ff"
-                            thumbTintColor="#e6dcdcff"
-                            step={1}
+                            minimumTrackTintColor={trackColor}
+                            maximumTrackTintColor={trackBg}
+                            thumbTintColor={trackColor}
+                            step={0.1}                               // ✅ smoother
+                            style={styles.slider}
                         />
                     </View>
                 </View>
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                    <Text style={{ color: "white" }}>
-                        {Math.floor(player.duration)}s
+
+                {/* Time + Status */}
+                <View style={styles.footer}>
+                    <Text style={[styles.time, { color: textColor }]}>
+                        {/* ✅ show remaining time when playing, total when paused */}
+                        {isPlaying
+                            ? formatTime(Math.floor(duration - current))
+                            : formatTime(Math.floor(duration))
+                        }
                     </Text>
-                    <MessageStatusBubble
-                        message={message}
-                        isMine={isMine}
-                    />
+                    <MessageStatusBubble message={message} isMine={isMine} />
                 </View>
             </View>
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flexDirection: "row",
+        gap: 10,
+        minWidth: 200,
+        alignItems: "center",
+    },
+    avatar: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        flexShrink: 0,
+    },
+    content: {
+        flex: 1,
+        gap: 4,
+    },
+    row: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+    },
+    sliderWrap: {
+        flex: 1,
+    },
+    slider: {
+        height: 30,
+    },
+    footer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+    time: {
+        fontSize: 11,
+        fontWeight: "600",
+    },
+});
