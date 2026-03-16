@@ -1,34 +1,41 @@
-import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import Constants from "expo-constants";
-// ✅ How notifications appear when app is foregrounded
-Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: true,
-        shouldSetBadge: true,
-    }),
-});
+
+const isExpoGo = Constants.appOwnership === "expo";
+const isAndroid = Platform.OS === "android";
+
+// ✅ Only import on iOS or development builds
+const Notifications = (!isAndroid || !isExpoGo)
+    ? require("expo-notifications")
+    : null;
+
+// ✅ Set handler only if available
+if (Notifications) {
+    Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+            shouldShowAlert: true,
+            shouldPlaySound: true,
+            shouldSetBadge: true,
+        }),
+    });
+}
 
 class NotificationService {
 
     async requestPermissions(): Promise<boolean> {
+        if (!Notifications) return false;
         const { status: existing } = await Notifications.getPermissionsAsync();
         if (existing === "granted") return true;
-
         const { status } = await Notifications.requestPermissionsAsync();
         return status === "granted";
     }
 
     async registerPushToken(): Promise<string | null> {
+        if (!Notifications) {
+            console.log("⚠️ Push notifications not available in Expo Go Android");
+            return null;
+        }
         try {
-            // ✅ Skip on Android Expo Go — not supported in SDK 53+
-            const isExpoGo = Constants.appOwnership === "expo";
-            if (Platform.OS === "android" && isExpoGo) {
-                console.log("⚠️ Push notifications not supported in Expo Go Android — skipping");
-                return null;
-            }
-
             const granted = await this.requestPermissions();
             if (!granted) return null;
 
@@ -46,7 +53,7 @@ class NotificationService {
             return token.data;
         } catch (err) {
             console.error("Failed to get push token:", err);
-            return null;  // ✅ don't crash app if this fails
+            return null;
         }
     }
 
@@ -55,37 +62,41 @@ class NotificationService {
         messageText: string;
         chatId: string;
         phoneNumber: string;
-        avatar?: string;
     }) {
-        await Notifications.scheduleNotificationAsync({
-            content: {
-                title: params.senderName,
-                body: params.messageText,
-                sound: true,
-                data: {
-                    chatId: params.chatId,
-                    phoneNumber: params.phoneNumber,
+        if (!Notifications) return;
+        try {
+            await Notifications.scheduleNotificationAsync({
+                content: {
+                    title: params.senderName,
+                    body: params.messageText,
+                    sound: true,
+                    data: {
+                        chatId: params.chatId,
+                        phoneNumber: params.phoneNumber,
+                    },
                 },
-            },
-            trigger: null, // ✅ show immediately
-        });
+                trigger: null,
+            });
+        } catch (err) {
+            console.error("Failed to show notification:", err);
+        }
     }
 
-    // ✅ Clear badge count
     async clearBadge() {
+        if (!Notifications) return;
         await Notifications.setBadgeCountAsync(0);
     }
 
-    // ✅ Listen for notification taps
     addNotificationResponseListener(
         callback: (chatId: string, phoneNumber: string) => void
     ) {
-        return Notifications.addNotificationResponseReceivedListener(response => {
-            const { chatId, phoneNumber } = response.notification.request.content.data as any;
-            if (chatId && phoneNumber) {
-                callback(chatId, phoneNumber);
+        if (!Notifications) return { remove: () => { } };
+        return Notifications.addNotificationResponseReceivedListener(
+            (response: any) => {
+                const { chatId, phoneNumber } = response.notification.request.content.data;
+                if (chatId && phoneNumber) callback(chatId, phoneNumber);
             }
-        });
+        );
     }
 }
 
