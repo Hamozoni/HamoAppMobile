@@ -81,7 +81,7 @@ export default function ChatFooter({ phoneNumber, sendMessage }: ChatFooterProps
 
     return (
         <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "position"}
+            behavior="padding"
             keyboardVerticalOffset={80}
         >
             <View style={styles.wrapper}>

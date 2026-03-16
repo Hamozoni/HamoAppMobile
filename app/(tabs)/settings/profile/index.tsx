@@ -7,6 +7,7 @@ import TitleForwardIconBtn from "../../../../components/buttons/titleForwardIcon
 import { Ionicons } from "@expo/vector-icons";
 import { useAuthStore } from "../../../../hooks/store/useAuthStore";
 import Avatar from "../../../../components/ui/avatar";
+import AnimatedBorder from "../../../../components/ui/animatedBorder";
 
 type IoniconsName = keyof typeof Ionicons.glyphMap;
 
@@ -33,12 +34,17 @@ export default function Profile() {
             <ScrollView contentInsetAdjustmentBehavior="automatic">
                 <View style={{ alignItems: "center", marginVertical: 20 }}>
                     <TouchableOpacity style={{ alignItems: "center", marginBottom: 10 }}>
-                        <Avatar
-                            profilePicture={user?.profilePicture?.secureUrl}
-                            displayName={user?.displayName}
-                            width={150}
-                            height={150}
-                        />
+                        <View style={{ justifyContent: "center", alignItems: 'center', paddingTop: 40, marginBottom: 20 }}>
+                            <AnimatedBorder>
+                                <Avatar
+                                    profilePicture={user?.profilePicture?.secureUrl}
+                                    displayName={user?.displayName}
+                                    width={150}
+                                    height={150}
+                                />
+                            </AnimatedBorder>
+                        </View>
+
                     </TouchableOpacity>
                     <TouchableOpacity>
                         <Text style={{ fontSize: 18, fontWeight: "700", color: "#095e06ff" }}>Change Profile Photo</Text>

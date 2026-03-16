@@ -14,7 +14,7 @@ export default function RootLayout() {
 
     const { user, hydrated } = useAuthStore();
 
-    useSocketConnection();
+    useSocketConnection()
     useGlobalSocketListeners();
 
     return (

@@ -1,7 +1,9 @@
 import React from "react";
 import { Stack } from "expo-router";
+import { useGlobalSocketListeners } from "../../hooks/useGlobalSocket";
 
 export default function ScreenLayout() {
+
     return (
         <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen
