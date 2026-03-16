@@ -13,11 +13,11 @@ import { MessageDraft, MessageType } from "../../../types/message.types";
 const WA_GREEN = "#25D366";
 
 interface ChatFooterProps {
-    phoneNumber: string;
+    onFocus: () => void;
     sendMessage: (draft: MessageDraft) => void;
 }
 
-export default function ChatFooter({ phoneNumber, sendMessage }: ChatFooterProps) {
+export default function ChatFooter({ onFocus, sendMessage }: ChatFooterProps) {
 
     const [keyboardHeight, setKeyboardHeight] = useState(336);
     const [isAttachment, setIsAttachment] = useState(false);
@@ -79,6 +79,12 @@ export default function ChatFooter({ phoneNumber, sendMessage }: ChatFooterProps
 
     const hasContent = text.trim().length > 0 || !!asset;
 
+
+    const handleOnFocus = () => {
+        setIsAttachment(false);
+        onFocus();
+    }
+
     return (
         <KeyboardAvoidingView
             behavior="padding"
@@ -118,7 +124,7 @@ export default function ChatFooter({ phoneNumber, sendMessage }: ChatFooterProps
                         ref={textInputRef}
                         value={text}
                         onChangeText={setText}
-                        onFocus={() => setIsAttachment(false)}
+                        onFocus={handleOnFocus}
                         placeholder={asset ? "Add a caption..." : "Message"}
                         placeholderTextColor="#9DB2BF"
                         multiline

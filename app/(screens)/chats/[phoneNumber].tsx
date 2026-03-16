@@ -18,11 +18,15 @@ export default function ChatDetails() {
 
     const reversedMessages = useMemo(() => [...messages].reverse(), [messages]);
     const flatListRef = useRef<FlatList>(null);
-    // ✅ Scroll to bottom when messages change
-    useEffect(() => {
+    // ✅ Scroll to bottom when messages change;
+
+    const handleScroll = () => {
         if (reversedMessages.length > 0) {
             flatListRef.current?.scrollToEnd({ animated: false });
         }
+    }
+    useEffect(() => {
+        handleScroll()
     }, [reversedMessages.length]);
 
     const { pendingLocation, clearPendingLocation } = usePendingStore();
@@ -63,7 +67,7 @@ export default function ChatDetails() {
                 }
             />
             <ChatFooter
-                phoneNumber={phoneNumber}
+                onFocus={handleScroll}
                 sendMessage={sendMessage}
             />
         </View>
