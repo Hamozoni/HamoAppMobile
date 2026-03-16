@@ -158,32 +158,13 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
                 socketService.joinChat(data.chatId);
                 addMessage(data.chatId, data.message);
             } else if (data.chatId === activeChatId) {
-                addMessage(activeChatId, data.message);
+                addMessage(activeChatId, data.message);  // ✅ just add message, no sound here
             } else {
                 console.log("⚠️ Ignoring — different chat");
                 return;
             }
 
-            // ✅ Play sound always
-            await soundService.playMessageSound();
-
-            // ✅ Show notification only when app is backgrounded
-            // or when user is in a different chat
-            const isInThisChat = activeChatId === data.chatId;
-            const isForegrounded = AppState.currentState === "active";
-
-            if (!isInThisChat || !isForegrounded) {
-                const sender = data.message.senderId as any;
-                await notificationService.showMessageNotification({
-                    senderName: sender?.displayName ?? "New Message",
-                    messageText: getMessagePreview(data.message),
-                    chatId: data.chatId,
-                    phoneNumber: phoneNumber,
-                    avatar: sender?.profilePicture?.secureUrl,
-                });
-            }
-
-            // ✅ update chat preview for received message
+            // ✅ still update chat preview from here
             updateChatPreview(data.chatId, data.message, false);
             incrementUnread(data.chatId);
         };

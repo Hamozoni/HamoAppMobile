@@ -5,15 +5,17 @@ import { QueryClientProvider } from "@tanstack/react-query";
 
 import { AuthBootstrap } from "../utils/authBootstrap";
 import { useAuthStore } from "../hooks/store/useAuthStore";
-import { ActivityIndicator, StatusBar } from "react-native";
+import { ActivityIndicator } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useSocketConnection } from "../hooks/useSocketConnection";
+import { useGlobalSocketListeners } from "../hooks/useGlobalSocket";
 
 export default function RootLayout() {
 
     const { user, hydrated } = useAuthStore();
 
     useSocketConnection();
+    useGlobalSocketListeners();
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
