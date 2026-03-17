@@ -21,13 +21,18 @@ export default function ChatDetails() {
     // ✅ Scroll to bottom when messages change;
 
     const handleScroll = () => {
-        if (reversedMessages.length > 0) {
-            flatListRef.current?.scrollToEnd({ animated: false });
-        }
+        if (reversedMessages?.length === 0) return;
+        flatListRef.current?.scrollToIndex({
+            index: reversedMessages?.length - 1,
+            animated: false,
+            viewPosition: 1,
+        });
     }
     useEffect(() => {
-        handleScroll()
-    }, [reversedMessages.length]);
+        if (reversedMessages.length > 0) {
+            handleScroll()
+        }
+    }, [reversedMessages?.length]);
 
     const { pendingLocation, clearPendingLocation } = usePendingStore();
 
@@ -59,12 +64,8 @@ export default function ChatDetails() {
                 showsVerticalScrollIndicator={false}
                 ref={flatListRef}
                 style={{ flex: 1, padding: 16 }}
-                onContentSizeChange={() =>
-                    flatListRef.current?.scrollToEnd({ animated: false })
-                }
-                onLayout={() =>
-                    flatListRef.current?.scrollToEnd({ animated: false })
-                }
+                onContentSizeChange={handleScroll}
+                onLayout={handleScroll}
             />
             <ChatFooter
                 onFocus={handleScroll}
@@ -78,6 +79,6 @@ const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 5,
         paddingTop: 20,
-        paddingBottom: 50
+        paddingBottom: 30
     },
 });
