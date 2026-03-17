@@ -20,7 +20,9 @@ export default function DocumentMessageBubble({ message, isMine }: DocumentMessa
                 <Ionicons name="document-text-outline" size={24} color="#ddd6d6ff" />
                 <View>
                     <Text style={{ fontSize: 18, fontWeight: "500" }}>{message?.file?.metadata?.n}</Text>
-                    <Text style={{ fontSize: 12, fontWeight: "500" }}>{Math.floor(message?.file?.metadata?.size / 1000)} MB</Text>
+                    <Text style={{ fontSize: 12, fontWeight: "500", color: "#ddd6d6ff" }}>
+                        {Math.floor(message?.file?.metadata?.size / 1000)} MB
+                    </Text>
                 </View>
             </View>
         </TouchableOpacity>
