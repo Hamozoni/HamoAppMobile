@@ -11,16 +11,16 @@ interface DocumentMessageBubbleProps {
 
 export default function DocumentMessageBubble({ message, isMine }: DocumentMessageBubbleProps) {
     return (
-        <TouchableOpacity style={{ overflow: "hidden", borderRadius: 10, paddingBottom: 10, marginBottom: 5 }} >
+        <TouchableOpacity style={{ overflow: "hidden", borderRadius: 10, paddingBottom: 3 }} >
             <Image
-                source={message?.file?.metadata?.url as ImageSourcePropType}
+                source={{ uri: message?.file?.secureUrl }}
                 style={{ width: 220, height: 70 }}
             />
             <View style={{ paddingTop: 10, flexDirection: "row", alignItems: "center", gap: 5 }}>
-                <Ionicons name="document-text-outline" size={34} color="#f54848ff" />
+                <Ionicons name="document-text-outline" size={24} color="#ddd6d6ff" />
                 <View>
-                    <Text style={{ fontSize: 18, fontWeight: "500" }}>{message?.file?.metadata?.name}</Text>
-                    <Text style={{ fontSize: 12, fontWeight: "500" }}>{message?.file?.metadata?.size}MB {message?.file?.metadata?.mimeType?.split("/")[1]}</Text>
+                    <Text style={{ fontSize: 18, fontWeight: "500" }}>{message?.file?.metadata?.n}</Text>
+                    <Text style={{ fontSize: 12, fontWeight: "500" }}>{Math.floor(message?.file?.metadata?.size / 1000)} MB</Text>
                 </View>
             </View>
         </TouchableOpacity>

@@ -47,15 +47,15 @@ const MessagePreview = ({ lastMessage }: { lastMessage: Chat["lastMessage"] }) =
             )}
 
             {/* Type icon — skip for plain text */}
-            {!isText && (
-                <View style={[styles.typeIconWrap, { backgroundColor: config.color + "18" }]}>
-                    <Ionicons name={config.icon} size={12} color={config.color} />
+            {/* {!isText && (
+                <View style={[styles.typeIconWrap, { backgroundColor: config?.color + "18" }]}>
+                    <Ionicons name={config?.icon} size={12} color={config?.color} />
                 </View>
-            )}
+            )} */}
 
             {/* Message text / label */}
             <Text style={styles.messageText} numberOfLines={1}>
-                {text ?? config.label}
+                {text ?? config?.label}
             </Text>
         </View>
     );

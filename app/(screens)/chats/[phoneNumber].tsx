@@ -77,6 +77,7 @@ export default function ChatDetails() {
 const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 5,
-        paddingVertical: 20,
+        paddingTop: 20,
+        paddingBottom: 50
     },
 });
