@@ -13,11 +13,10 @@ import { MessageDraft, MessageType } from "../../../types/message.types";
 const WA_GREEN = "#25D366";
 
 interface ChatFooterProps {
-    onFocus: () => void;
     sendMessage: (draft: MessageDraft) => void;
 }
 
-export default function ChatFooter({ onFocus, sendMessage }: ChatFooterProps) {
+export default function ChatFooter({ sendMessage }: ChatFooterProps) {
 
     const [keyboardHeight, setKeyboardHeight] = useState(336);
     const [isAttachment, setIsAttachment] = useState(false);
@@ -82,7 +81,6 @@ export default function ChatFooter({ onFocus, sendMessage }: ChatFooterProps) {
 
     const handleOnFocus = () => {
         setIsAttachment(false);
-        onFocus();
     }
 
     return (

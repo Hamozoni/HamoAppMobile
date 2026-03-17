@@ -12,9 +12,6 @@ import socketService, { SOCKET_EVENTS } from "../services/socket.service";
 import axios from "axios";
 import { formatMessageTime } from "../utils";
 import { useChatsStore } from "./store/useChatsStore";
-import soundService from "../services/sound.service";
-import { AppState } from "react-native";
-import notificationService from "../services/notification.service";
 
 interface UseSendMessageOptions {
     phoneNumber: string;

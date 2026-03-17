@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef } from "react";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useRef } from "react";
+import { useLocalSearchParams } from "expo-router";
 import ChatFooter from "../../../components/chats/chatWindowFooter/chatFooter";
 import MessageCard from "../../../components/cards/messageCard";
 import { FlatList, StyleSheet, View } from "react-native";
@@ -7,37 +7,20 @@ import { useMessages } from "../../../hooks/useMessage";
 import { usePendingStore } from "../../../hooks/store/usePendingStore";
 
 export default function ChatDetails() {
-
     const { phoneNumber } = useLocalSearchParams<{
         phoneNumber: string;
     }>();
 
-    const router = useRouter()
-
     const { messages, sendMessage } = useMessages({ phoneNumber });
 
-    const reversedMessages = useMemo(() => [...messages].reverse(), [messages]);
     const flatListRef = useRef<FlatList>(null);
-    // ✅ Scroll to bottom when messages change;
-
-    const handleScroll = () => {
-        if (reversedMessages?.length === 0) return;
-        flatListRef.current?.scrollToIndex({
-            index: reversedMessages?.length - 1,
-            animated: false,
-            viewPosition: 1,
-        });
-    }
-    useEffect(() => {
-        if (reversedMessages.length > 0) {
-            handleScroll()
-        }
-    }, [reversedMessages?.length]);
 
     const { pendingLocation, clearPendingLocation } = usePendingStore();
 
+    // ✅ Handle sending pending location
     useEffect(() => {
         if (!pendingLocation) return;
+
         sendMessage({
             location: {
                 latitude: pendingLocation.latitude,
@@ -45,30 +28,35 @@ export default function ChatDetails() {
                 name: pendingLocation.name,
             },
         });
+
         clearPendingLocation();
     }, [pendingLocation]);
 
     return (
         <View style={{ flex: 1, backgroundColor: "#fff" }}>
-
             <FlatList
+                ref={flatListRef}
                 data={messages}
+                inverted   // ✅ WhatsApp behavior
+                keyExtractor={(item) => item.clientMessageId ?? item._id}
                 renderItem={({ item, index }) => (
                     <MessageCard
                         message={item}
-                        prevMessage={messages[index - 1]}  // ✅ use reversedMessages directly
+                        // ✅ because list is inverted
+                        prevMessage={messages[index + 1]}
                     />
                 )}
-                keyExtractor={(item) => item.clientMessageId ?? item._id}
                 contentContainerStyle={styles.container}
                 showsVerticalScrollIndicator={false}
-                ref={flatListRef}
                 style={{ flex: 1, padding: 16 }}
-                onContentSizeChange={handleScroll}
-                onLayout={handleScroll}
+
+                // ✅ keeps position stable when new messages arrive
+                maintainVisibleContentPosition={{
+                    minIndexForVisible: 1,
+                }}
             />
+
             <ChatFooter
-                onFocus={handleScroll}
                 sendMessage={sendMessage}
             />
         </View>
@@ -78,7 +66,6 @@ export default function ChatDetails() {
 const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 5,
-        paddingTop: 20,
-        paddingBottom: 30
+        paddingVertical: 20,
     },
 });
