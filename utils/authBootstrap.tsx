@@ -18,9 +18,10 @@ export function AuthBootstrap() {
     const router = useRouter();
 
     useEffect(() => {
-        if (syncedRef.current) return;
-        syncedRef.current = true;
 
+        if (syncedRef.current) return;
+
+        syncedRef.current = true;
         async function bootstrap() {
             try {
                 // ✅ 1. Hydrate token first
@@ -35,12 +36,11 @@ export function AuthBootstrap() {
                 let user = null;
                 try {
                     user = await getProfile();
-                    console.log({ user })
-
                     await useAuthStore.getState().setUser(user);
 
                     // ✅ 4. Register push token after login
                     const token = await notificationService.registerPushToken();
+                    console.log({ token })
                     if (token) {
                         await axiosInstance.post("/profile/push-token", { token });
                     }

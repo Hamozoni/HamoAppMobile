@@ -34,6 +34,7 @@ axiosInstance.interceptors.request.use(
         if (config.skipAuth) return config;
 
         const token = await SecureStore.getItemAsync("accessToken");
+        console.log({ token })
         if (token && config.headers) {
             config.headers.Authorization = `Bearer ${token}`;
         }
