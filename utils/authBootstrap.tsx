@@ -40,7 +40,6 @@ export function AuthBootstrap() {
 
                     // ✅ 4. Register push token after login
                     const token = await notificationService.registerPushToken();
-                    console.log({ token })
                     if (token) {
                         await axiosInstance.post("/profile/push-token", { token });
                     }

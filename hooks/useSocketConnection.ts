@@ -6,10 +6,10 @@ import { useSocketStore } from "./store/useSocketStore";
 export function useSocketConnection() {
 
     const user = useAuthStore(state => state.user);
-
     const { setConnected, setUserTyping } = useSocketStore();
 
     useEffect(() => {
+
         if (!user) {
             // ✅ No user — disconnect and clean up
             socketService.disconnect();
