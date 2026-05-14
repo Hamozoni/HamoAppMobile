@@ -8,7 +8,6 @@ import Avatar from "../ui/avatar";
 const WA_GREEN = "#2585d3ff";
 const TEXT_PRIMARY = "#111B21";
 const TEXT_SECONDARY = "#667781";
-const AVATAR_BG = "#DFE5E7";
 
 interface ContactCardProps {
     contact: Contact;
