@@ -90,7 +90,6 @@ export default function MessageCard({ message, prevMessage }: MessageCardProps) 
     );
 };
 
-
 const styles = StyleSheet.create({
     dateSeparator: {
         alignSelf: "center",

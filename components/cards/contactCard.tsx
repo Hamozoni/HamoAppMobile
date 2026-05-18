@@ -24,7 +24,7 @@ const ContactCard = ({ contact }: ContactCardProps) => {
             router.push({
                 pathname: "/chats/[phoneNumber]",
                 params: {
-                    phoneNumber: contact.phoneNumber, // ✅ only this
+                    phoneNumber: contact.phoneNumber,
                 }
             } as any);
         }
