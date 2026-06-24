@@ -55,12 +55,12 @@ export function AuthBootstrap() {
                 } catch (profileError: any) {
                     console.log("No active session:", profileError.message);
 
-                    onAuthFailed(async () => {
-                        await SecureStore.deleteItemAsync("accessToken");
-                        await SecureStore.deleteItemAsync("refreshToken");
-                        await useAuthStore.getState().clearUser();
-                        router.replace("/(auth)/login");
-                    });
+                    await SecureStore.deleteItemAsync("accessToken");
+                    await SecureStore.deleteItemAsync("refreshToken");
+                    await useAuthStore.getState().clearUser();
+                    router.replace("/(auth)/login");
+                    // onAuthFailed(async () => {
+                    // });
                     return;
                 }
 

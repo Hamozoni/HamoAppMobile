@@ -9,9 +9,11 @@ export default function Index() {
     if (!hydrated) return <ActivityIndicator />;
 
     if (!user) {
+        console.log("No user found!");
         return <Redirect href="/(auth)/login" />;
     }
 
+    console.log(user, "User found!");
     return <Redirect href="/(tabs)/chats" />;
 
 }
