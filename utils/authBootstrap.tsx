@@ -6,7 +6,6 @@ import { useGetProfile } from "../hooks/api/useProfileApi";
 import { syncContacts } from "../db/services/syncContacts.service";
 import { useContactsStore } from "../hooks/store/useContactsStore";
 import { runMigrations } from "../db/runMigration";
-import { onAuthFailed } from "./authEvents";
 import notificationService from "../services/notification.service";
 import { axiosInstance } from "../lib/axios.config";
 
@@ -59,8 +58,6 @@ export function AuthBootstrap() {
                     await SecureStore.deleteItemAsync("refreshToken");
                     await useAuthStore.getState().clearUser();
                     router.replace("/(auth)/login");
-                    // onAuthFailed(async () => {
-                    // });
                     return;
                 }
 

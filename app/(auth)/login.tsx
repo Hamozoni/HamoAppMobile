@@ -81,7 +81,10 @@ export default function Login() {
                 pathname: "/(auth)/verify",
                 params: { phoneNumber: fullPhoneNumber, countryCode, countryISO }
             });
-        } catch (err) {
+        } catch (err: any) {
+
+            console.log(err, "ERROR");
+
             setError("Something went wrong. Please try again.");
         }
     };

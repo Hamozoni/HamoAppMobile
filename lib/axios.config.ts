@@ -21,7 +21,7 @@ declare module "axios" {
  */
 
 export const axiosInstance: AxiosInstance = axios.create({
-    baseURL: process.env.EXPO_PUBLIC_API_URL,
+    baseURL: 'http://localhost:8001/api',
     timeout: 10000,
     headers: {
         "Content-Type": "application/json",
@@ -31,10 +31,12 @@ export const axiosInstance: AxiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
+
         if (config.skipAuth) return config;
 
         const token = await SecureStore.getItemAsync("accessToken");
         console.log({ token })
+
         if (token && config.headers) {
             config.headers.Authorization = `Bearer ${token}`;
         }
