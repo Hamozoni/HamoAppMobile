@@ -79,72 +79,76 @@ export default function SetupProfile() {
                     <SetupProfileImage />
 
                     <Separator />
+                    <View style={{ padding: 20 }}>
 
-                    <View >
-                        <Separator />
                         <View >
-                            <Text style={styles.inputLabel}>Username *</Text>
-                            <View style={[
-                                styles.inputContainer,
-                                errors.displayName && styles.inputError
-                            ]}>
-                                <Ionicons name="person-outline" size={20} color="#888" />
-                                <TextInput
-                                    style={styles.textInput}
-                                    placeholder="Enter your username"
-                                    placeholderTextColor="#999"
-                                    value={displayName}
-                                    onChangeText={(text) => {
-                                        setDisplayName(text);
-                                        setErrors((prev) => ({ ...prev, displayName: "" }));
-                                    }}
-                                    maxLength={30}
-                                    autoCapitalize="none"
-                                />
+                            <Separator />
+                            <View >
+                                <Text style={styles.inputLabel}>Username *</Text>
+                                <View style={[
+                                    styles.inputContainer,
+                                    errors.displayName && styles.inputError
+                                ]}>
+                                    <Ionicons name="person-outline" size={20} color="#888" />
+                                    <TextInput
+                                        style={styles.textInput}
+                                        placeholder="Enter your username"
+                                        placeholderTextColor="#999"
+                                        value={displayName}
+                                        onChangeText={(text) => {
+                                            setDisplayName(text);
+                                            setErrors((prev) => ({ ...prev, displayName: "" }));
+                                        }}
+                                        maxLength={30}
+                                        autoCapitalize="none"
+                                    />
+                                </View>
+                                {errors.displayName && (
+                                    <Text style={styles.errorText}>{errors.displayName}</Text>
+                                )}
                             </View>
-                            {errors.displayName && (
-                                <Text style={styles.errorText}>{errors.displayName}</Text>
+                            <Separator />
+                            <View >
+                                <Text style={[styles.inputLabel, { marginTop: 10 }]}>Bio</Text>
+                                <View style={styles.bioContainer}>
+                                    <TextInput
+                                        style={styles.bioInput}
+                                        placeholder="Tell us about yourself..."
+                                        placeholderTextColor="#999"
+                                        value={about}
+                                        onChangeText={setAbout}
+                                        multiline
+                                        numberOfLines={4}
+                                        maxLength={50}
+                                        textAlignVertical="top"
+                                    />
+                                </View>
+                                <Text style={styles.charCount}>{about.length}/50</Text>
+                            </View>
+                        </View>
+
+                        <Separator />
+
+                        <TouchableOpacity
+                            style={[
+                                styles.continueButton,
+                                isLoading && styles.continueButtonDisabled,
+                            ]}
+                            onPress={handleContinue}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (
+                                <ActivityIndicator color="#fff" size="small" />
+                            ) : (
+                                <>
+                                    <Text style={styles.continueButtonText}>Complete Setup</Text>
+                                    <Ionicons name="checkmark-circle" size={22} color="#fff" />
+                                </>
                             )}
-                        </View>
-                        <Separator />
-                        <View >
-                            <Text style={[styles.inputLabel, { marginTop: 10 }]}>Bio</Text>
-                            <View style={styles.bioContainer}>
-                                <TextInput
-                                    style={styles.bioInput}
-                                    placeholder="Tell us about yourself..."
-                                    placeholderTextColor="#999"
-                                    value={about}
-                                    onChangeText={setAbout}
-                                    multiline
-                                    numberOfLines={4}
-                                    maxLength={50}
-                                    textAlignVertical="top"
-                                />
-                            </View>
-                            <Text style={styles.charCount}>{about.length}/50</Text>
-                        </View>
+                        </TouchableOpacity>
+
                     </View>
 
-                    <Separator />
-
-                    <TouchableOpacity
-                        style={[
-                            styles.continueButton,
-                            isLoading && styles.continueButtonDisabled,
-                        ]}
-                        onPress={handleContinue}
-                        disabled={isLoading}
-                    >
-                        {isLoading ? (
-                            <ActivityIndicator color="#fff" size="small" />
-                        ) : (
-                            <>
-                                <Text style={styles.continueButtonText}>Complete Setup</Text>
-                                <Ionicons name="checkmark-circle" size={22} color="#fff" />
-                            </>
-                        )}
-                    </TouchableOpacity>
 
                 </ScrollView>
             </KeyboardAvoidingView>

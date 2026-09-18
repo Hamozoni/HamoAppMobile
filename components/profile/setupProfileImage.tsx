@@ -100,7 +100,7 @@ export const SetupProfileImage = () => {
     };
 
     return (
-        <View style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 10, borderStyle: 'dashed' }}>
+        <View style={{ borderWidth: 1, borderColor: '#ccc', borderStyle: 'dashed' }}>
 
             <ImageBackground source={require('../../assets/images/sudaChat.jpg')} style={styles.imageSection}>
                 <TouchableOpacity
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     profileImage: {
-        borderRadius: 28,
+        borderRadius: "50%",
         backgroundColor: "#fff",
         width: 130,
         height: 130,
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     imagePlaceholder: {
         width: 130,
         height: 130,
-        borderRadius: 28,
+        borderRadius: "50%",
         backgroundColor: "#fff",
         justifyContent: "center",
         alignItems: "center",
