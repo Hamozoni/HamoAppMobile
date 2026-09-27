@@ -26,12 +26,14 @@ interface Errors {
 
 
 export default function SetupProfile() {
+
     const router = useRouter();
+    const user = useAuthStore(state => state.user);
 
-
-    const [displayName, setDisplayName] = useState("");
-    const [about, setAbout] = useState("");
+    const [displayName, setDisplayName] = useState(user?.displayName || "");
+    const [about, setAbout] = useState(user?.about || "");
     const [errors, setErrors] = useState<Errors>({});
+    const [isProfileEdit, setIsProfileEdit] = useState(true);
 
     const { mutateAsync: postUpdateProfile, isPending: isLoading } = useUpdateProfile();
 
@@ -57,6 +59,9 @@ export default function SetupProfile() {
         router.replace("/(tabs)/chats" as string);
     };
 
+    const shouldDisabled =
+        displayName === user?.displayName && about === user?.about && isProfileEdit;
+
     return (
         <ThemedSafeAreaView>
             <AuthBootstrap />
@@ -76,7 +81,7 @@ export default function SetupProfile() {
                         <Text style={styles.skipButtonText}>Skip</Text>
                     </TouchableOpacity>
                     <Separator />
-                    <SetupProfileImage />
+                    <SetupProfileImage setIsProfileEdit={setIsProfileEdit} />
 
                     <Separator />
                     <View style={{ padding: 20 }}>
@@ -95,6 +100,7 @@ export default function SetupProfile() {
                                         placeholder="Enter your username"
                                         placeholderTextColor="#999"
                                         value={displayName}
+                                        editable={!isLoading}
                                         onChangeText={(text) => {
                                             setDisplayName(text);
                                             setErrors((prev) => ({ ...prev, displayName: "" }));
@@ -116,6 +122,7 @@ export default function SetupProfile() {
                                         placeholder="Tell us about yourself..."
                                         placeholderTextColor="#999"
                                         value={about}
+                                        editable={!isLoading}
                                         onChangeText={setAbout}
                                         multiline
                                         numberOfLines={4}
@@ -132,10 +139,10 @@ export default function SetupProfile() {
                         <TouchableOpacity
                             style={[
                                 styles.continueButton,
-                                isLoading && styles.continueButtonDisabled,
+                                shouldDisabled && styles.continueButtonDisabled,
                             ]}
                             onPress={handleContinue}
-                            disabled={isLoading}
+                            disabled={shouldDisabled}
                         >
                             {isLoading ? (
                                 <ActivityIndicator color="#fff" size="small" />

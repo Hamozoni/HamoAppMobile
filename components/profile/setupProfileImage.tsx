@@ -1,19 +1,23 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, Image, TouchableOpacity, ImageBackground, StyleSheet } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import * as ImagePicker from 'expo-image-picker';
 import { useProfilePictureSignature } from '../../hooks/api/useProfilePicureSignature';
 import axios from 'axios';
 import { useUpdateProfilePicture } from '../../hooks/api/useProfileApi';
+import { useAuthStore } from '../../hooks/store/useAuthStore';
 
-export const SetupProfileImage = () => {
+export const SetupProfileImage = ({ setIsProfileEdit }: { setIsProfileEdit: React.Dispatch<React.SetStateAction<boolean>> }) => {
 
-
-    const [profileImage, setProfileImage] = useState<any>(null);
+    const user = useAuthStore(state => state.user);
+    const [profileImage, setProfileImage] = useState<any>(user?.profilePicture || null);
 
     const { mutateAsync: postProfilePictureSignature, isPending } = useProfilePictureSignature();
     const { mutateAsync: postProfilePicture, isPending: isPendingProfilePicture } = useUpdateProfilePicture();
 
+    useEffect(() => {
+        setIsProfileEdit(profileImage === user?.profilePicture);
+    }, [profileImage]);
 
     const handleContinue = async (image: any) => {
         // if (!validateForm()) return;
@@ -74,8 +78,8 @@ export const SetupProfileImage = () => {
         });
 
         if (!result.canceled) {
-            setProfileImage(result.assets[0]);
-            handleContinue(result.assets[0]);
+            setProfileImage(result?.assets[0]?.uri);
+            handleContinue(result?.assets[0]);
         }
     };
 
@@ -94,7 +98,7 @@ export const SetupProfileImage = () => {
         });
 
         if (!result.canceled) {
-            setProfileImage(result.assets[0]);
+            setProfileImage(result.assets[0]?.uri);
             handleContinue(result.assets[0]);
         }
     };
@@ -109,7 +113,7 @@ export const SetupProfileImage = () => {
                 >
                     {profileImage ? (
                         <Image
-                            source={{ uri: profileImage.uri }}
+                            source={{ uri: profileImage }}
                             style={styles.profileImage}
                         />
                     ) : (
