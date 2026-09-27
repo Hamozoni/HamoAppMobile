@@ -1,21 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { axiosInstance } from "../../lib/axios.config";
+import { CloudinarySignature } from "../../services/cloudinary.service";
 
 
-interface UploadMediaResponse {
-    signature: string,
-    timestamp: string,
-    cloudName: string,
-    apiKey: string,
-    uploadUrl: string,
-    folder: string,
-    publicId: string,
-    overwrite: string,
-    invalidate: string,
-}
-
-
-const postUploadMedia = async (): Promise<UploadMediaResponse> => {
+const postUploadMedia = async (): Promise<CloudinarySignature> => {
     const { data } = await axiosInstance.post(`/cloudinary/profile_picture_signature`);
     return data;
 };
