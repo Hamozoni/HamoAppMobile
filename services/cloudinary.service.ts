@@ -21,16 +21,9 @@ export interface CloudinaryUploadResponse {
     width: number;
     height: number;
     bytes: number;
-    [key: string]: any;
-
-    //     public_id: string,
-    // secure_url: string,
-    // width: number,
-    // height: number,
-    // size: number,
-    // format: string,
-    // mimeType: string,
-    // resource_type: string
+    size: number;
+    mimeType: string;
+    resource_type: string;
 }
 
 export const uploadImageToCloudinary = async (

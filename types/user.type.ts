@@ -15,15 +15,10 @@ export interface IUser {
     _id: string,
     phoneNumber: string,
     displayName: string,
+    about: string,
     profilePicture: {
         _id: string,
         secureUrl: string,
         publicId: string,
-        createdAt: Date,
-        updatedAt: Date
     },
-    about: string,
-    isPhoneVerified: boolean,
-    createdAt: Date,
-    updatedAt: Date
 }

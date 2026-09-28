@@ -20,6 +20,7 @@ import { useVerifyOtp } from "../../hooks/api/useVerifyOpt";
 
 
 import * as SecureStore from "expo-secure-store";
+import { useAuthStore } from "../../hooks/store/useAuthStore";
 
 const OTP_LENGTH = 6;
 const RESEND_TIMER = 180;
@@ -33,6 +34,7 @@ type VerifyParams = {
 export default function Verify(): JSX.Element {
 
     const router = useRouter();
+    const setUser = useAuthStore((state) => state.setUser);
     const { phoneNumber, countryCode, countryISO } = useLocalSearchParams<VerifyParams>();
     const [otp, setOtp] = useState<Array<string>>(Array(OTP_LENGTH).fill(""));
     const [error, setError] = useState<string>("");
@@ -103,10 +105,11 @@ export default function Verify(): JSX.Element {
                 countryCode,
                 countryISO,
                 device
-            })
+            });
 
             await SecureStore.setItemAsync("accessToken", data.accessToken);
             await SecureStore.setItemAsync("refreshToken", data.refreshToken);
+            await setUser(data?.user);
             // Navigate to profile setup
             router.replace("/(auth)/setup-profile");
         } catch (err) {
