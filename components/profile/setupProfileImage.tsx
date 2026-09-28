@@ -232,6 +232,7 @@ export const SetupProfileImage: React.FC<SetupProfileImageProps> = ({
     onImageSelected,
     isUploading = false,
 }) => {
+
     const requestAndPick = async (
         launcher: () => Promise<ImagePicker.ImagePickerResult>,
         permissionRequester: () => Promise<ImagePicker.PermissionResponse>,
@@ -276,8 +277,7 @@ export const SetupProfileImage: React.FC<SetupProfileImageProps> = ({
 
     return (
         <View style={styles.container}>
-            <ImageBackground
-                source={require('../../assets/images/sudaChat.jpg')}
+            <View
                 style={styles.imageSection}
             >
                 <TouchableOpacity
@@ -293,9 +293,6 @@ export const SetupProfileImage: React.FC<SetupProfileImageProps> = ({
                             <Ionicons name="person" size={60} color="#ccc" />
                         </View>
                     )}
-                    <View style={styles.editBadge}>
-                        <Ionicons name="camera" size={18} color="#fff" />
-                    </View>
                 </TouchableOpacity>
 
                 <View style={styles.imageButtons}>
@@ -304,7 +301,7 @@ export const SetupProfileImage: React.FC<SetupProfileImageProps> = ({
                         onPress={pickImage}
                         disabled={isUploading}
                     >
-                        <Ionicons name="images-outline" size={20} color="#259cd3" />
+                        <Ionicons name="images-outline" size={20} color="#888" />
                         <Text style={styles.imageOptionText}>Gallery</Text>
                     </TouchableOpacity>
 
@@ -313,11 +310,11 @@ export const SetupProfileImage: React.FC<SetupProfileImageProps> = ({
                         onPress={takePhoto}
                         disabled={isUploading}
                     >
-                        <Ionicons name="camera-outline" size={20} color="#259cd3" />
+                        <Ionicons name="camera-outline" size={20} color="#888" />
                         <Text style={styles.imageOptionText}>Camera</Text>
                     </TouchableOpacity>
                 </View>
-            </ImageBackground>
+            </View>
         </View>
     );
 };
@@ -333,50 +330,45 @@ const styles = StyleSheet.create({
     imageSection: {
         alignItems: 'center',
         paddingVertical: 24,
+
     },
     imageContainer: {
         position: 'relative',
-        width: 120,
-        height: 120,
-        borderRadius: 60,
+        width: 180,
+        height: 180,
+        borderRadius: "50%",
     },
     profileImage: {
-        width: 120,
-        height: 120,
-        borderRadius: 60,
+        width: 180,
+        height: 180,
+        borderRadius: "50%",
     },
     imagePlaceholder: {
-        width: 120,
-        height: 120,
-        borderRadius: 60,
+        width: 180,
+        height: 180,
+        borderRadius: "50%",
         backgroundColor: '#f0f0f0',
         alignItems: 'center',
         justifyContent: 'center',
     },
-    editBadge: {
-        position: 'absolute',
-        bottom: 0,
-        right: 0,
-        backgroundColor: '#259cd3',
-        padding: 8,
-        borderRadius: 20,
-    },
     imageButtons: {
         flexDirection: 'row',
         marginTop: 16,
-        gap: 12,
+        gap: 10
     },
     imageOptionButton: {
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 16,
         paddingVertical: 8,
-        borderRadius: 20,
-        backgroundColor: '#ffffffEE',
+        borderRadius: 10,
+        borderWidth: 1,
+        borderStyle: 'dashed',
+        borderColor: '#c6ddf0ff',
         gap: 6,
     },
     imageOptionText: {
-        color: '#259cd3',
+        color: '#888',
         fontWeight: '600',
     },
 });

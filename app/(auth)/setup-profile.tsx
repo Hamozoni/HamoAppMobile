@@ -359,7 +359,12 @@ const styles = StyleSheet.create({
     skipButton: { alignSelf: 'flex-end', padding: 8 },
     skipButtonText: { color: '#888', fontWeight: '600' },
     formContainer: { paddingVertical: 12 },
-    inputLabel: { fontSize: 14, fontWeight: '600', color: '#333', marginBottom: 6 },
+    inputLabel: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#888',
+        marginBottom: 10
+    },
     bioLabel: { marginTop: 16 },
     inputContainer: {
         flexDirection: 'row',
