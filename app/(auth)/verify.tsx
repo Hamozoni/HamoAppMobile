@@ -109,7 +109,7 @@ export default function Verify(): JSX.Element {
 
             await SecureStore.setItemAsync("accessToken", data.accessToken);
             await SecureStore.setItemAsync("refreshToken", data.refreshToken);
-            await setUser(data?.user);
+            await setUser(data?.user as any);
             // Navigate to profile setup
             router.replace("/(auth)/setup-profile");
         } catch (err) {
