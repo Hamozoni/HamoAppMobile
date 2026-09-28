@@ -232,6 +232,8 @@ export default function SetupProfile() {
         try {
             if (selectedImageAsset) {
                 const cloudinaryData = await uploadToCloudinary(selectedImageAsset);
+
+                console.log(cloudinaryData, "cloudinaryData");
                 await postUpdateProfilePicture(cloudinaryData);
             }
 

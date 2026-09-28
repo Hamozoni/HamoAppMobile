@@ -22,6 +22,15 @@ export interface CloudinaryUploadResponse {
     height: number;
     bytes: number;
     [key: string]: any;
+
+    //     public_id: string,
+    // secure_url: string,
+    // width: number,
+    // height: number,
+    // size: number,
+    // format: string,
+    // mimeType: string,
+    // resource_type: string
 }
 
 export const uploadImageToCloudinary = async (
@@ -29,6 +38,7 @@ export const uploadImageToCloudinary = async (
     signature: CloudinarySignature,
     onProgress?: (progress: number) => void
 ): Promise<CloudinaryUploadResponse> => {
+
     const extension = asset.uri.split('.').pop() || 'jpg';
     const filename = asset.fileName || `avatar_${Date.now()}.${extension}`;
     const mimeType = asset.mimeType || `image/${extension}`;
@@ -65,6 +75,8 @@ export const uploadImageToCloudinary = async (
             },
         }
     );
+
+    console.log("cloudinary response", data);
 
     return data;
 };
