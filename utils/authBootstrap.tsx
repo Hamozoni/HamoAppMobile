@@ -21,6 +21,7 @@ export function AuthBootstrap() {
         if (syncedRef.current) return;
 
         syncedRef.current = true;
+
         async function bootstrap() {
             try {
                 // ✅ 1. Hydrate token first
