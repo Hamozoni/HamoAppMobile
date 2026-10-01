@@ -8,6 +8,7 @@ import soundService from "../services/sound.service";
 import { getMessagePreview } from "./useMessage";
 
 export function useGlobalSocketListeners() {
+
     const user = useAuthStore(state => state.user);
     const { updateChat, incrementUnread } = useChatsStore();
 
