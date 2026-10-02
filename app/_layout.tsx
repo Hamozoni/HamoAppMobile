@@ -8,16 +8,20 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useSocketConnection } from "../hooks/useSocketConnection";
 import { useGlobalSocketListeners } from "../hooks/useGlobalSocket";
 
-export default function RootLayout() {
-
+const AppListtener = () => {
     useSocketConnection()
     useGlobalSocketListeners();
+    return null
+};
+
+export default function RootLayout() {
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <SafeAreaProvider>
                 <QueryClientProvider client={queryClient}>
                     <AuthBootstrap />
+                    <AppListtener />
                     <Stack screenOptions={{ headerShown: false }}>
                         <Stack.Screen name="(tabs)" />
                         <Stack.Screen name="(screens)" />
