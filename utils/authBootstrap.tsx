@@ -52,6 +52,7 @@ export function AuthBootstrap() {
                         } as any);
                     });
 
+
                 } catch (profileError: any) {
                     console.log("No active session:", profileError.message);
 

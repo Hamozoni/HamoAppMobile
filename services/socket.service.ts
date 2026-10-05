@@ -42,7 +42,9 @@ class SocketService {
     async connect(): Promise<void> {
 
         if (this.socket?.connected) return;
+
         const token = await SecureStore.getItemAsync("accessToken");
+
         if (!token) {
             console.log("⚠️ No access token — socket not connected");
             return;

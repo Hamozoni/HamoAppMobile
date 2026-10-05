@@ -5,23 +5,24 @@ import { QueryClientProvider } from "@tanstack/react-query";
 
 import { AuthBootstrap } from "../utils/authBootstrap";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { useSocketConnection } from "../hooks/useSocketConnection";
-import { useGlobalSocketListeners } from "../hooks/useGlobalSocket";
-
-const AppListtener = () => {
-    useSocketConnection()
-    useGlobalSocketListeners();
-    return null
-};
+// import { useSocketConnection } from "../hooks/useSocketConnection";
+// import { useGlobalSocketListeners } from "../hooks/useGlobalSocket";
 
 export default function RootLayout() {
 
+    // const AppListtener = () => {
+
+    //     useSocketConnection()
+    //     useGlobalSocketListeners();
+    //     return null
+
+    // };
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <SafeAreaProvider>
                 <QueryClientProvider client={queryClient}>
                     <AuthBootstrap />
-                    <AppListtener />
+                    {/* <AppListtener /> */}
                     <Stack screenOptions={{ headerShown: false }}>
                         <Stack.Screen name="(tabs)" />
                         <Stack.Screen name="(screens)" />

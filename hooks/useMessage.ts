@@ -200,6 +200,7 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
         if (!draft.text?.trim() && !draft.asset && !draft.location && !draft.contact) return;
 
         const clientMessageId = Crypto.randomUUID();
+
         const type: MessageType =
             draft.asset ? (draft.assetType ?? "image") :
                 draft.location ? "location" :
