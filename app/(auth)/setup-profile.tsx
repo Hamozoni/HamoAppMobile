@@ -38,7 +38,7 @@ export default function SetupProfile() {
     const [selectedImageAsset, setSelectedImageAsset] = useState<ImagePicker.ImagePickerAsset | null>(null);
     const [errors, setErrors] = useState<FormErrors>({});
 
-    const { mutateAsync: uploadToCloudinary, isPending: isUploadingImage, progress } = useCloudinaryUpload();
+    const { mutateAsync: uploadToCloudinary, isPending: isUploadingImage, progress } = useCloudinaryUpload('/cloudinary/profile_picture_signature');
     const { mutateAsync: postUpdateProfile, isPending: isUpdatingProfile } = useUpdateProfile();
 
     const isSubmitting = isUploadingImage || isUpdatingProfile;

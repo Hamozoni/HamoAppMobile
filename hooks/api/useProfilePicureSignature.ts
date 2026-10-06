@@ -3,8 +3,8 @@ import { axiosInstance } from "../../lib/axios.config";
 import { CloudinarySignature } from "../../services/cloudinary.service";
 
 
-const getProfilePictureSignature = async (): Promise<CloudinarySignature> => {
-    const { data } = await axiosInstance.post('/cloudinary/profile_picture_signature');
+const getProfilePictureSignature = async (payload: { endPoint: string, mediaType?: string }): Promise<CloudinarySignature> => {
+    const { data } = await axiosInstance.post(payload.endPoint, { type: payload?.mediaType });
     return data;
 };
 

@@ -8,7 +8,7 @@ import {
 } from "../types/message.types";
 import { useMessagesStore } from "./store/useMessageStore";
 import { axiosInstance } from "../lib/axios.config";
-import socketService, { SOCKET_EVENTS } from "../services/socket.service";
+// import socketService, { SOCKET_EVENTS } from "../services/socket.service";
 import axios from "axios";
 import { formatMessageTime } from "../utils";
 import { useChatsStore } from "./store/useChatsStore";
@@ -113,17 +113,17 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
             console.log("🆕 New chat created:", chat._id);
             setCurrentChatId(chat._id);
             currentChatIdRef.current = chat._id;
-            socketService.joinChat(chat._id);
+            // socketService.joinChat(chat._id);
         };
 
-        socketService.on("chat:new", handleNewChat);
-        return () => socketService.off("chat:new", handleNewChat);
+        // socketService.on("chat:new", handleNewChat);
+        // return () => socketService.off("chat:new", handleNewChat);
     }, []);
 
     // ── Message listeners ─────────────────────────
     useEffect(() => {
         if (currentChatId) {
-            socketService.joinChat(currentChatId);
+            // socketService.joinChat(currentChatId);
             fetchMessages();
         }
 
@@ -143,7 +143,7 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
                 if (!activeChatId && data.chatId) {
                     setCurrentChatId(data.chatId);
                     currentChatIdRef.current = data.chatId;
-                    socketService.joinChat(data.chatId);
+                    // socketService.joinChat(data.chatId);
                 }
                 return;
             }
@@ -152,7 +152,7 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
             if (!activeChatId) {
                 setCurrentChatId(data.chatId);
                 currentChatIdRef.current = data.chatId;
-                socketService.joinChat(data.chatId);
+                // socketService.joinChat(data.chatId);
                 addMessage(data.chatId, data.message);
             } else if (data.chatId === activeChatId) {
                 addMessage(activeChatId, data.message);  // ✅ just add message, no sound here
@@ -182,16 +182,16 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
             }
         };
 
-        socketService.on(SOCKET_EVENTS.MESSAGE_NEW, handleNewMessage);
-        socketService.on(SOCKET_EVENTS.MESSAGE_DELIVERED, handleDelivered);
-        socketService.on(SOCKET_EVENTS.MESSAGE_READ, handleRead);
+        // socketService.on(SOCKET_EVENTS.MESSAGE_NEW, handleNewMessage);
+        // socketService.on(SOCKET_EVENTS.MESSAGE_DELIVERED, handleDelivered);
+        // socketService.on(SOCKET_EVENTS.MESSAGE_READ, handleRead);
 
-        return () => {
-            if (currentChatId) socketService.leaveChat(currentChatId);
-            socketService.off(SOCKET_EVENTS.MESSAGE_NEW, handleNewMessage);
-            socketService.off(SOCKET_EVENTS.MESSAGE_DELIVERED, handleDelivered);
-            socketService.off(SOCKET_EVENTS.MESSAGE_READ, handleRead);
-        };
+        // return () => {
+        //     if (currentChatId) socketService.leaveChat(currentChatId);
+        //     socketService.off(SOCKET_EVENTS.MESSAGE_NEW, handleNewMessage);
+        //     socketService.off(SOCKET_EVENTS.MESSAGE_DELIVERED, handleDelivered);
+        //     socketService.off(SOCKET_EVENTS.MESSAGE_READ, handleRead);
+        // };
     }, [currentChatId]);
 
     // ── Send message ──────────────────────────────

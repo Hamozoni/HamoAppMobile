@@ -181,5 +181,5 @@ class SocketService {
 }
 
 // Singleton — one instance across the whole app
-export const socketService = new SocketService();
-export default socketService;
+// export const socketService = new SocketService();
+// export default socketService;
