@@ -265,11 +265,8 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
                 formData.append("folder", signature.folder);
                 formData.append("cloud_name", signature.cloudName);
 
-                console.log("📤 Uploading to Cloudinary...", signature.uploadUrl);
                 const { data: cloudinaryData } = await axios.post(signature.uploadUrl, formData);
-                console.log("✅ Cloudinary upload:", cloudinaryData.secure_url);
 
-                console.log("📤 Confirming file...");
                 const { data: fileData } = await axiosInstance.post("/files/confirm", {
                     cloudinaryData,
                     type,
@@ -281,17 +278,17 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
             }
 
             console.log("📤 Emitting message...", { phoneNumber, type, fileId, clientMessageId });
-            socketService.emit(SOCKET_EVENTS.MESSAGE_SEND, {
-                chatId: currentChatIdRef.current,
-                phoneNumber,
-                type,
-                text: draft.text?.trim(),
-                fileId,
-                location: draft.location,
-                contact: draft.contact,
-                replyTo: draft.replyTo,
-                clientMessageId,
-            } as SendMessagePayload);
+            // socketService.emit(SOCKET_EVENTS.MESSAGE_SEND, {
+            //     chatId: currentChatIdRef.current,
+            //     phoneNumber,
+            //     type,
+            //     text: draft.text?.trim(),
+            //     fileId,
+            //     location: draft.location,
+            //     contact: draft.contact,
+            //     replyTo: draft.replyTo,
+            //     clientMessageId,
+            // } as SendMessagePayload);
             console.log("✅ Message emitted");
 
         } catch (err) {

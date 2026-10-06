@@ -17,19 +17,9 @@ interface ICloudinaryData {
 interface IUpdateProfile {
     displayName: string,
     about: string,
+    cloudinaryData?: ICloudinaryData
 }
 
-const updateProfilePicture = async (payload: ICloudinaryData): Promise<IUser> => {
-    const { data } = await axiosInstance.post('/profile/update-profile-picture', payload);
-    return data;
-};
-
-export const useUpdateProfilePicture = () => {
-
-    return useMutation({
-        mutationFn: updateProfilePicture,
-    });
-};
 
 const updateProfile = async (payload: IUpdateProfile): Promise<IUser> => {
     const { data } = await axiosInstance.post('/profile/update', payload);

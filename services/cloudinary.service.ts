@@ -69,7 +69,5 @@ export const uploadImageToCloudinary = async (
         }
     );
 
-    console.log("cloudinary response", data);
-
     return data;
 };

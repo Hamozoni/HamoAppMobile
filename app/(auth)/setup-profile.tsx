@@ -1,168 +1,3 @@
-// import React, { useState } from "react";
-// import {
-//     View,
-//     Text,
-//     TextInput,
-//     TouchableOpacity,
-//     StyleSheet,
-//     KeyboardAvoidingView,
-//     Platform,
-//     ScrollView,
-//     ActivityIndicator,
-// } from "react-native";
-// import { Ionicons } from "@expo/vector-icons";
-// import { useRouter } from "expo-router";
-// import ThemedSafeAreaView from "../../components/themedViews/safeAreaView";
-// import Separator from "../../components/ui/separator";
-// import { SetupProfileImage } from "../../components/profile/setupProfileImage";
-// import { useUpdateProfile } from "../../hooks/api/useProfileApi";
-// import { AuthBootstrap } from "../../utils/authBootstrap";
-// import { useAuthStore } from "../../hooks/store/useAuthStore";
-
-// interface Errors {
-//     displayName?: string;
-//     birthDate?: string;
-// };
-
-
-// export default function SetupProfile() {
-
-//     const router = useRouter();
-//     const user = useAuthStore(state => state.user);
-
-//     const [displayName, setDisplayName] = useState(user?.displayName || "");
-//     const [about, setAbout] = useState(user?.about || "");
-//     const [errors, setErrors] = useState<Errors>({});
-//     const [isProfileEdit, setIsProfileEdit] = useState(true);
-
-//     const { mutateAsync: postUpdateProfile, isPending: isLoading } = useUpdateProfile();
-
-//     const handleContinue = async () => {
-//         // if (!validateForm()) return;
-
-//         try {
-
-//             const response = await postUpdateProfile({
-//                 displayName,
-//                 about,
-//             });
-
-//             await useAuthStore.getState().setUser(response);
-
-//             router.replace("/(tabs)/chats" as string);
-//         } catch (err) {
-//             console.error(err);
-//         }
-//     };
-
-//     const handleSkip = () => {
-//         router.replace("/(tabs)/chats" as string);
-//     };
-
-//     const shouldDisabled =
-//         displayName === user?.displayName && about === user?.about && isProfileEdit;
-
-//     return (
-//         <ThemedSafeAreaView>
-//             <AuthBootstrap />
-//             <KeyboardAvoidingView
-//                 behavior={Platform.OS === "ios" ? "padding" : "height"}
-//                 style={styles.container}
-//             >
-//                 <ScrollView
-//                     contentContainerStyle={styles.scrollContent}
-//                     showsVerticalScrollIndicator={false}
-//                     keyboardShouldPersistTaps="handled"
-//                 >
-//                     <TouchableOpacity
-//                         style={styles.skipButton}
-//                         onPress={handleSkip}
-//                     >
-//                         <Text style={styles.skipButtonText}>Skip</Text>
-//                     </TouchableOpacity>
-//                     <Separator />
-//                     <SetupProfileImage setIsProfileEdit={setIsProfileEdit} />
-
-//                     <Separator />
-//                     <View style={{ padding: 20 }}>
-
-//                         <View >
-//                             <Separator />
-//                             <View >
-//                                 <Text style={styles.inputLabel}>Username *</Text>
-//                                 <View style={[
-//                                     styles.inputContainer,
-//                                     errors.displayName && styles.inputError
-//                                 ]}>
-//                                     <Ionicons name="person-outline" size={20} color="#888" />
-//                                     <TextInput
-//                                         style={styles.textInput}
-//                                         placeholder="Enter your username"
-//                                         placeholderTextColor="#999"
-//                                         value={displayName}
-//                                         editable={!isLoading}
-//                                         onChangeText={(text) => {
-//                                             setDisplayName(text);
-//                                             setErrors((prev) => ({ ...prev, displayName: "" }));
-//                                         }}
-//                                         maxLength={30}
-//                                         autoCapitalize="none"
-//                                     />
-//                                 </View>
-//                                 {errors.displayName && (
-//                                     <Text style={styles.errorText}>{errors.displayName}</Text>
-//                                 )}
-//                             </View>
-//                             <Separator />
-//                             <View >
-//                                 <Text style={[styles.inputLabel, { marginTop: 10 }]}>Bio</Text>
-//                                 <View style={styles.bioContainer}>
-//                                     <TextInput
-//                                         style={styles.bioInput}
-//                                         placeholder="Tell us about yourself..."
-//                                         placeholderTextColor="#999"
-//                                         value={about}
-//                                         editable={!isLoading}
-//                                         onChangeText={setAbout}
-//                                         multiline
-//                                         numberOfLines={4}
-//                                         maxLength={50}
-//                                         textAlignVertical="top"
-//                                     />
-//                                 </View>
-//                                 <Text style={styles.charCount}>{about.length}/50</Text>
-//                             </View>
-//                         </View>
-
-//                         <Separator />
-
-//                         <TouchableOpacity
-//                             style={[
-//                                 styles.continueButton,
-//                                 shouldDisabled && styles.continueButtonDisabled,
-//                             ]}
-//                             onPress={handleContinue}
-//                             disabled={shouldDisabled}
-//                         >
-//                             {isLoading ? (
-//                                 <ActivityIndicator color="#fff" size="small" />
-//                             ) : (
-//                                 <>
-//                                     <Text style={styles.continueButtonText}>Complete Setup</Text>
-//                                     <Ionicons name="checkmark-circle" size={22} color="#fff" />
-//                                 </>
-//                             )}
-//                         </TouchableOpacity>
-
-//                     </View>
-
-
-//                 </ScrollView>
-//             </KeyboardAvoidingView>
-//         </ThemedSafeAreaView>
-//     );
-// }
-
 import React, { useState } from 'react';
 import {
     View,
@@ -183,8 +18,8 @@ import * as ImagePicker from 'expo-image-picker';
 import ThemedSafeAreaView from '../../components/themedViews/safeAreaView';
 import Separator from '../../components/ui/separator';
 import { SetupProfileImage } from '../../components/profile/setupProfileImage';
-import { useCloudinaryUpload } from '../../hooks/api/useCloudinaryUplaodApi';
-import { useUpdateProfile, useUpdateProfilePicture } from '../../hooks/api/useProfileApi';
+import { useCloudinaryUpload } from '../../hooks/api/useCloudinaryUplaodProfilePictureApi';
+import { useUpdateProfile } from '../../hooks/api/useProfileApi';
 import { AuthBootstrap } from '../../utils/authBootstrap';
 import { useAuthStore } from '../../hooks/store/useAuthStore';
 
@@ -204,10 +39,9 @@ export default function SetupProfile() {
     const [errors, setErrors] = useState<FormErrors>({});
 
     const { mutateAsync: uploadToCloudinary, isPending: isUploadingImage, progress } = useCloudinaryUpload();
-    const { mutateAsync: postUpdateProfilePicture, isPending: isSavingPic } = useUpdateProfilePicture();
     const { mutateAsync: postUpdateProfile, isPending: isUpdatingProfile } = useUpdateProfile();
 
-    const isSubmitting = isUploadingImage || isSavingPic || isUpdatingProfile;
+    const isSubmitting = isUploadingImage || isUpdatingProfile;
 
     const isUnchanged =
         displayName.trim() === (user?.displayName || '') &&
@@ -230,18 +64,17 @@ export default function SetupProfile() {
         if (!validate()) return;
 
         try {
+            let cloudinaryData;
             if (selectedImageAsset) {
-                const cloudinaryData = await uploadToCloudinary(selectedImageAsset);
-
-                console.log(cloudinaryData, "cloudinaryData");
-                await postUpdateProfilePicture(cloudinaryData);
+                cloudinaryData = await uploadToCloudinary(selectedImageAsset)
             }
 
             const profileResponse = await postUpdateProfile({
                 displayName: displayName.trim(),
                 about: about.trim(),
+                cloudinaryData,
             });
-
+            console.log("profileResponse>>>", profileResponse)
             await setUser(profileResponse);
             router.replace('/(tabs)/chats');
         } catch (err: any) {
