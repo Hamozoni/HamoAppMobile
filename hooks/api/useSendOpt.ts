@@ -9,12 +9,12 @@ interface VerifyOtpResponse {
     error?: string;
 }
 
-const postOtp = async (phoneNumber: string): Promise<VerifyOtpResponse> => {
-    const { data } = await axiosInstance.post('/auth/send_otp', { phoneNumber });
-    return data;
-};
 
 export const useSendOpt = () => {
+    const postOtp = async (phoneNumber: string): Promise<VerifyOtpResponse> => {
+        const { data } = await axiosInstance.post('/auth/send_otp', { phoneNumber });
+        return data;
+    };
     return useMutation({
         mutationFn: postOtp,
     });

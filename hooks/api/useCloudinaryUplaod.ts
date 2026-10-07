@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { ImagePickerAsset } from 'expo-image-picker';
-import { useProfilePictureSignature } from './useProfilePicureSignature';
+import { useProfilePictureSignature } from './useCloudinarySignature';
 import { uploadImageToCloudinary, CloudinaryUploadResponse } from '../../services/cloudinary.service';
 
 export const useCloudinaryUpload = (endPoint: string) => {

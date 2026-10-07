@@ -3,6 +3,7 @@ import { axiosInstance } from "../../lib/axios.config";
 import { useChatsStore } from "../store/useChatsStore";
 
 export function useChats() {
+
     const { chats, setChats } = useChatsStore();
     const [loading, setLoading] = useState(false);
 
@@ -10,8 +11,6 @@ export function useChats() {
         try {
             setLoading(true);
             const { data } = await axiosInstance.get("/chats");
-
-            console.log("chats data", data)
             setChats(data.chats);
         } catch (err: any) {
             console.error("Failed to fetch chats:", err.response?.status);

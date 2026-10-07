@@ -21,27 +21,28 @@ interface IUpdateProfile {
 }
 
 
-const updateProfile = async (payload: IUpdateProfile): Promise<IUser> => {
-    const { data } = await axiosInstance.post('/profile/update', payload);
-    return data;
-};
 
 
 export const useUpdateProfile = () => {
+
+    const updateProfile = async (payload: IUpdateProfile): Promise<IUser> => {
+        const { data } = await axiosInstance.post('/profile/update', payload);
+        return data;
+    };
 
     return useMutation({
         mutationFn: updateProfile,
     });
 };
 
-const getProfile = async (): Promise<IUser> => {
-    const response = await axiosInstance.get('/profile');
-    if (!response?.data) throw new Error("No profile data returned");
-    return response.data;
-};
 
 export const useGetProfile = () => {
 
+    const getProfile = async (): Promise<IUser> => {
+        const response = await axiosInstance.get('/profile');
+        if (!response?.data) throw new Error("No profile data returned");
+        return response.data;
+    };
     return useMutation({
         mutationFn: getProfile,
     });

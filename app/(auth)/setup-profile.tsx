@@ -18,7 +18,7 @@ import * as ImagePicker from 'expo-image-picker';
 import ThemedSafeAreaView from '../../components/themedViews/safeAreaView';
 import Separator from '../../components/ui/separator';
 import { SetupProfileImage } from '../../components/profile/setupProfileImage';
-import { useCloudinaryUpload } from '../../hooks/api/useCloudinaryUplaodProfilePictureApi';
+import { useCloudinaryUpload } from '../../hooks/api/useCloudinaryUplaod';
 import { useUpdateProfile } from '../../hooks/api/useProfileApi';
 import { AuthBootstrap } from '../../utils/authBootstrap';
 import { useAuthStore } from '../../hooks/store/useAuthStore';
