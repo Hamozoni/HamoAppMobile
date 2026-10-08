@@ -216,10 +216,6 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
             receiverId: "",
             type,
             text: draft.text?.trim() ?? null,
-            status: "pending",
-            isDeleted: false,
-            isEdited: false,
-            isStarred: false,
             createdAt: now,
             updatedAt: now,
             clientMessageId,
@@ -230,54 +226,53 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
             ...(draft.replyTo && { replyTo: draft.replyTo }),
         };
 
-        const storeKey = currentChatIdRef.current ?? phoneNumber;
-        addMessage(storeKey, optimistic);
+        // const storeKey = currentChatIdRef.current ?? phoneNumber;
+        // addMessage(storeKey, optimistic);
 
         // ✅ Optimistically update chat list preview
-        if (currentChatIdRef.current) {
-            updateLastMessage(currentChatIdRef.current, {
-                type,
-                text: draft.text?.trim() ?? null,
-                createdAt: formatMessageTime(now),
-                rawTime: Date.now(),
-                isMine: true,
-                isRead: false,
-            });
-        }
+        // if (currentChatIdRef.current) {
+        //     updateLastMessage(currentChatIdRef.current, {
+        //         type,
+        //         text: draft.text?.trim() ?? null,
+        //         createdAt: formatMessageTime(now),
+        //         rawTime: Date.now(),
+        //         isMine: true,
+        //         isRead: false,
+        //     });
+        // }
 
         try {
             let fileId: string | undefined;
 
             if (draft.asset) {
-                console.log("📤 Getting signature...");
-                const { data: signature } = await axiosInstance.post("/files/signature", { type });
-                console.log("✅ Signature:", signature);
+                // console.log("📤 Getting signature...");
+                // const { data: signature } = await axiosInstance.post("/files/signature", { type });
+                // console.log("✅ Signature:", signature);
 
-                const formData = new FormData() as any;
-                formData.append("file", {
-                    uri: draft.asset.uri,
-                    type: draft.asset.mimeType,
-                    name: draft.asset.fileName ?? `file.${draft.asset.uri.split(".").pop()}`,
-                });
-                formData.append("signature", signature.signature);
-                formData.append("timestamp", signature.timestamp);
-                formData.append("api_key", signature.apiKey);
-                formData.append("folder", signature.folder);
-                formData.append("cloud_name", signature.cloudName);
+                // const formData = new FormData() as any;
+                // formData.append("file", {
+                //     uri: draft.asset.uri,
+                //     type: draft.asset.mimeType,
+                //     name: draft.asset.fileName ?? `file.${draft.asset.uri.split(".").pop()}`,
+                // });
+                // formData.append("signature", signature.signature);
+                // formData.append("timestamp", signature.timestamp);
+                // formData.append("api_key", signature.apiKey);
+                // formData.append("folder", signature.folder);
+                // formData.append("cloud_name", signature.cloudName);
 
-                const { data: cloudinaryData } = await axios.post(signature.uploadUrl, formData);
+                // const { data: cloudinaryData } = await axios.post(signature.uploadUrl, formData);
 
-                const { data: fileData } = await axiosInstance.post("/files/confirm", {
-                    cloudinaryData,
-                    type,
-                    chatId: currentChatIdRef.current,
-                });
-                console.log("✅ File confirmed:", fileData.fileId);
+                // const { data: fileData } = await axiosInstance.post("/files/confirm", {
+                //     cloudinaryData,
+                //     type,
+                //     chatId: currentChatIdRef.current,
+                // });
 
-                fileId = fileData.fileId;
+
+                // fileId = fileData.fileId;
             }
 
-            console.log("📤 Emitting message...", { phoneNumber, type, fileId, clientMessageId });
             // socketService.emit(SOCKET_EVENTS.MESSAGE_SEND, {
             //     chatId: currentChatIdRef.current,
             //     phoneNumber,
@@ -289,11 +284,10 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
             //     replyTo: draft.replyTo,
             //     clientMessageId,
             // } as SendMessagePayload);
-            console.log("✅ Message emitted");
 
         } catch (err) {
             console.error("Failed to send message:", err);
-            updateMessageStatus(storeKey, clientMessageId, "failed");
+            // updateMessageStatus(storeKey, clientMessageId, "failed");
         }
 
     }, [phoneNumber, user]);

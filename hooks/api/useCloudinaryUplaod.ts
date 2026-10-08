@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { ImagePickerAsset } from 'expo-image-picker';
-import { useProfilePictureSignature } from './useCloudinarySignature';
+import { useCloudinarySignature } from './useCloudinarySignature';
 import { uploadImageToCloudinary, CloudinaryUploadResponse } from '../../services/cloudinary.service';
 
 export const useCloudinaryUpload = (endPoint: string) => {
+
     const [progress, setProgress] = useState<number>(0);
-    const { mutateAsync: fetchSignature } = useProfilePictureSignature();
+    const { mutateAsync: fetchSignature } = useCloudinarySignature();
 
     const mutation = useMutation<CloudinaryUploadResponse, Error, ImagePickerAsset>({
         mutationFn: async (asset: ImagePickerAsset) => {

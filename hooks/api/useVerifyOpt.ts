@@ -23,11 +23,11 @@ interface VerifyOtpResponse {
 
 export const useVerifyOtp = () => {
 
-    const postVerifyOtp = async (payload: VerifyOtpPayload): Promise<VerifyOtpResponse> => {
+    const mutationFn = async (payload: VerifyOtpPayload): Promise<VerifyOtpResponse> => {
         const { data } = await axiosInstance.post('/auth/verify_otp', payload);
         return data;
     };
     return useMutation({
-        mutationFn: postVerifyOtp,
+        mutationFn,
     });
 };
