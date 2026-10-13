@@ -5,18 +5,15 @@ import {
     KeyboardAvoidingView,
 } from "react-native";
 import { Ionicons, FontAwesome6, Entypo } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import FooterAttachment from "./footerAttachment";
 import AudioRecorder from "./audioRecorder";
 import { MessageDraft, MessageType } from "../../../types/message.types";
+import { useMessages } from "../../../hooks/useMessage";
 
 const WA_GREEN = "#25D366";
 
-interface ChatFooterProps {
-    sendMessage: (draft: MessageDraft) => void;
-}
-
-export default function ChatFooter({ sendMessage }: ChatFooterProps) {
+export default function ChatFooter() {
 
     const [keyboardHeight, setKeyboardHeight] = useState(336);
     const [isAttachment, setIsAttachment] = useState(false);
@@ -26,6 +23,12 @@ export default function ChatFooter({ sendMessage }: ChatFooterProps) {
     const [assetType, setAssetType] = useState<MessageType>("image");
     const textInputRef = useRef<TextInput>(null);
     const router = useRouter();
+
+    const { phoneNumber } = useLocalSearchParams<{
+        phoneNumber: string;
+    }>();
+
+    const { sendMessage } = useMessages({ phoneNumber });
 
     useEffect(() => {
         const show = Keyboard.addListener("keyboardDidShow", e => {

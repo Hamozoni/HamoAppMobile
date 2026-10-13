@@ -12,7 +12,7 @@ export interface SendMessagePayload {
     phoneNumber?: string;      // ✅ optional — used when no receiverId
     type: MessageType;
     text?: string;
-    fileId?: string;
+    asset: any;
     location?: { latitude: number; longitude: number; name?: string };
     contact?: { displayName: string; phoneNumber: string; avatar?: string };
     link?: { url: string; title?: string; description?: string; thumbnail?: string };

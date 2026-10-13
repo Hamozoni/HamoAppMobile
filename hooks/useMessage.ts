@@ -9,7 +9,6 @@ import {
 import { useMessagesStore } from "./store/useMessageStore";
 import { axiosInstance } from "../lib/axios.config";
 // import socketService, { SOCKET_EVENTS } from "../services/socket.service";
-import axios from "axios";
 import { formatMessageTime } from "../utils";
 import { useChatsStore } from "./store/useChatsStore";
 
@@ -226,8 +225,8 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
             ...(draft.replyTo && { replyTo: draft.replyTo }),
         };
 
-        // const storeKey = currentChatIdRef.current ?? phoneNumber;
-        // addMessage(storeKey, optimistic);
+        const storeKey = currentChatIdRef.current ?? phoneNumber;
+        addMessage(storeKey, optimistic);
 
         // ✅ Optimistically update chat list preview
         // if (currentChatIdRef.current) {

@@ -7,6 +7,7 @@ import { useMessages } from "../../../hooks/useMessage";
 import { usePendingStore } from "../../../hooks/store/usePendingStore";
 
 export default function ChatDetails() {
+
     const { phoneNumber } = useLocalSearchParams<{
         phoneNumber: string;
     }>();
@@ -56,9 +57,7 @@ export default function ChatDetails() {
                 }}
             />
 
-            <ChatFooter
-                sendMessage={sendMessage}
-            />
+            <ChatFooter />
         </View>
     );
 }

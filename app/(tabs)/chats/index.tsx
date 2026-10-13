@@ -28,7 +28,6 @@ const Chats = () => {
 
     const { chats, loading, fetchChats } = useChats();
 
-    console.log(chats)
     const registered = useContactsStore(state => state.registered);
 
     const handleEdit = () => {

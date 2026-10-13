@@ -8,7 +8,7 @@ export default function Index() {
 
     if (!hydrated) return <ActivityIndicator />;
 
-    if (user) {
+    if (!user) {
         console.log("No user found!");
         return <Redirect href="/(auth)/login" />;
     }

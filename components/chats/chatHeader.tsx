@@ -1,4 +1,4 @@
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -10,7 +10,7 @@ interface ChatHeaderProps {
     phoneNumber: string;
 }
 
-export const ChatHeaderLeft = ({ phoneNumber }: ChatHeaderProps) => {
+export const ChatHeaderLeft = () => {
 
     const router = useRouter();
     return (
@@ -21,7 +21,6 @@ export const ChatHeaderLeft = ({ phoneNumber }: ChatHeaderProps) => {
 };
 
 export const ChatHeaderMiddle = ({ phoneNumber }: ChatHeaderProps) => {
-
     const { registered } = useContactsStore();
     const user = useAuthStore(state => state.user)
     const findContact = () => {
@@ -43,7 +42,7 @@ export const ChatHeaderMiddle = ({ phoneNumber }: ChatHeaderProps) => {
     );
 };
 
-export const ChatHeaderRight = ({ phoneNumber }: ChatHeaderProps) => {
+export const ChatHeaderRight = () => {
     return (
         <View style={{ flexDirection: "row", alignItems: "center", gap: 15 }}>
             <TouchableOpacity>

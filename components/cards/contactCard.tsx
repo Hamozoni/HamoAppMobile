@@ -14,6 +14,7 @@ interface ContactCardProps {
 }
 
 const ContactCard = ({ contact }: ContactCardProps) => {
+
     const router = useRouter();
     const isRegistered = contact.isRegistered === 1;
 
