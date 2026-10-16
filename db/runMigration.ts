@@ -4,6 +4,7 @@ import migration001 from "./migrations/001_init";
 const migrations = [migration001];
 
 export function runMigrations() {
+
     const db = getDatabase();
 
     db.execSync(`

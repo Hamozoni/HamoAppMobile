@@ -22,7 +22,8 @@ export const ChatHeaderLeft = () => {
 
 export const ChatHeaderMiddle = ({ phoneNumber }: ChatHeaderProps) => {
     const { registered } = useContactsStore();
-    const user = useAuthStore(state => state.user)
+    const user = useAuthStore(state => state.user);
+
     const findContact = () => {
         return registered?.find(e => e.phoneNumber === phoneNumber)
     };

@@ -63,7 +63,7 @@ const MessagePreview = ({ lastMessage }: { lastMessage: Chat["lastMessage"] }) =
 
 export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: ChatCardProps) => {
 
-    console.log(contact)
+    console.log({ contact, chat })
     const router = useRouter();
     const hasUnread = (chat.unreadCount ?? 0) > 0;
 
@@ -86,7 +86,7 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: Ch
 
             {/* Avatar + online dot */}
             <View style={styles.avatarWrapper}>
-                <Image source={{ uri: contact?.profilePicture as string }} style={styles.avatar} />
+                <Image source={{ uri: contact?.profilePicture || chat?.contact?.photoURL as string }} style={styles.avatar} />
                 {chat.isOnline && <View style={styles.onlineDot} />}
             </View>
 
@@ -94,7 +94,7 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: Ch
             <View style={styles.content}>
                 <View style={styles.topRow}>
                     <Text style={styles.name} numberOfLines={1}>
-                        {contact?.displayName || chat.contact.displayName}
+                        {contact?.displayName || chat.contact.phoneNumber}
                     </Text>
                     <Text style={[styles.time, hasUnread && styles.timeUnread]}>
                         {chat.lastMessage?.createdAt}

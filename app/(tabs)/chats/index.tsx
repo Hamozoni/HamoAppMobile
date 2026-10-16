@@ -10,6 +10,7 @@ import { ChatCard } from "../../../components/cards/chatCard";
 import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";
 import { useChats } from "../../../hooks/api/useChatsApi";
 import { useContactsStore } from "../../../hooks/store/useContactsStore";
+import chats from "../settings/chats";
 
 const { width } = Dimensions.get("window");
 const WA_GREEN = "#25D366";
@@ -27,6 +28,7 @@ const Chats = () => {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
     const { chats, loading, fetchChats } = useChats();
+    console.log(chats[0])
 
     const registered = useContactsStore(state => state.registered);
 
