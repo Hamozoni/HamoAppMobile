@@ -2,9 +2,13 @@ import React, { useEffect, useRef } from "react";
 import { useLocalSearchParams } from "expo-router";
 import ChatFooter from "../../../components/chats/chatWindowFooter/chatFooter";
 import MessageCard from "../../../components/cards/messageCard";
-import { FlatList, StyleSheet, View } from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 import { useMessages } from "../../../hooks/useMessage";
 import { usePendingStore } from "../../../hooks/store/usePendingStore";
+import { useGetmessages } from "../../../hooks/api/useGetMessagesApi";
+import { useChatsStore } from "../../../hooks/store/useChatsStore";
+import { useMessagesStore } from "../../../hooks/store/useMessageStore";
+import { LocationAccuracy } from "expo-location";
 
 export default function ChatDetails() {
 
@@ -12,7 +16,16 @@ export default function ChatDetails() {
         phoneNumber: string;
     }>();
 
-    const { messages, sendMessage } = useMessages({ phoneNumber });
+    const chats = useChatsStore((state) => state.chats);
+
+    // 1. Safely find the chat where one of the participants matches the phone number
+    const currentChatId: string | undefined = chats?.find((chat) =>
+        chat?.participants?.some((participant) => participant?.phoneNumber === phoneNumber)
+    )?._id;
+
+    // 2. Pass currentChatId to your query hook
+    const { isLoading, error } = useGetmessages(currentChatId);
+    const messages = useMessagesStore(e => e.messages[currentChatId ?? 0])
 
     const flatListRef = useRef<FlatList>(null);
 
@@ -22,16 +35,14 @@ export default function ChatDetails() {
     useEffect(() => {
         if (!pendingLocation) return;
 
-        sendMessage({
-            location: {
-                latitude: pendingLocation.latitude,
-                longitude: pendingLocation.longitude,
-                name: pendingLocation.name,
-            },
-        });
+
 
         clearPendingLocation();
     }, [pendingLocation]);
+
+    if (isLoading) {
+        return <ActivityIndicator />
+    }
 
     return (
         <View style={{ flex: 1, backgroundColor: "#fff" }}>

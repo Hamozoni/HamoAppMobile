@@ -47,7 +47,7 @@ export default function AnimatedBorder({
                     colors={["#FF3B30", "#FF9F0A", "#25D366", "#007AFF"]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
-                    style={StyleSheet.absoluteFillObject}
+                // style={ }
                 />
             </Animated.View>
 
@@ -65,9 +65,8 @@ const styles = StyleSheet.create({
         backgroundColor: "transparent",
     },
     gradient: {
-        ...StyleSheet.absoluteFillObject,
         // Make it bigger than the container so rotation doesn't show corners
-        margin: -50,
+        // margin: -50,
     },
     inner: {
         backgroundColor: "#fff",

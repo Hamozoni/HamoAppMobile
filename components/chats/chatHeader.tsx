@@ -5,6 +5,7 @@ import React from "react";
 import { useContactsStore } from "../../hooks/store/useContactsStore";
 import { useAuthStore } from "../../hooks/store/useAuthStore";
 import Avatar from "../ui/avatar";
+import { useChatsStore } from "../../hooks/store/useChatsStore";
 
 interface ChatHeaderProps {
     phoneNumber: string;
@@ -24,6 +25,13 @@ export const ChatHeaderMiddle = ({ phoneNumber }: ChatHeaderProps) => {
     const { registered } = useContactsStore();
     const user = useAuthStore(state => state.user);
 
+    const chats = useChatsStore((state) => state.chats);
+
+    // 1. Safely find the chat where one of the participants matches the phone number
+    const contact = chats?.find((chat) =>
+        chat?.participants?.some((participant) => participant?.phoneNumber === phoneNumber)
+    )?.participants?.find(e => e.phoneNumber === phoneNumber)
+
     const findContact = () => {
         return registered?.find(e => e.phoneNumber === phoneNumber)
     };
@@ -32,10 +40,13 @@ export const ChatHeaderMiddle = ({ phoneNumber }: ChatHeaderProps) => {
 
     return (
         <TouchableOpacity onPress={() => router.push(`chats/profile/${phoneNumber}`)} style={{ flexDirection: "row", alignItems: "center", gap: 10, flex: 1 }}>
-            <Avatar profilePicture={findContact()?.profilePicture} displayName={findContact()?.displayName} />
+            <Avatar
+                profilePicture={contact?.profilePicture?.secureUrl}
+                displayName={findContact()?.displayName || contact?.phoneNumber} />
             <TouchableOpacity>
                 <Text style={{ fontSize: 16, fontWeight: "500" }}>
-                    {findContact()?.displayName} {user?.phoneNumber === findContact()?.phoneNumber && ' ( You )'}
+                    {findContact()?.displayName || contact?.phoneNumber}
+                    {user?.phoneNumber === contact?.phoneNumber && ' ( You )'}
                 </Text>
                 <Text style={{ fontSize: 14, color: "#666" }}>on line</Text>
             </TouchableOpacity>

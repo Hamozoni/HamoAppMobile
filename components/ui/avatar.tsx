@@ -6,7 +6,7 @@ interface AvatarProps {
     width?: number;
     height?: number;
 }
-export default function Avatar({ profilePicture, displayName, isRegistered = true, width = 40, height = 40 }: AvatarProps) {
+export default function Avatar({ profilePicture, displayName, width = 40, height = 40 }: AvatarProps) {
     // Generate initials from display name
     const initials = displayName
         ?.split(" ")
@@ -21,7 +21,7 @@ export default function Avatar({ profilePicture, displayName, isRegistered = tru
     ];
     return (
         <View style={[styles.avatarContainer, { backgroundColor: avatarColor.bg, width, height }]}>
-            {isRegistered && profilePicture ? (
+            {profilePicture ? (
                 <Image
                     source={{ uri: profilePicture }}
                     style={[styles.avatarImage, { width, height }]}

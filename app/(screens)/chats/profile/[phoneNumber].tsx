@@ -9,6 +9,7 @@ import Separator from "../../../../components/ui/separator";
 import { useAuthStore } from "../../../../hooks/store/useAuthStore";
 import Avatar from "../../../../components/ui/avatar";
 import AnimatedBorder from "../../../../components/ui/animatedBorder";
+import { useChatsStore } from "../../../../hooks/store/useChatsStore";
 
 interface ProfileButton {
     id: any;
@@ -100,10 +101,18 @@ export default function Profile() {
 
     const { phoneNumber } = useLocalSearchParams<{ phoneNumber: string }>();
     const { registered } = useContactsStore();
-    const user = useAuthStore(state => state.user)
+    const user = useAuthStore(state => state.user);
+
     const findContact = () => {
         return registered?.find(e => e.phoneNumber === phoneNumber)
     };
+
+    const chats = useChatsStore((state) => state.chats);
+
+    // 1. Safely find the chat where one of the participants matches the phone number
+    const contact = chats?.find((chat) =>
+        chat?.participants?.some((participant) => participant?.phoneNumber === phoneNumber)
+    )?.participants?.find(e => e.phoneNumber === phoneNumber)
 
     return (
         <ThemedSafeAreaView paddingTop={0}>
@@ -112,20 +121,24 @@ export default function Profile() {
                 <ThemedViewContainer>
                     <View style={{ justifyContent: "center", alignItems: 'center', paddingTop: 40, marginBottom: 20 }}>
                         <AnimatedBorder>
-                            <Avatar profilePicture={findContact()?.profilePicture} displayName={findContact()?.displayName} width={150} height={150} />
+                            <Avatar
+                                profilePicture={contact?.profilePicture?.secureUrl}
+                                displayName={findContact()?.displayName || contact?.phoneNumber}
+                                width={150} height={150} />
                         </AnimatedBorder>
                     </View>
                     <View style={{ flexDirection: "column", justifyContent: "center", alignContent: "center" }}>
                         <Text style={{ fontSize: 22, fontWeight: 900, textAlign: 'center' }}>
-                            {findContact()?.displayName}  {user?.phoneNumber === findContact()?.phoneNumber && ' ( You )'}
+                            {findContact()?.displayName || contact?.displayName}
+                            {user?.phoneNumber === contact?.phoneNumber && ' ( You )'}
                         </Text>
                         <Text style={{ fontSize: 18, textAlign: 'center', color: "gray", marginTop: 3, marginBottom: 5 }}>
-                            {findContact()?.phoneNumber}
+                            {contact?.phoneNumber}
                         </Text>
                         {
-                            findContact()?.about &&
+                            (findContact()?.about || contact?.about) &&
                             <Text style={{ fontSize: 16, textAlign: 'center', color: "gray" }}>
-                                {findContact()?.about}
+                                {findContact()?.about || contact?.about}
                             </Text>
                         }
                     </View>

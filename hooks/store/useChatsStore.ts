@@ -1,11 +1,11 @@
 import { create } from "zustand";
-import { IChat } from "../api/useChatsApi";
+import { Chat } from "../../types/components.types";
 
 interface ChatsState {
-    chats: IChat[];
-    setChats: (chats: IChat[]) => void;
-    updateChat: (chatId: string, update: Partial<IChat>) => void;
-    updateLastMessage: (chatId: string, lastMessage: IChat["lastMessage"]) => void;
+    chats: Chat[];
+    setChats: (chats: Chat[]) => void;
+    updateChat: (chatId: string, update: Partial<Chat>) => void;
+    updateLastMessage: (chatId: string, lastMessage: Chat["lastMessage"]) => void;
     incrementUnread: (chatId: string) => void;
     resetUnread: (chatId: string) => void;
 }
@@ -20,7 +20,7 @@ export const useChatsStore = create<ChatsState>((set) => ({
             chats: state.chats
                 .map(c => c._id === chatId ? { ...c, ...update } : c)
                 .sort((a, b) =>
-                    (b.lastMessage?.rawTime ?? 0) - (a.lastMessage?.rawTime ?? 0)
+                    (new Date(b.lastMessage?.createdAt).getMilliseconds()) - (new Date(a.lastMessage?.createdAt).getMilliseconds())
                 ),
         })),
 
@@ -29,7 +29,7 @@ export const useChatsStore = create<ChatsState>((set) => ({
             chats: state.chats
                 .map(c => c._id === chatId ? { ...c, lastMessage } : c)
                 .sort((a, b) =>
-                    (b.lastMessage?.rawTime ?? 0) - (a.lastMessage?.rawTime ?? 0)
+                    (new Date(b.lastMessage?.createdAt).getMilliseconds()) - (new Date(a.lastMessage?.createdAt).getMilliseconds())
                 ),
         })),
 

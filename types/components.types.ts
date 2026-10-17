@@ -18,7 +18,7 @@ export interface Contact {
 }
 
 export interface Message {
-    id?: string;
+    _id?: string;
     text?: string;
     mediaUrl?: any;
     mediaType?: 'image' | 'video' | 'audio' | 'document';
@@ -30,25 +30,28 @@ export interface Message {
 export type MessageType = "text" | "audio" | "image" | "video" | "location" | "contact";
 
 export interface LastMessage {
+    _id: string;
     text?: string;
     type: MessageType;
-    createdAt: string;
+    createdAt: Date;
     isRead?: boolean;
     isMine?: boolean;
 }
 
 export interface Chat {
-    id: string;
+    _id: string;
     participants: [{
         _id: string;
         phoneNumber: string;
         displayName: string;
-        profilrPicture: {
+        about: string;
+        profilePicture: {
             secureUrl: string
         };
     }];
     lastMessage: LastMessage;
-    unreadCount?: number;
+    unreadCount?: any;
+    isGroup: boolean;
     isOnline?: boolean;
 }
 

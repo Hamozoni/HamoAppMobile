@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Chat, MessageType } from "../../types/components.types";
 import { useAuthStore } from "../../hooks/store/useAuthStore";
+import { formatMessageTime } from "../../utils";
 
 const WA_GREEN = "#25D366";
 const TEXT_PRIMARY = "#111B21";
@@ -66,7 +67,6 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: Ch
 
     console.log({ contact, chat })
     const router = useRouter();
-    const hasUnread = (chat.unreadCount ?? 0) > 0;
 
     const user = useAuthStore().user
     const notContact: {
@@ -79,6 +79,9 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: Ch
 
     } | undefined = chat?.participants?.find(e => e._id !== user?._id) as any
 
+    const contactId = notContact?._id || 0
+
+    const hasUnread = (chat.unreadCount?.[contactId] ?? 0) > 0;
     return (
         <TouchableOpacity
             onPress={() => isEditMode ? onSelect?.() : router.push({
@@ -109,7 +112,7 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: Ch
                         {contact?.displayName || notContact?.phoneNumber}
                     </Text>
                     <Text style={[styles.time, hasUnread && styles.timeUnread]}>
-                        {chat.lastMessage?.createdAt}
+                        {formatMessageTime(chat.lastMessage?.createdAt)}
                     </Text>
                 </View>
 
@@ -120,7 +123,7 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: Ch
                     {hasUnread && (
                         <View style={styles.badge}>
                             <Text style={styles.badgeText}>
-                                {(chat.unreadCount ?? 0) > 99 ? "99+" : chat.unreadCount}
+                                {(chat.unreadCount[contactId] ?? 0) > 99 ? "99+" : chat.unreadCount[contactId]}
                             </Text>
                         </View>
                     )}
