@@ -1,5 +1,5 @@
 
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { axiosInstance } from '../../lib/axios.config';
 import { IUser } from '../../types/user.type';
 
@@ -36,14 +36,16 @@ export const useUpdateProfile = () => {
 };
 
 
-export const useGetProfile = () => {
+export const useGetProfile = (enabled: boolean) => {
 
-    const mutationFn = async (): Promise<IUser> => {
+    const getProfile = async (): Promise<IUser> => {
         const response = await axiosInstance.get('/profile');
         if (!response?.data) throw new Error("No profile data returned");
         return response.data;
     };
-    return useMutation({
-        mutationFn,
+    return useQuery({
+        queryKey: ['profile'],
+        queryFn: getProfile,
+        enabled
     });
 };

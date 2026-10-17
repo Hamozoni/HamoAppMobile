@@ -6,6 +6,7 @@ import ThemedViewContainer from "../../../components/themedViews/ThemedViewConta
 import Seprater from "../../../components/ui/separator";
 import TitleForwardIconBtn from "../../../components/buttons/titleForwardIconBtn";
 import { Ionicons } from "@expo/vector-icons";
+import { useAuthStore } from "../../../hooks/store/useAuthStore";
 
 type IoniconsName = keyof typeof Ionicons.glyphMap;
 
@@ -37,6 +38,7 @@ const settingsData3: SettingItem[] = [
 ];
 
 const Settings = () => {
+
     return (
         <ThemedSafeAreaView>
             <ScrollView showsVerticalScrollIndicator={false}>

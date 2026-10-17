@@ -39,10 +39,14 @@ export interface LastMessage {
 
 export interface Chat {
     id: string;
-    contact: {
+    participants: [{
+        _id: string;
+        phoneNumber: string;
         displayName: string;
-        photoURL: string | any;
-    };
+        profilrPicture: {
+            secureUrl: string
+        };
+    }];
     lastMessage: LastMessage;
     unreadCount?: number;
     isOnline?: boolean;

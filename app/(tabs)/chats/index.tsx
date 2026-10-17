@@ -8,9 +8,10 @@ import { Stack, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { ChatCard } from "../../../components/cards/chatCard";
 import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";
-import { useChats } from "../../../hooks/api/useChatsApi";
 import { useContactsStore } from "../../../hooks/store/useContactsStore";
 import chats from "../settings/chats";
+import { useChatsStore } from "../../../hooks/store/useChatsStore";
+import { useAuthStore } from "../../../hooks/store/useAuthStore";
 
 const { width } = Dimensions.get("window");
 const WA_GREEN = "#25D366";
@@ -27,8 +28,9 @@ const Chats = () => {
     const [isEdit, setIsEdit] = useState(false);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
-    const { chats, loading, fetchChats } = useChats();
-    console.log(chats[0])
+    const user = useAuthStore().user
+
+    const { chats } = useChatsStore();
 
     const registered = useContactsStore(state => state.registered);
 
@@ -78,8 +80,8 @@ const Chats = () => {
                 keyExtractor={(item) => item._id}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.listContent}
-                refreshing={loading}
-                onRefresh={fetchChats}
+                // refreshing={loading}
+                // onRefresh={fetchChats}
 
                 ListHeaderComponent={() => (
                     <>
@@ -131,7 +133,7 @@ const Chats = () => {
                         <ChatCard
                             chat={item as any}
                             isSelected={selectedIds.has(item._id)}
-                            contact={registered.find(e => e?._id === item.contact?._id)}
+                            contact={registered.find(e => e?._id === item.participants.find((e: any) => e._id !== user?._id)?._id) as any}
                             isEditMode={isEdit}
                             onSelect={() => handleSelect(item._id)}
                         />
@@ -139,7 +141,7 @@ const Chats = () => {
                 )}
 
                 ListEmptyComponent={
-                    !loading ? (
+                    !chats ? (
                         <View style={styles.empty}>
                             <Ionicons name="chatbubbles-outline" size={64} color="#CBD5E1" />
                             <Text style={styles.emptyTitle}>No chats yet</Text>

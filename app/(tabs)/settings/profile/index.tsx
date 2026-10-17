@@ -24,6 +24,9 @@ export default function Profile() {
 
     const user = useAuthStore((state) => state.user);
 
+
+    console.log({ user })
+
     const profileData: ProfileItem[] = [
         { subTitle: "Name", title: user?.displayName, _id: "name", link: '/settings/profile/name', iconName: 'person-outline' },
         { subTitle: "About", title: user?.about, _id: "about", link: '/settings/profile/about', iconName: 'alert-circle-outline' },

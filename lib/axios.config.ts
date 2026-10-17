@@ -6,7 +6,7 @@ import axios, {
 
 import * as SecureStore from "expo-secure-store";
 import { emitAuthFailed } from "../utils/authEvents";
-import socketService from "../services/socket.service";
+// import socketService from "../services/socket.service";
 
 declare module "axios" {
     export interface AxiosRequestConfig {
@@ -122,7 +122,7 @@ axiosInstance.interceptors.response
 
                 await SecureStore.setItemAsync("accessToken", data.accessToken);
                 await SecureStore.setItemAsync("refreshToken", data.refreshToken);
-                await socketService.reconnect();
+                // await socketService.reconnect();
 
                 lastRefreshAttempt = Date.now();
 

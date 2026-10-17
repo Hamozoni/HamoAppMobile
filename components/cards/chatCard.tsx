@@ -2,6 +2,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Chat, MessageType } from "../../types/components.types";
+import { useAuthStore } from "../../hooks/store/useAuthStore";
 
 const WA_GREEN = "#25D366";
 const TEXT_PRIMARY = "#111B21";
@@ -67,11 +68,22 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: Ch
     const router = useRouter();
     const hasUnread = (chat.unreadCount ?? 0) > 0;
 
+    const user = useAuthStore().user
+    const notContact: {
+        _id: string;
+        phoneNumber: string;
+        displayName: string;
+        profilePicture: {
+            secureUrl: string
+        };
+
+    } | undefined = chat?.participants?.find(e => e._id !== user?._id) as any
+
     return (
         <TouchableOpacity
             onPress={() => isEditMode ? onSelect?.() : router.push({
                 pathname: "/chats/[phoneNumber]",
-                params: { phoneNumber: chat?.contact?.phoneNumber },
+                params: { phoneNumber: notContact?.phoneNumber },
             } as any)}
             onLongPress={onSelect}
             activeOpacity={0.6}
@@ -86,7 +98,7 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: Ch
 
             {/* Avatar + online dot */}
             <View style={styles.avatarWrapper}>
-                <Image source={{ uri: contact?.profilePicture || chat?.contact?.photoURL as string }} style={styles.avatar} />
+                <Image source={{ uri: contact?.profilePicture || notContact?.profilePicture?.secureUrl as string }} style={styles.avatar} />
                 {chat.isOnline && <View style={styles.onlineDot} />}
             </View>
 
@@ -94,7 +106,7 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: Ch
             <View style={styles.content}>
                 <View style={styles.topRow}>
                     <Text style={styles.name} numberOfLines={1}>
-                        {contact?.displayName || chat.contact.phoneNumber}
+                        {contact?.displayName || notContact?.phoneNumber}
                     </Text>
                     <Text style={[styles.time, hasUnread && styles.timeUnread]}>
                         {chat.lastMessage?.createdAt}
