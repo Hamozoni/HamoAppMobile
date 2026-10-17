@@ -2,10 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "../../lib/axios.config";
 import { ILocalMessage } from "../../types/message.types";
 import { useMessagesStore } from "../store/useMessageStore";
+import { useChatsStore } from "../store/useChatsStore";
 
 // 1. Accept chatId as a parameter to the hook
 export const useGetmessages = (chatId: string | undefined) => {
     const { setMessages } = useMessagesStore();
+    const { resetUnread } = useChatsStore()
 
     return useQuery({
         // 2. Include chatId in the queryKey so it refetches when switching chats
@@ -17,7 +19,8 @@ export const useGetmessages = (chatId: string | undefined) => {
             const { data } = await axiosInstance.get(`/messages/${id}`);
 
             console.log("✅ Messages fetched:", data.messages.length);
-            setMessages(id, data.messages);
+            setMessages(data?.chat?._id, data.messages);
+            resetUnread(data?.chat?._id)
             return data.messages;
         },
 

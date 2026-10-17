@@ -7,7 +7,7 @@ interface ChatsState {
     updateChat: (chatId: string, update: Partial<Chat>) => void;
     updateLastMessage: (chatId: string, lastMessage: Chat["lastMessage"]) => void;
     incrementUnread: (chatId: string) => void;
-    resetUnread: (chatId: string) => void;
+    resetUnread: (chatId: string | undefined) => void;
 }
 
 export const useChatsStore = create<ChatsState>((set) => ({

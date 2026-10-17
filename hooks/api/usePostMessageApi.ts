@@ -22,7 +22,8 @@ export const usePostMessage = () => {
 
 
                 }
-                const { data } = await axiosInstance.post('/messages', { payload })
+                const { data } = await axiosInstance.post('/messages', { payload });
+
                 return data;
             }
         }),

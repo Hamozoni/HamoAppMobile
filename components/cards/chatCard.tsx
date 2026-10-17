@@ -65,7 +65,6 @@ const MessagePreview = ({ lastMessage }: { lastMessage: Chat["lastMessage"] }) =
 
 export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: ChatCardProps) => {
 
-    console.log({ contact, chat })
     const router = useRouter();
 
     const user = useAuthStore().user
@@ -123,7 +122,7 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: Ch
                     {hasUnread && (
                         <View style={styles.badge}>
                             <Text style={styles.badgeText}>
-                                {(chat.unreadCount[contactId] ?? 0) > 99 ? "99+" : chat.unreadCount[contactId]}
+                                {(chat.unreadCount[user?._id] ?? 0) > 99 ? "99+" : chat.unreadCount[user?._id]}
                             </Text>
                         </View>
                     )}
