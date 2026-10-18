@@ -80,7 +80,7 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: Ch
 
     const contactId = notContact?._id || 0
 
-    const hasUnread = (chat.unreadCount?.[contactId] ?? 0) > 0;
+    const hasUnread = (chat.unreadCount[user?._id] ?? 0) > 0;
     return (
         <TouchableOpacity
             onPress={() => isEditMode ? onSelect?.() : router.push({

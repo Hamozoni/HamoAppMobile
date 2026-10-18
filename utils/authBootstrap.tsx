@@ -1,111 +1,79 @@
-import { useEffect, useRef, useState } from "react";
-import { Redirect, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { Redirect } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import { useAuthStore } from "../hooks/store/useAuthStore";
-import { syncContacts } from "../db/services/syncContacts.service";
-import { useContactsStore } from "../hooks/store/useContactsStore";
-import { runMigrations } from "../db/runMigration";
-import notificationService from "../services/notification.service";
-import { axiosInstance } from "../lib/axios.config";
 import { ActivityIndicator } from "react-native";
-import { useGetProfile } from "../hooks/api/useProfileApi";
-import { IUser } from "../types/user.type";
+import { useAuthStore } from "../hooks/store/useAuthStore";
+import { useContactsStore } from "../hooks/store/useContactsStore";
 import { useChatsStore } from "../hooks/store/useChatsStore";
+import { syncContacts } from "../db/services/syncContacts.service";
+import { runMigrations } from "../db/runMigration";
+import { axiosInstance } from "../lib/axios.config";
+import { IUser } from "../types/user.type";
 
 export function AuthBootstrap() {
+    const [ready, setReady] = useState(false);
+    const [accessToken, setAccessToken] = useState<string | null>(null);
 
-    const syncedRef = useRef(false);
-    const { loadContacts, setIsSyncing } = useContactsStore();
-    const { setChats } = useChatsStore();
-    const user = useAuthStore(st => st.user);
-    const hydrated = useAuthStore(st => st.hydrated);
-    const setUser = useAuthStore(st => st.setUser);
-    const hydrate = useAuthStore(st => st.hydrate);
-    const [isUser, setIsUer] = useState<boolean>(false);
+    const user = useAuthStore((s) => s.user);
+    const setUser = useAuthStore((s) => s.setUser);
+    const hydrate = useAuthStore((s) => s.hydrate);
+    const clearUser = useAuthStore((s) => s.clearUser);
 
-
-
-    const { data: userData } = useGetProfile(isUser);
+    const loadContacts = useContactsStore((s) => s.loadContacts);
+    const setIsSyncing = useContactsStore((s) => s.setIsSyncing);
+    const setChats = useChatsStore((s) => s.setChats);
 
     useEffect(() => {
-
-        if (syncedRef.current) return;
-
-        syncedRef.current = true;
+        let cancelled = false;
 
         async function bootstrap() {
             try {
-
                 await hydrate();
-                const accessToken = await SecureStore.getItemAsync('accessToken');
+                const token = await SecureStore.getItemAsync("accessToken");
+                setAccessToken(token);
 
-                if (!user && accessToken) {
-                    setIsUer(true)
-                    setUser(userData as IUser)
+                if (!token) return; // not logged in -> falls through to login redirect
 
-                };
+                // Validate session / get fresh profile
+                if (!useAuthStore.getState().user) {
+                    const { data } = await axiosInstance.get<IUser>("/profile");
+                    if (cancelled) return;
+                    setUser(data);
+                }
 
-                if (!accessToken) return
-                // ✅ 2. Run migrations before any DB operations
-
-                const { data: chatData } = await axiosInstance.get("/chats");
-
-                console.log(chatData.chats[0]?.participants)
-
-                setChats(chatData.chats)
                 await runMigrations();
 
+                const { data: chatData } = await axiosInstance.get("/chats");
+                if (cancelled) return;
+                setChats(chatData.chats);
+
                 setIsSyncing(true);
-
-
-                // try {
-
-                //     // ✅ 4. Register push token after login
-                //     const token = await notificationService.registerPushToken();
-                //     if (token) {
-                //         await axiosInstance.post("/profile/push-token", { token });
-                //     }
-
-                //     // ✅ 5. Handle notification taps
-                //     notificationService.addNotificationResponseListener((chatId, phoneNumber) => {
-                //         router.push({
-                //             pathname: "/chats/[phoneNumber]",
-                //             params: { phoneNumber },
-                //         } as any);
-                //     });
-
-
-                // } catch (profileError: any) {
-                //     console.log("No active session:", profileError.message);
-
-                //     await SecureStore.deleteItemAsync("accessToken");
-                //     await SecureStore.deleteItemAsync("refreshToken");
-                //     await useAuthStore.getState().clearUser();
-                //     router.replace("/(auth)/login");
-                //     return;
-                // }
-
-                // ✅ 6. Sync contacts after profile loaded
                 await syncContacts();
                 loadContacts();
-
-            } catch (e) {
-                console.error("Bootstrap failed:", e);
+            } catch (e: any) {
+                console.error("Bootstrap failed:", e?.message);
+                if (e?.response?.status === 401) {
+                    await SecureStore.deleteItemAsync("accessToken");
+                    await SecureStore.deleteItemAsync("refreshToken");
+                    await clearUser();
+                }
             } finally {
                 setIsSyncing(false);
+                if (!cancelled) setReady(true);
             }
         }
 
         bootstrap();
+        return () => {
+            cancelled = true;
+        };
     }, []);
 
-    if (!hydrated) return <ActivityIndicator />;
+    console.log("user", user);
+    console.log("accessToken", accessToken);
+    console.log("ready", ready);
 
-    if (!user) {
-        console.log("No user found!");
-        return <Redirect href="/(auth)/login" />;
-    }
+    if (!ready) return <ActivityIndicator style={{ flex: 1 }} />;
 
-    console.log(user, "User found!");
-    return <Redirect href="/(tabs)/chats" />;
-}
+    return <Redirect href={user || accessToken ? "/(tabs)/chats" : "/(auth)/login"} />;
+};
