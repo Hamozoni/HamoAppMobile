@@ -1,7 +1,7 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { Chat, MessageType } from "../../types/components.types";
+import { Chat, Contact, MessageType } from "../../types/components.types";
 import { useAuthStore } from "../../hooks/store/useAuthStore";
 import { formatMessageTime } from "../../utils";
 
@@ -18,11 +18,14 @@ interface ChatCardProps {
 }
 
 // Config for each message type
-const MESSAGE_TYPE_CONFIG: Record<MessageType, {
-    icon: keyof typeof Ionicons.glyphMap;
-    color: string;
-    label?: string; // fallback label if no text
-}> = {
+const MESSAGE_TYPE_CONFIG: {
+    text: { icon: string, color: string };
+    audio: { icon: string, color: string };
+    image: { icon: string, color: string };
+    video: { icon: string, color: string };
+    location: { icon: string, color: string };
+    contact: { icon: string, color: string };
+} = {
     text: { icon: "chatbubble-outline", color: TEXT_SECONDARY },
     audio: { icon: "mic-outline", color: "#8B5CF6" },
     image: { icon: "image-outline", color: "#0EA5E9" },
@@ -31,15 +34,19 @@ const MESSAGE_TYPE_CONFIG: Record<MessageType, {
     contact: { icon: "person-circle-outline", color: "#10B981" },
 };
 
-const MessagePreview = ({ lastMessage }: { lastMessage: Chat["lastMessage"] }) => {
-    const { type, text, isMine, isRead } = lastMessage;
-    const config = MESSAGE_TYPE_CONFIG[type];
-    const isText = type === "text";
+const MessagePreview = ({ chat }: { chat: Chat }) => {
+    const { lastMessageType, lastMessageText, lastMessageStatus, lastMessageSenderId } = chat;
+    const config = MESSAGE_TYPE_CONFIG[lastMessageType as MessageType ?? "text"];
+    const isText = lastMessageType === "text";
+
+    const isRead = lastMessageStatus === 'read'
+
+    const { user } = useAuthStore()
 
     return (
         <View style={styles.messageRow}>
             {/* Sent checkmarks for my messages */}
-            {isMine && (
+            {lastMessageSenderId === user?._id && (
                 <Ionicons
                     name={isRead ? "checkmark-done" : "checkmark"}
                     size={14}
@@ -49,15 +56,15 @@ const MessagePreview = ({ lastMessage }: { lastMessage: Chat["lastMessage"] }) =
             )}
 
             {/* Type icon — skip for plain text */}
-            {/* {!isText && (
+            {!isText && (
                 <View style={[styles.typeIconWrap, { backgroundColor: config?.color + "18" }]}>
-                    <Ionicons name={config?.icon} size={12} color={config?.color} />
+                    <Ionicons name="chatbubble-outline" size={12} color={config?.color} />
                 </View>
-            )} */}
+            )}
 
             {/* Message text / label */}
             <Text style={styles.messageText} numberOfLines={1}>
-                {text ?? config?.label}
+                {lastMessageText}
             </Text>
         </View>
     );
@@ -68,24 +75,16 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: Ch
     const router = useRouter();
 
     const user = useAuthStore().user
-    const notContact: {
-        _id: string;
-        phoneNumber: string;
-        displayName: string;
-        profilePicture: {
-            secureUrl: string
-        };
-
-    } | undefined = chat?.participants?.find(e => e._id !== user?._id) as any
-
+    const notContact: Contact | undefined = chat?.participants?.find(e => e._id !== user?._id) as any
     const contactId = notContact?._id || 0
 
-    const hasUnread = (chat.unreadCount[user?._id] ?? 0) > 0;
+    const hasUnread = (chat.unreadCount[user?._id || 0] ?? 0) > 0;
+
     return (
         <TouchableOpacity
             onPress={() => isEditMode ? onSelect?.() : router.push({
                 pathname: "/chats/[phoneNumber]",
-                params: { phoneNumber: notContact?.phoneNumber },
+                params: { phoneNumber: notContact?.phoneNumber, contactId },
             } as any)}
             onLongPress={onSelect}
             activeOpacity={0.6}
@@ -101,7 +100,7 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: Ch
             {/* Avatar + online dot */}
             <View style={styles.avatarWrapper}>
                 <Image source={{ uri: contact?.profilePicture || notContact?.profilePicture?.secureUrl as string }} style={styles.avatar} />
-                {chat.isOnline && <View style={styles.onlineDot} />}
+                {/* {chat.isOnline && <View style={styles.onlineDot} />} */}
             </View>
 
             {/* Content */}
@@ -111,18 +110,18 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: Ch
                         {contact?.displayName || notContact?.phoneNumber}
                     </Text>
                     <Text style={[styles.time, hasUnread && styles.timeUnread]}>
-                        {formatMessageTime(chat.lastMessage?.createdAt)}
+                        {formatMessageTime(chat.lastMessageAt)}
                     </Text>
                 </View>
 
                 <View style={styles.bottomRow}>
                     <View style={styles.previewWrap}>
-                        <MessagePreview lastMessage={chat.lastMessage} />
+                        <MessagePreview chat={chat} />
                     </View>
                     {hasUnread && (
                         <View style={styles.badge}>
                             <Text style={styles.badgeText}>
-                                {(chat.unreadCount[user?._id] ?? 0) > 99 ? "99+" : chat.unreadCount[user?._id]}
+                                {(chat.unreadCount[user?._id || 0] ?? 0) > 99 ? "99+" : chat.unreadCount[user?._id || 0]}
                             </Text>
                         </View>
                     )}

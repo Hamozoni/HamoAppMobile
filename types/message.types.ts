@@ -22,12 +22,19 @@ export interface SendMessagePayload {
 
 // What the user builds before sending
 export interface MessageDraft {
+    chatId: string;
+    senderId: string;
+    receiverId: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+    _id: string;
     text?: string;
-    asset?: any;        // expo image/video/audio/document asset
+    asset?: any;
+    type: string;       // expo image/video/audio/document asset
     assetType?: MessageType;
     location?: { latitude: number; longitude: number; name?: string };
     contact?: { displayName: string; phoneNumber: string; avatar?: string };
-    replyTo?: any;
+    replyTo?: string;
 }
 
 export interface NewMessageData {
@@ -61,5 +68,5 @@ export interface ILocalMessage {
     updatedAt: string;
     clientMessageId?: string;
     isOptimistic?: boolean;
-    replyTo?: any;
+    replyTo?: string | null;
 }

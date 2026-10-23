@@ -75,5 +75,5 @@ export function AuthBootstrap() {
 
     if (!ready) return <ActivityIndicator style={{ flex: 1 }} />;
 
-    return <Redirect href={user || accessToken ? "/(tabs)/chats" : "/(auth)/login"} />;
+    return <Redirect href={user ? "/(tabs)/chats" : "/(auth)/login"} />;
 };

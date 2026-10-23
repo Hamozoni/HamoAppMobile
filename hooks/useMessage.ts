@@ -68,130 +68,130 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
     }, [updateLastMessage]);
 
     // ── Fetch messages ────────────────────────────
-    const fetchMessages = useCallback(async () => {
-        if (!currentChatIdRef.current) {
-            console.log("⚠️ No chatId yet — new chat");
-            return;
-        }
-        try {
-            console.log("📤 Fetching messages:", currentChatIdRef.current);
-            const { data } = await axiosInstance.get(`/messages/${currentChatIdRef.current}`);
-            console.log("✅ Messages fetched:", data.messages.length);
-            setMessages(currentChatIdRef.current, data.messages);
-        } catch (err: any) {
-            console.error("Failed to fetch messages:", err.response?.status, err.response?.data);
-        }
-    }, []);
+    // const fetchMessages = useCallback(async () => {
+    //     if (!currentChatIdRef.current) {
+    //         console.log("⚠️ No chatId yet — new chat");
+    //         return;
+    //     }
+    //     try {
+    //         console.log("📤 Fetching messages:", currentChatIdRef.current);
+    //         const { data } = await axiosInstance.get(`/messages/${currentChatIdRef.current}`);
+    //         console.log("✅ Messages fetched:", data.messages.length);
+    //         setMessages(currentChatIdRef.current, data.messages);
+    //     } catch (err: any) {
+    //         console.error("Failed to fetch messages:", err.response?.status, err.response?.data);
+    //     }
+    // }, []);
 
     // ── Fetch chat by phoneNumber on mount ────────
-    useEffect(() => {
-        const fetchChatByPhone = async () => {
-            try {
-                console.log("📤 Looking up chat for:", phoneNumber);
-                const { data } = await axiosInstance.get(`/chats/phone/${phoneNumber}`);
-                if (data?.chatId) {
-                    console.log("✅ Existing chat found:", data.chatId);
-                    setCurrentChatId(data.chatId);
-                    currentChatIdRef.current = data.chatId;
-                } else {
-                    console.log("💬 No existing chat — will create on first message");
-                }
-            } catch (err: any) {
-                if (err.response?.status !== 404) {
-                    console.error("Failed to look up chat:", err.response?.status);
-                }
-            }
-        };
+    // useEffect(() => {
+    //     const fetchChatByPhone = async () => {
+    //         try {
+    //             console.log("📤 Looking up chat for:", phoneNumber);
+    //             const { data } = await axiosInstance.get(`/chats/phone/${phoneNumber}`);
+    //             if (data?.chatId) {
+    //                 console.log("✅ Existing chat found:", data.chatId);
+    //                 setCurrentChatId(data.chatId);
+    //                 currentChatIdRef.current = data.chatId;
+    //             } else {
+    //                 console.log("💬 No existing chat — will create on first message");
+    //             }
+    //         } catch (err: any) {
+    //             if (err.response?.status !== 404) {
+    //                 console.error("Failed to look up chat:", err.response?.status);
+    //             }
+    //         }
+    //     };
 
-        fetchChatByPhone();
-    }, [phoneNumber]);
+    //     fetchChatByPhone();
+    // }, [phoneNumber]);
 
     // ── New chat created listener ─────────────────
-    useEffect(() => {
-        const handleNewChat = (chat: any) => {
-            console.log("🆕 New chat created:", chat._id);
-            setCurrentChatId(chat._id);
-            currentChatIdRef.current = chat._id;
-            // socketService.joinChat(chat._id);
-        };
+    // useEffect(() => {
+    //     const handleNewChat = (chat: any) => {
+    //         console.log("🆕 New chat created:", chat._id);
+    //         setCurrentChatId(chat._id);
+    //         currentChatIdRef.current = chat._id;
+    //         // socketService.joinChat(chat._id);
+    //     };
 
-        // socketService.on("chat:new", handleNewChat);
-        // return () => socketService.off("chat:new", handleNewChat);
-    }, []);
+    //     // socketService.on("chat:new", handleNewChat);
+    //     // return () => socketService.off("chat:new", handleNewChat);
+    // }, []);
 
     // ── Message listeners ─────────────────────────
-    useEffect(() => {
-        if (currentChatId) {
-            // socketService.joinChat(currentChatId);
-            fetchMessages();
-        }
+    // useEffect(() => {
+    // if (currentChatId) {
+    // socketService.joinChat(currentChatId);
+    // fetchMessages();
+    // }
 
-        const handleNewMessage = async (data: NewMessageData) => {
-            const activeChatId = currentChatIdRef.current
-            const isOwnMessage = !!data.clientMessageId;
+    // const handleNewMessage = async (data: NewMessageData) => {
+    //     const activeChatId = currentChatIdRef.current
+    //     const isOwnMessage = !!data.clientMessageId;
 
-            if (isOwnMessage) {
-                const key = activeChatId ?? phoneNumber;
-                replaceOptimistic(key, data.clientMessageId!, {
-                    ...data.message,
-                    chatId: data.chatId,
-                });
-                // ✅ update chat preview for sent message
-                updateChatPreview(data.chatId, data.message, true);
+    //     if (isOwnMessage) {
+    //         const key = activeChatId ?? phoneNumber;
+    //         replaceOptimistic(key, data.clientMessageId!, {
+    //             ...data.message,
+    //             chatId: data.chatId,
+    //         });
+    //         // ✅ update chat preview for sent message
+    //         updateChatPreview(data.chatId, data.message, true);
 
-                if (!activeChatId && data.chatId) {
-                    setCurrentChatId(data.chatId);
-                    currentChatIdRef.current = data.chatId;
-                    // socketService.joinChat(data.chatId);
-                }
-                return;
-            }
+    //         if (!activeChatId && data.chatId) {
+    //             setCurrentChatId(data.chatId);
+    //             currentChatIdRef.current = data.chatId;
+    //             // socketService.joinChat(data.chatId);
+    //         }
+    //         return;
+    //     }
 
-            // ── Incoming from other user ──────────
-            if (!activeChatId) {
-                setCurrentChatId(data.chatId);
-                currentChatIdRef.current = data.chatId;
-                // socketService.joinChat(data.chatId);
-                addMessage(data.chatId, data.message);
-            } else if (data.chatId === activeChatId) {
-                addMessage(activeChatId, data.message);  // ✅ just add message, no sound here
-            } else {
-                console.log("⚠️ Ignoring — different chat");
-                return;
-            }
+    //     // ── Incoming from other user ──────────
+    //     if (!activeChatId) {
+    //         setCurrentChatId(data.chatId);
+    //         currentChatIdRef.current = data.chatId;
+    //         // socketService.joinChat(data.chatId);
+    //         addMessage(data.chatId, data.message);
+    //     } else if (data.chatId === activeChatId) {
+    //         addMessage(activeChatId, data.message);  // ✅ just add message, no sound here
+    //     } else {
+    //         console.log("⚠️ Ignoring — different chat");
+    //         return;
+    //     }
 
-            // ✅ still update chat preview from here
-            updateChatPreview(data.chatId, data.message, false);
-            incrementUnread(data.chatId);
-        };
+    //     // ✅ still update chat preview from here
+    //     updateChatPreview(data.chatId, data.message, false);
+    //     incrementUnread(data.chatId);
+    // };
 
-        const handleDelivered = (data: any) => {
-            const activeChatId = currentChatIdRef.current;
-            if (!activeChatId || data.chatId !== activeChatId) return;
-            if (data.messageId) {
-                updateMessageStatus(activeChatId, data.messageId, data.status);
-            }
-        };
+    // const handleDelivered = (data: any) => {
+    //     const activeChatId = currentChatIdRef.current;
+    //     if (!activeChatId || data.chatId !== activeChatId) return;
+    //     if (data.messageId) {
+    //         updateMessageStatus(activeChatId, data.messageId, data.status);
+    //     }
+    // };
 
-        const handleRead = (data: any) => {
-            const activeChatId = currentChatIdRef.current;
-            if (!activeChatId || data.chatId !== activeChatId) return;
-            if (data.messageId) {
-                updateMessageStatus(activeChatId, data.messageId, "read");
-            }
-        };
+    // const handleRead = (data: any) => {
+    //     const activeChatId = currentChatIdRef.current;
+    //     if (!activeChatId || data.chatId !== activeChatId) return;
+    //     if (data.messageId) {
+    //         updateMessageStatus(activeChatId, data.messageId, "read");
+    //     }
+    // };
 
-        // socketService.on(SOCKET_EVENTS.MESSAGE_NEW, handleNewMessage);
-        // socketService.on(SOCKET_EVENTS.MESSAGE_DELIVERED, handleDelivered);
-        // socketService.on(SOCKET_EVENTS.MESSAGE_READ, handleRead);
+    // socketService.on(SOCKET_EVENTS.MESSAGE_NEW, handleNewMessage);
+    // socketService.on(SOCKET_EVENTS.MESSAGE_DELIVERED, handleDelivered);
+    // socketService.on(SOCKET_EVENTS.MESSAGE_READ, handleRead);
 
-        // return () => {
-        //     if (currentChatId) socketService.leaveChat(currentChatId);
-        //     socketService.off(SOCKET_EVENTS.MESSAGE_NEW, handleNewMessage);
-        //     socketService.off(SOCKET_EVENTS.MESSAGE_DELIVERED, handleDelivered);
-        //     socketService.off(SOCKET_EVENTS.MESSAGE_READ, handleRead);
-        // };
-    }, [currentChatId]);
+    // return () => {
+    //     if (currentChatId) socketService.leaveChat(currentChatId);
+    //     socketService.off(SOCKET_EVENTS.MESSAGE_NEW, handleNewMessage);
+    //     socketService.off(SOCKET_EVENTS.MESSAGE_DELIVERED, handleDelivered);
+    //     socketService.off(SOCKET_EVENTS.MESSAGE_READ, handleRead);
+    // };
+    // }, [currentChatId]);
 
     // ── Send message ──────────────────────────────
     const sendMessage = useCallback(async (draft: MessageDraft) => {
@@ -294,7 +294,7 @@ export function useMessages({ phoneNumber }: UseSendMessageOptions) {
     return {
         messages: chatMessages,
         sendMessage,
-        fetchMessages,
+        // fetchMessages,
         currentChatId,
     };
 }

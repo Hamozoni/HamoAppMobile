@@ -24,8 +24,9 @@ interface MessageCardProps {
 export default function MessageCard({ message, prevMessage }: MessageCardProps) {
 
     const user = useAuthStore(state => state.user);
-    const isMine = message.senderId === user?._id ||
-        (message.senderId as any)?._id === user?._id;
+    const isMine = message.senderId === user?._id;
+
+    console.log({ isMine, senderId: message.senderId, userId: user?._id })
 
     const showDateSeparator = !prevMessage ||
         !isSameDay(message.createdAt, prevMessage.createdAt);

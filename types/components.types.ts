@@ -10,10 +10,10 @@ export interface RouteParams {
 
 // ============ Chat Types ============
 export interface Contact {
-    id?: string;
+    _id?: string;
     displayName: string;
     phoneNumber?: string;
-    photoURL?: any;
+    profilePicture?: { secureUrl: string };
     about?: string;
 }
 
@@ -40,19 +40,24 @@ export interface LastMessage {
 
 export interface Chat {
     _id: string;
-    participants: [{
-        _id: string;
-        phoneNumber: string;
-        displayName: string;
-        about: string;
-        profilePicture: {
-            secureUrl: string
-        };
-    }];
-    lastMessage: LastMessage;
+    participants?: Contact[] | any[];
+    lastMessageId?: string;
     unreadCount?: any;
     isGroup: boolean;
-    isOnline?: boolean;
+    groupName?: string | null
+    groupAvatar?: { secureUrl: string }
+    groupAdmins?: Contact[]
+    lastMessageText: string | null;
+    lastMessageType: string;
+    lastMessageAt: Date;
+    lastMessageSenderId: string;
+    lastMessageStatus: string;
+    isPinned?: any;
+    isArchived?: any;
+    isMuted?: any;
+    mutedUntil?: any;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 // ============ Call Types ============

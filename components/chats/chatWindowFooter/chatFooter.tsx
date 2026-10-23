@@ -8,12 +8,13 @@ import { Ionicons, FontAwesome6, Entypo } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import FooterAttachment from "./footerAttachment";
 import AudioRecorder from "./audioRecorder";
-import { MessageDraft, MessageType } from "../../../types/message.types";
-import { useMessages } from "../../../hooks/useMessage";
+import { MessageType } from "../../../types/message.types";
+import { useAuthStore } from "../../../hooks/store/useAuthStore";
+import { usePostMessage } from "../../../hooks/api/usePostMessageApi";
 
 const WA_GREEN = "#25D366";
 
-export default function ChatFooter() {
+export default function ChatFooter({ currentChatId }: { currentChatId: string | null }) {
 
     const [keyboardHeight, setKeyboardHeight] = useState(336);
     const [isAttachment, setIsAttachment] = useState(false);
@@ -23,12 +24,18 @@ export default function ChatFooter() {
     const [assetType, setAssetType] = useState<MessageType>("image");
     const textInputRef = useRef<TextInput>(null);
     const router = useRouter();
+    const { user } = useAuthStore()
 
-    const { phoneNumber } = useLocalSearchParams<{
-        phoneNumber: string;
+    const { contactId } = useLocalSearchParams<{
+        contactId: string
     }>();
 
-    const { sendMessage } = useMessages({ phoneNumber });
+    const { mutate } = usePostMessage({
+        chatId: currentChatId,
+        senderId: user?._id,
+        receiverId: contactId,
+    })
+
 
     useEffect(() => {
         const show = Keyboard.addListener("keyboardDidShow", e => {
@@ -50,11 +57,14 @@ export default function ChatFooter() {
     // ✅ Send text / media / mixed
     const handleSend = () => {
         if (!text.trim() && !asset) return;
-        sendMessage({
-            text: text.trim() || undefined,
-            asset,
-            assetType,
-        });
+        if (!user) return;
+        mutate({
+            payload: {
+                text,
+                type: "text",
+                status: "pending"
+            }
+        })
         setText("");
         setAsset(null);
     };
@@ -68,14 +78,19 @@ export default function ChatFooter() {
 
     // ✅ Called from AudioRecorder when send pressed
     const handleSendAudio = (uri: string) => {
-        sendMessage({
+        if (!user || !uri) return;
+        mutate({
             asset: {
                 uri,
                 mimeType: "audio/m4a",
                 fileName: "voice.m4a",
             },
-            assetType: "audio",
-        });
+            payload: {
+                type: "audio",
+                status: "pending",
+
+            }
+        })
         setIsAudioRecorder(false);
     };
 

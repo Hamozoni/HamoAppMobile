@@ -26,6 +26,7 @@ const ContactCard = ({ contact }: ContactCardProps) => {
                 pathname: "/chats/[phoneNumber]",
                 params: {
                     phoneNumber: contact.phoneNumber,
+                    contactId: contact?._id
                 }
             } as any);
         }

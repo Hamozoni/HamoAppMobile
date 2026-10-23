@@ -3,43 +3,39 @@ import { useLocalSearchParams } from "expo-router";
 import ChatFooter from "../../../components/chats/chatWindowFooter/chatFooter";
 import MessageCard from "../../../components/cards/messageCard";
 import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
-import { useMessages } from "../../../hooks/useMessage";
 import { usePendingStore } from "../../../hooks/store/usePendingStore";
 import { useGetmessages } from "../../../hooks/api/useGetMessagesApi";
 import { useChatsStore } from "../../../hooks/store/useChatsStore";
 import { useMessagesStore } from "../../../hooks/store/useMessageStore";
-import { LocationAccuracy } from "expo-location";
 
 export default function ChatDetails() {
 
-    const { phoneNumber } = useLocalSearchParams<{
-        phoneNumber: string;
+    const { contactId } = useLocalSearchParams<{
+        contactId: string;
     }>();
 
     const chats = useChatsStore((state) => state.chats);
+    const currentChatId =
+        chats?.find((chat) =>
+            chat?.participants?.some((participant) => participant?._id === contactId)
+        )?._id
 
-    // 1. Safely find the chat where one of the participants matches the phone number
-    const currentChatId: string | undefined = chats?.find((chat) =>
-        chat?.participants?.some((participant) => participant?.phoneNumber === phoneNumber)
-    )?._id;
 
     // 2. Pass currentChatId to your query hook
     const { isLoading, error } = useGetmessages(currentChatId);
-    const messages = useMessagesStore(e => e.messages[currentChatId ?? 0])
-
+    const messages = useMessagesStore(e => e.messages[currentChatId || contactId]);
     const flatListRef = useRef<FlatList>(null);
+
 
     const { pendingLocation, clearPendingLocation } = usePendingStore();
 
     // ✅ Handle sending pending location
     useEffect(() => {
         if (!pendingLocation) return;
-
-
-
         clearPendingLocation();
     }, [pendingLocation]);
 
+    // loading indicator
     if (isLoading) {
         return <ActivityIndicator />
     }
@@ -68,7 +64,7 @@ export default function ChatDetails() {
                 }}
             />
 
-            <ChatFooter />
+            <ChatFooter currentChatId={currentChatId || contactId} />
         </View>
     );
 }

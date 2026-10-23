@@ -8,7 +8,7 @@ interface MessagesState {
     addMessage: (chatId: string, message: ILocalMessage) => void;
     replaceOptimistic: (chatId: string, clientMessageId: string, real: ILocalMessage) => void;
     updateMessageStatus: (chatId: string, messageId: string, status: string) => void;
-    setMessages: (chatId: string | undefined, messages: ILocalMessage[]) => void;
+    setMessages: (chatId: string, messages: ILocalMessage[]) => void;
     prependMessages: (chatId: string, messages: ILocalMessage[]) => void; // pagination
     deleteMessage: (chatId: string, messageId: string) => void;
     clearChat: (chatId: string) => void;
@@ -21,7 +21,7 @@ export const useMessagesStore = create<MessagesState>((set) => ({
         set(state => ({
             messages: {
                 ...state.messages,
-                [chatId]: [message, ...(state.messages[chatId] ?? [])],
+                [chatId]: state.messages[chatId].find(m => m._id === message._id) ? state.messages[chatId] ?? [] : [message, ...(state.messages[chatId] ?? [])],
             },
         })),
 
@@ -48,7 +48,7 @@ export const useMessagesStore = create<MessagesState>((set) => ({
 
     setMessages: (chatId, messages) =>
         set(state => ({
-            messages: { ...state.messages, [chatId ?? 0]: messages },
+            messages: { ...state.messages, [chatId]: messages },
         })),
 
     prependMessages: (chatId, messages) =>

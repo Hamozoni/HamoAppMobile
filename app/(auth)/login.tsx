@@ -111,7 +111,7 @@ export default function Login() {
                     {/* Logo & Header */}
                     <View style={styles.headerContainer}>
                         <Image
-                            source={require("../../assets/images/sudaChat.jpg")}
+                            source={require("../../assets/images/sudaChatLightMoode.jpeg")}
                             style={{ width: 200, height: 200 }}
                         />
 

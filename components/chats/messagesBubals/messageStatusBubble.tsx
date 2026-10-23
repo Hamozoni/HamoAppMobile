@@ -14,7 +14,7 @@ interface MessageStatusBubbleProps {
 export default function MessageStatusBubble({ message, isMine }: MessageStatusBubbleProps) {
     const isMedia = message?.type === "image" || message?.type === "video" || message?.type === "location";
 
-    if (message?.senderId) {
+    if (!isMedia) {
         return (
             <View
                 style={{
@@ -41,7 +41,7 @@ export default function MessageStatusBubble({ message, isMine }: MessageStatusBu
                         fontWeight: "bold",
                         color: isMine ? "#ecececff" : "#353535ff"
                     }}
-                >{formatMessageTime(message?.createdAt)}
+                >{formatMessageTime(new Date(message?.createdAt))}
                 </Text>
                 {
                     isMine &&
@@ -49,7 +49,7 @@ export default function MessageStatusBubble({ message, isMine }: MessageStatusBu
                         {
                             message?.status === "sent" ? (
                                 <Ionicons name="checkmark-sharp" size={16} color="white" />
-                            ) : message?.status === "delivered" || message?.status === "readed" ? (
+                            ) : message?.status === "delivered" || message?.status === "read" ? (
                                 <Ionicons name="checkmark-done-sharp" size={16} color={message?.status === "delivered" ? "white" : "#80e280ff"} />
                             ) : (
                                 <Ionicons name="stopwatch-outline" size={16} color="white" />
