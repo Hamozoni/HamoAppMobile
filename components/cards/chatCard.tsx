@@ -47,12 +47,17 @@ const MessagePreview = ({ chat }: { chat: Chat }) => {
         <View style={styles.messageRow}>
             {/* Sent checkmarks for my messages */}
             {lastMessageSenderId === user?._id && (
-                <Ionicons
-                    name={isRead ? "checkmark-done" : "checkmark"}
-                    size={14}
-                    color={isRead ? WA_GREEN : TEXT_SECONDARY}
-                    style={styles.tick}
-                />
+                <View >
+                    {
+                        lastMessageStatus === "sent" ? (
+                            <Ionicons name="checkmark" size={16} color="#333333ff" />
+                        ) : lastMessageStatus === "delivered" || lastMessageStatus === "read" ? (
+                            <Ionicons name="checkmark-done" size={16} color={lastMessageStatus === "delivered" ? "#333333ff" : "#80e280ff"} />
+                        ) : (
+                            <Ionicons name="stopwatch-outline" size={16} color="#333333ff" />
+                        )
+                    }
+                </View>
             )}
 
             {/* Type icon — skip for plain text */}

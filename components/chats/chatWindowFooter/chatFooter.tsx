@@ -83,7 +83,7 @@ export default function ChatFooter({ currentChatId }: { currentChatId: string | 
             asset: {
                 uri,
                 mimeType: "audio/m4a",
-                fileName: "voice.m4a",
+                fileName: "audio.m4a",
             },
             payload: {
                 type: "audio",

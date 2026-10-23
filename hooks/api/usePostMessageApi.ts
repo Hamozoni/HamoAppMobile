@@ -84,6 +84,11 @@ export const usePostMessage = ({ chatId, senderId, receiverId }: {
                 }
                 const { data } = await axiosInstance.post('/messages', { payload, cloudinaryData });
 
+                console.log({
+                    data
+
+                })
+
                 replaceOptimistic(data.message.chatId, clientMessageId, data.message);
                 updateChat(payload.chatId, { lastMessageStatus: data.message.status });
 
