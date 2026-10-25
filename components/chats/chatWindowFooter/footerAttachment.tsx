@@ -60,12 +60,7 @@ export default function FooterAttachment({
             });
             if (!result.canceled) {
                 const doc = result.assets[0];
-                onAssetPicked({
-                    uri: doc.uri,
-                    mimeType: doc.mimeType,
-                    fileName: doc.name,
-                    size: doc.size,
-                }, "document"); // ✅ pass up
+                onAssetPicked(doc, "document"); // ✅ pass up
                 setIsAttachment(false);
             }
         } catch (e) {

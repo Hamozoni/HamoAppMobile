@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
-import { useAudioPlayer } from "expo-audio";
+import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import { formatTime } from "../../../utils/formatTime";
 import Slider from "@react-native-community/slider";
 import { Ionicons } from "@expo/vector-icons";
+import WaveformSeekBar from "../messagesBubals/waveformseekpar";
 
 const WA_GREEN = "#25D366";
 
@@ -14,7 +15,7 @@ interface AudioPlayerProps {
 
 export default function AudioPlayer({ uri, dark = false }: AudioPlayerProps) {
     const player = useAudioPlayer(uri);
-    const [isPlaying, setIsPlaying] = useState(false);
+    const status = useAudioPlayerStatus(player);
 
     // ✅ Fixed: cleanup only pauses if actually playing
     useEffect(() => {
@@ -26,17 +27,14 @@ export default function AudioPlayer({ uri, dark = false }: AudioPlayerProps) {
     const togglePlay = () => {
         if (isPlaying) {
             player?.pause();
-            setIsPlaying(false);
         } else {
             player?.play();
-            setIsPlaying(true);
         }
     };
 
     const onSeek = (val: number) => {
         player?.seekTo(val);
         player?.play();
-        setIsPlaying(true);
     };
 
     const textColor = dark ? "#fff" : "#111B21";
@@ -45,9 +43,9 @@ export default function AudioPlayer({ uri, dark = false }: AudioPlayerProps) {
     const thumb = dark ? "rgba(255,255,255,0.9)" : WA_GREEN;
 
     if (!player) return null;
-
-    const elapsed = Math.floor(player.currentTime);
-    const duration = Math.floor(player.duration);
+    const isPlaying = status.playing;
+    const duration = status.duration ?? 0;
+    const current = status.currentTime ?? 0;
 
     return (
         <View style={styles.row}>
@@ -59,7 +57,7 @@ export default function AudioPlayer({ uri, dark = false }: AudioPlayerProps) {
                 />
             </TouchableOpacity>
 
-            <View style={styles.sliderWrap}>
+            {/* <View style={styles.sliderWrap}>
                 <Slider
                     minimumValue={0}
                     maximumValue={duration || 1}
@@ -71,11 +69,22 @@ export default function AudioPlayer({ uri, dark = false }: AudioPlayerProps) {
                     step={1}
                     style={styles.slider}
                 />
+            </View> */}
+
+            <View style={styles.sliderWrap}>
+                <WaveformSeekBar
+                    duration={duration}
+                    current={current}
+                    onSeek={onSeek}              // receives seconds, same as before
+                    activeColor={trackColor}
+                    inactiveColor={trackBg}
+                    seed={"22"}
+                />
             </View>
 
             {/* ✅ Fixed: show formatted time */}
             <Text style={[styles.time, { color: dark ? "rgba(255,255,255,0.8)" : "#667781" }]}>
-                {isPlaying ? formatTime(elapsed) : formatTime(duration)}
+                {isPlaying ? formatTime(current) : formatTime(duration)}
             </Text>
         </View>
     );

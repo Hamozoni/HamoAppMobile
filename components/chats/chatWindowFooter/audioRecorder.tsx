@@ -22,6 +22,7 @@ export default function AudioRecorder({ setIsAudioRecorder, onSendAudio }: Audio
     const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
     const recorderState = useAudioRecorderState(audioRecorder);
     const [recordUri, setRecordUri] = useState<string | null>(null);
+    const [asset, setAsset] = useState<string | null>(null);
     const [wave, setWave] = useState<number[]>([]);
     const [recordTime, setRecordTime] = useState(0);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -49,6 +50,7 @@ export default function AudioRecorder({ setIsAudioRecorder, onSendAudio }: Audio
 
     const stopRecording = async () => {
         await audioRecorder.stop();
+        console.log({ audioRecorder })
         if (audioRecorder.uri) setRecordUri(audioRecorder.uri);
         clearIntervals();
         hasStarted.current = false;

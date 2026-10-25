@@ -6,6 +6,8 @@ import { Ionicons } from "@expo/vector-icons";
 import MessageStatusBubble from "./messageStatusBubble";
 import { ILocalMessage } from "../../../types/message.types";
 import { formatTime } from "../../../utils/formatTime";
+import { useChatsStore } from "../../../hooks/store/useChatsStore";
+import WaveformSeekBar from "./waveformseekpar";
 
 const WA_GREEN = "#25D366";
 
@@ -21,6 +23,7 @@ export default function AudioMessageBubble({ message, isMine }: AudioMessageBubb
     const isPlaying = status.playing;
     const duration = status.duration ?? 0;
     const current = status.currentTime ?? 0;
+
 
     const togglePlay = () => {
         if (isPlaying) {
@@ -39,40 +42,42 @@ export default function AudioMessageBubble({ message, isMine }: AudioMessageBubb
     const trackColor = isMine ? "rgba(255,255,255,0.9)" : WA_GREEN;
     const trackBg = isMine ? "rgba(255,255,255,0.3)" : "#DFE5E7";
 
+    const { chats } = useChatsStore();
+
+    const findChatById = () => {
+        if (!chats) return null;
+        return chats.find(chat => chat._id === message?.chatId)?.participants?.find(e => e._id === message?.senderId)?.profilePicture?.secureUrl
+    };
+
     return (
         <View style={styles.container}>
             {/* Avatar */}
             <Image
-                source={{ uri: (message?.senderId as any)?.profilePicture?.secureUrl }}
+                source={{ uri: findChatById() }}
                 style={styles.avatar}
             />
-
             <View style={styles.content}>
                 {/* Play + Slider */}
                 <View style={styles.row}>
                     <TouchableOpacity onPress={togglePlay} hitSlop={8}>
                         <Ionicons
                             name={isPlaying ? "pause" : "play"}
-                            size={28}
+                            size={22}
                             color={textColor}
                         />
                     </TouchableOpacity>
 
                     <View style={styles.sliderWrap}>
-                        <Slider
-                            minimumValue={0}
-                            maximumValue={duration || 1}
-                            value={current}                          // ✅ reactive
-                            onSlidingComplete={onSeek}
-                            minimumTrackTintColor={trackColor}
-                            maximumTrackTintColor={trackBg}
-                            thumbTintColor={trackColor}
-                            step={0.1}                               // ✅ smoother
-                            style={styles.slider}
+                        <WaveformSeekBar
+                            duration={duration}
+                            current={current}
+                            onSeek={onSeek}              // receives seconds, same as before
+                            activeColor={trackColor}
+                            inactiveColor={trackBg}
+                            seed={message._id}
                         />
                     </View>
                 </View>
-
                 {/* Time + Status */}
                 <View style={styles.footer}>
                     <Text style={[styles.time, { color: textColor }]}>
@@ -85,6 +90,7 @@ export default function AudioMessageBubble({ message, isMine }: AudioMessageBubb
                     <MessageStatusBubble message={message} isMine={isMine} />
                 </View>
             </View>
+
         </View>
     );
 }
@@ -92,19 +98,19 @@ export default function AudioMessageBubble({ message, isMine }: AudioMessageBubb
 const styles = StyleSheet.create({
     container: {
         flexDirection: "row",
-        gap: 10,
-        minWidth: 200,
-        alignItems: "center",
+        gap: 5,
+        minWidth: "88%",
+
     },
     avatar: {
-        width: 36,
-        height: 36,
-        borderRadius: 18,
+        width: 40,
+        height: 40,
+        borderRadius: "50%",
         flexShrink: 0,
     },
     content: {
         flex: 1,
-        gap: 4,
+        gap: 0,
     },
     row: {
         flexDirection: "row",
@@ -115,7 +121,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     slider: {
-        height: 30,
+        height: 20,
     },
     footer: {
         flexDirection: "row",
@@ -123,7 +129,9 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     time: {
-        fontSize: 11,
-        fontWeight: "600",
+        fontSize: 12,
+        fontWeight: "400",
     },
 });
+
+

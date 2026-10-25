@@ -19,12 +19,12 @@ interface ChatCardProps {
 
 // Config for each message type
 const MESSAGE_TYPE_CONFIG: {
-    text: { icon: string, color: string };
-    audio: { icon: string, color: string };
-    image: { icon: string, color: string };
-    video: { icon: string, color: string };
-    location: { icon: string, color: string };
-    contact: { icon: string, color: string };
+    text: { icon: any, color: string };
+    audio: { icon: any, color: string };
+    image: { icon: any, color: string };
+    video: { icon: any, color: string };
+    location: { icon: any, color: string };
+    contact: { icon: any, color: string };
 } = {
     text: { icon: "chatbubble-outline", color: TEXT_SECONDARY },
     audio: { icon: "mic-outline", color: "#8B5CF6" },
@@ -50,11 +50,11 @@ const MessagePreview = ({ chat }: { chat: Chat }) => {
                 <View >
                     {
                         lastMessageStatus === "sent" ? (
-                            <Ionicons name="checkmark" size={16} color="#333333ff" />
+                            <Ionicons name="checkmark" size={18} color="#333333ff" />
                         ) : lastMessageStatus === "delivered" || lastMessageStatus === "read" ? (
-                            <Ionicons name="checkmark-done" size={16} color={lastMessageStatus === "delivered" ? "#333333ff" : "#80e280ff"} />
+                            <Ionicons name="checkmark-done" size={18} color={lastMessageStatus === "delivered" ? "#333333ff" : "#80e280ff"} />
                         ) : (
-                            <Ionicons name="stopwatch-outline" size={16} color="#333333ff" />
+                            <Ionicons name="stopwatch-outline" size={18} color="#333333ff" />
                         )
                     }
                 </View>
@@ -62,8 +62,11 @@ const MessagePreview = ({ chat }: { chat: Chat }) => {
 
             {/* Type icon — skip for plain text */}
             {!isText && (
-                <View style={[styles.typeIconWrap, { backgroundColor: config?.color + "18" }]}>
-                    <Ionicons name="chatbubble-outline" size={12} color={config?.color} />
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                    <View style={[styles.typeIconWrap, { backgroundColor: config?.color + "18" }]}>
+                        <Ionicons name={config?.icon} size={16} color={config?.color} />
+                    </View>
+                    <Text style={{ textTransform: "capitalize" }}>{lastMessageType}</Text>
                 </View>
             )}
 

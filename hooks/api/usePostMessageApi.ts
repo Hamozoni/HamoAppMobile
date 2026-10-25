@@ -2,7 +2,6 @@ import { useMutation } from "@tanstack/react-query"
 import { axiosInstance } from "../../lib/axios.config"
 import { ILocalMessage } from "../../types/message.types"
 import { useCloudinaryUpload } from "./useCloudinaryUplaod";
-import * as Crypto from "expo-crypto";
 import { useMessagesStore } from "../store/useMessageStore";
 import { useChatsStore } from "../store/useChatsStore";
 import { useContactsStore } from "../store/useContactsStore";
@@ -14,16 +13,16 @@ export const usePostMessage = ({ chatId, senderId, receiverId }: {
     receiverId: string
 }) => {
 
-    const { mutateAsync: uploadMediaToCloudinary, progress } = useCloudinaryUpload('/cloudinary/signature');
-    const { addMessage, replaceOptimistic } = useMessagesStore();
+    const { addMessage, replaceOptimistic, updateMessageStatus } = useMessagesStore();
     const { updateChat, addNewChat } = useChatsStore();
     const { registered } = useContactsStore()
 
+    const { mutateAsync: uploadToCloudinary } = useCloudinaryUpload('/cloudinary/signature')
+
     return {
         ...useMutation({
-            mutationFn: async ({ payload, asset }: any): Promise<ILocalMessage> => {
+            mutationFn: async ({ payload, asset, clientMessageId }: any): Promise<ILocalMessage> => {
 
-                const clientMessageId = Crypto.randomUUID();
                 payload.chatId = chatId;
                 payload.senderId = senderId;
                 payload.receiverId = receiverId
@@ -72,8 +71,12 @@ export const usePostMessage = ({ chatId, senderId, receiverId }: {
 
                 let cloudinaryData = null
 
+                console.log({ payload, asset })
                 if (asset) {
-                    cloudinaryData = await uploadMediaToCloudinary(asset);
+
+                    cloudinaryData = await uploadToCloudinary(asset)
+
+                    console.log({ cloudinaryData })
 
 
                     if (!cloudinaryData) {
@@ -90,13 +93,13 @@ export const usePostMessage = ({ chatId, senderId, receiverId }: {
                 })
 
                 replaceOptimistic(data.message.chatId, clientMessageId, data.message);
+                updateMessageStatus(data.message.chatId, data.message._id, data.message.status);
                 updateChat(payload.chatId, { lastMessageStatus: data.message.status });
 
 
 
                 return data;
             },
-        }),
-        progress
+        })
     }
 }

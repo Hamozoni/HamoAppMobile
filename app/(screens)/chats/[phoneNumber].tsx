@@ -8,12 +8,17 @@ import { useGetmessages } from "../../../hooks/api/useGetMessagesApi";
 import { useChatsStore } from "../../../hooks/store/useChatsStore";
 import { useMessagesStore } from "../../../hooks/store/useMessageStore";
 
+import { KeyboardAvoidingView, Platform } from "react-native";
+import { useHeaderHeight } from "expo-router/build/react-navigation";
+
+
 export default function ChatDetails() {
 
     const { contactId } = useLocalSearchParams<{
         contactId: string;
     }>();
 
+    const headerHeight = useHeaderHeight();
     const chats = useChatsStore((state) => state.chats);
     const currentChatId =
         chats?.find((chat) =>
@@ -25,6 +30,7 @@ export default function ChatDetails() {
     const { isLoading, error } = useGetmessages(currentChatId);
     const messages = useMessagesStore(e => e.messages[currentChatId || contactId]);
     const flatListRef = useRef<FlatList>(null);
+    console.log({ messages: messages?.find(e => e?._id === "6ade113bb843c57d0263109b") })
 
 
     const { pendingLocation, clearPendingLocation } = usePendingStore();
@@ -35,37 +41,70 @@ export default function ChatDetails() {
         clearPendingLocation();
     }, [pendingLocation]);
 
+    //     const isNearBottom = useRef(true);
+    // const firstLoad = useRef(true);
+
+    // // keep the latest messages visible when the keyboard opens
+    // useEffect(() => {
+    //     const event = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    //     const sub = Keyboard.addListener(event, () => {
+    //         if (isNearBottom.current) {
+    //             requestAnimationFrame(() => flatListRef.current?.scrollToEnd({ animated: true }));
+    //         }
+    //     });
+    //     return () => sub.remove();
+    // }, []);
+
+    // const handleScroll = (e: any) => {
+    //     const offset = e.nativeEvent.contentOffset.y;
+    //     const height = e.nativeEvent.layoutMeasurement.height;
+    //     const contentHeight = e.nativeEvent.contentSize.height;
+
+    //     if (offset + height >= contentHeight - 20) {
+    //         isNearBottom.current = true;
+    //     } else {
+    //         isNearBottom.current = false;
+    //     }
+
+    //     // For first load: snap to end if not already there
+    //     if (firstLoad.current && contentHeight > 0) {
+    //         flatListRef.current?.scrollToEnd({ animated: false });
+    //         isNearBottom.current = true;
+    //         firstLoad.current = false;
+    //     }
+    // };
+
+
     // loading indicator
     if (isLoading) {
         return <ActivityIndicator />
     }
 
     return (
-        <View style={{ flex: 1, backgroundColor: "#fff" }}>
+        <KeyboardAvoidingView
+            style={{ flex: 1, backgroundColor: "#fff" }}
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            keyboardVerticalOffset={headerHeight}
+        >
             <FlatList
                 ref={flatListRef}
                 data={messages}
-                inverted   // ✅ WhatsApp behavior
+                inverted
                 keyExtractor={(item) => item.clientMessageId ?? item._id}
                 renderItem={({ item, index }) => (
-                    <MessageCard
-                        message={item}
-                        // ✅ because list is inverted
-                        prevMessage={messages[index + 1]}
-                    />
+                    <MessageCard message={item} prevMessage={messages[index + 1]} />
                 )}
-                contentContainerStyle={styles.container}
+                style={{ flex: 1, flexGrow: 1, }}
+                contentContainerStyle={{ padding: 20 }}   // padding goes here, not on `style`
+                keyboardShouldPersistTaps="never"       // taps on messages don't get swallowed
+                keyboardDismissMode="interactive"    // drag the list down to dismiss the keyboard
                 showsVerticalScrollIndicator={false}
-                style={{ flex: 1, padding: 16 }}
-
-                // ✅ keeps position stable when new messages arrive
-                maintainVisibleContentPosition={{
-                    minIndexForVisible: 1,
-                }}
             />
 
             <ChatFooter currentChatId={currentChatId || contactId} />
-        </View>
+
+        </KeyboardAvoidingView>
+
     );
 }
 

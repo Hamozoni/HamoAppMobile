@@ -34,6 +34,7 @@ export const useChatsStore = create<ChatsState>((set) => ({
                 ),
         })),
 
+
     updateLastMessage: (chatId, lastMessage) =>
         set(state => ({
             chats: state.chats

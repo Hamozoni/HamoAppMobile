@@ -1,31 +1,33 @@
-import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { useCloudinarySignature } from './useCloudinarySignature';
-import { uploadImageToCloudinary, CloudinaryUploadResponse } from '../../services/cloudinary.service';
+import { uploadToCloudinary, CloudinaryUploadResponse } from '../../services/cloudinary.service';
 
 export const useCloudinaryUpload = (endPoint: string) => {
 
-    const [progress, setProgress] = useState<number>(0);
     const { mutateAsync: fetchSignature } = useCloudinarySignature();
 
     const mutation = useMutation<CloudinaryUploadResponse, Error, ImagePickerAsset>({
         mutationFn: async (asset: ImagePickerAsset) => {
-            setProgress(0);
 
             const signature = await fetchSignature({ endPoint, mediaType: asset.mimeType?.split('/')[0] });
+
+            console.log({ signature })
             if (!signature) {
                 throw new Error('Failed to retrieve upload signature from backend.');
-            }
+            };
 
-            return await uploadImageToCloudinary(asset, signature, (currentProgress) => {
-                setProgress(currentProgress);
-            });
+
+
+            const cloudinaryData = await uploadToCloudinary(asset, signature);
+
+            console.log({ cloudinaryData })
+
+            return cloudinaryData;
         },
     });
 
     return {
         ...mutation,
-        progress,
     };
 };

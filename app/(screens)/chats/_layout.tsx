@@ -3,6 +3,7 @@ import { Stack, useRouter } from "expo-router";
 import { TouchableOpacity, Text } from "react-native";
 import { ChatHeaderLeft, ChatHeaderRight, ChatHeaderMiddle } from "../../../components/chats/chatHeader";
 import ChevronBackBtn from "../../../components/buttons/chevronBackBtn";
+import ChatFooter from "../../../components/chats/chatWindowFooter/chatFooter";
 
 export default function ChatWindowLayout() {
 

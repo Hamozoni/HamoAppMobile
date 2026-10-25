@@ -25,7 +25,8 @@
         "foregroundImage": "./assets/images/sudaChat.jpg",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "softwareKeyboardLayoutMode": "resize"
     },
     "web": {
       "favicon": "./assets/images/sudaChat.jpg"

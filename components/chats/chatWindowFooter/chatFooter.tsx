@@ -12,6 +12,8 @@ import { MessageType } from "../../../types/message.types";
 import { useAuthStore } from "../../../hooks/store/useAuthStore";
 import { usePostMessage } from "../../../hooks/api/usePostMessageApi";
 
+import * as Crypto from "expo-crypto";
+
 const WA_GREEN = "#25D366";
 
 export default function ChatFooter({ currentChatId }: { currentChatId: string | null }) {
@@ -30,11 +32,12 @@ export default function ChatFooter({ currentChatId }: { currentChatId: string | 
         contactId: string
     }>();
 
-    const { mutate } = usePostMessage({
+    const { mutate, error } = usePostMessage({
         chatId: currentChatId,
         senderId: user?._id,
         receiverId: contactId,
-    })
+    });
+
 
 
     useEffect(() => {
@@ -58,15 +61,18 @@ export default function ChatFooter({ currentChatId }: { currentChatId: string | 
     const handleSend = () => {
         if (!text.trim() && !asset) return;
         if (!user) return;
+        const clientMessageId = Crypto.randomUUID();
         mutate({
             payload: {
                 text,
-                type: "text",
-                status: "pending"
-            }
-        })
+                type: asset ? assetType.split('/')[0] : "text",
+            },
+            asset,
+            clientMessageId
+        });
         setText("");
         setAsset(null);
+        setAssetType("image");
     };
 
     // ✅ Called from FooterAttachment when image/video/document picked
@@ -77,20 +83,24 @@ export default function ChatFooter({ currentChatId }: { currentChatId: string | 
     };
 
     // ✅ Called from AudioRecorder when send pressed
-    const handleSendAudio = (uri: string) => {
+    const handleSendAudio = (uri: any) => {
         if (!user || !uri) return;
+        const clientMessageId = Crypto.randomUUID();
         mutate({
             asset: {
                 uri,
-                mimeType: "audio/m4a",
-                fileName: "audio.m4a",
+                resourceType: "voice/mp3",
+                fileName: `audio-${user?._id}-${Date.now()}.mp3`
+
             },
             payload: {
                 type: "audio",
-                status: "pending",
-
-            }
+            },
+            clientMessageId
         })
+        setText("");
+        setAsset(null);
+        setAssetType("image");
         setIsAudioRecorder(false);
     };
 
@@ -102,89 +112,95 @@ export default function ChatFooter({ currentChatId }: { currentChatId: string | 
     }
 
     return (
-        <KeyboardAvoidingView
-            behavior="padding"
-            keyboardVerticalOffset={80}
-        >
-            <View style={styles.wrapper}>
 
-                {/* ── Asset preview ──────────────────── */}
-                {asset && (assetType === "image" || assetType === "video") && (
-                    <View style={styles.previewRow}>
-                        <Image
-                            source={{ uri: asset.uri }}
-                            style={styles.preview}
-                        />
-                        <TouchableOpacity
-                            onPress={() => setAsset(null)}
-                            style={styles.removeBtn}
-                        >
-                            <Ionicons name="close-circle" size={22} color="#FF3B30" />
-                        </TouchableOpacity>
-                    </View>
-                )}
+        <View style={{ ...styles.wrapper, height: isAttachment ? keyboardHeight + 15 : 70 }}>
 
-                {/* ── Input row ──────────────────────── */}
-                <View style={styles.inputRow}>
-
-                    {/* Attachment toggle */}
-                    <TouchableOpacity onPress={toggleAttachment} style={styles.iconBtn}>
-                        {isAttachment
-                            ? <FontAwesome6 name="keyboard" size={22} color="#76787a" />
-                            : <Entypo name="attachment" size={22} color="#76787a" />
-                        }
-                    </TouchableOpacity>
-
-                    {/* Text input */}
-                    <TextInput
-                        ref={textInputRef}
-                        value={text}
-                        onChangeText={setText}
-                        onFocus={handleOnFocus}
-                        placeholder={asset ? "Add a caption..." : "Message"}
-                        placeholderTextColor="#9DB2BF"
-                        multiline
-                        style={styles.input}
-                    />
-
-                    {/* Right actions */}
-                    {hasContent ? (
-                        // ✅ Send button when there's content
-                        <TouchableOpacity onPress={handleSend} style={styles.sendBtn}>
-                            <Ionicons name="send" size={18} color="#fff" />
-                        </TouchableOpacity>
-                    ) : (
-                        // Camera + Mic when empty
-                        <View style={styles.rightActions}>
-                            <TouchableOpacity onPress={() => router.push("/chats/camera" as any)}>
-                                <Ionicons name="camera-outline" size={26} color="#76787a" />
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setIsAudioRecorder(true)}>
-                                <Ionicons name="mic-outline" size={26} color="#76787a" />
-                            </TouchableOpacity>
-                        </View>
-                    )}
-                </View>
-
-                {/* ── Panels ─────────────────────────── */}
-                {isAttachment && (
-                    <FooterAttachment
-                        keyboardHeight={keyboardHeight}
-                        setIsAttachment={setIsAttachment}
-                        onAssetPicked={handleAssetPicked}   // ✅
-                        onLocationPick={() => router.push("/chats/location" as any)}
-                        onContactPick={() => router.push("/chats/shareContacts" as any)}
-                    />
-                )}
-
-                {isAudioRecorder && (
+            {
+                isAudioRecorder ? (
                     <AudioRecorder
                         setIsAudioRecorder={setIsAudioRecorder}
                         onSendAudio={handleSendAudio}   // ✅
                     />
-                )}
-            </View>
-        </KeyboardAvoidingView>
+                ) :
+                    <>
+                        {/* ── Asset preview ──────────────────── */}
+                        {asset && (assetType === "image" || assetType === "video") && (
+                            <View style={styles.previewRow}>
+                                <Image
+                                    source={{ uri: asset.uri }}
+                                    style={styles.preview}
+                                />
+                                <TouchableOpacity
+                                    onPress={() => setAsset(null)}
+                                    style={styles.removeBtn}
+                                >
+                                    <Ionicons name="close-circle" size={22} color="#FF3B30" />
+                                </TouchableOpacity>
+                            </View>
+                        )}
+
+                        {/* ── Input row ──────────────────────── */}
+                        <View style={styles.inputRow}>
+
+                            {/* Attachment toggle */}
+                            <TouchableOpacity onPress={toggleAttachment} style={styles.iconBtn}>
+                                {isAttachment
+                                    ? <FontAwesome6 name="keyboard" size={22} color="#76787a" />
+                                    : <Entypo name="attachment" size={22} color="#76787a" />
+                                }
+                            </TouchableOpacity>
+
+                            {/* Text input */}
+                            <TextInput
+                                ref={textInputRef}
+                                value={text}
+                                onChangeText={setText}
+                                onFocus={handleOnFocus}
+                                placeholder={asset ? "Add a caption..." : "Message"}
+                                placeholderTextColor="#9DB2BF"
+                                multiline
+                                style={styles.input}
+                            />
+
+                            {/* Right actions */}
+                            {hasContent ? (
+                                // ✅ Send button when there's content
+                                <TouchableOpacity onPress={handleSend} style={styles.sendBtn}>
+                                    <Ionicons name="send" size={18} color="#fff" />
+                                </TouchableOpacity>
+                            ) : (
+                                // Camera + Mic when empty
+                                <View style={styles.rightActions}>
+                                    <TouchableOpacity onPress={() => router.push({
+                                        pathname: '/chats/camera',
+                                        params: {
+                                            receiverId: contactId,
+                                            chatId: currentChatId
+                                        }
+                                    })}>
+                                        <Ionicons name="camera-outline" size={26} color="#76787a" />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => setIsAudioRecorder(true)}>
+                                        <Ionicons name="mic-outline" size={26} color="#76787a" />
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                        </View>
+
+                        {/* ── Panels ─────────────────────────── */}
+                        {isAttachment && (
+                            <FooterAttachment
+                                keyboardHeight={keyboardHeight}
+                                setIsAttachment={setIsAttachment}
+                                onAssetPicked={handleAssetPicked}   // ✅
+                                onLocationPick={() => router.push("/chats/location" as any)}
+                                onContactPick={() => router.push("/chats/shareContacts" as any)}
+                            />
+                        )}
+                    </>
+            }
+
+        </View>
     );
 }
 

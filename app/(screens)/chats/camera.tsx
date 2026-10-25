@@ -15,6 +15,10 @@ import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { VideoView, useVideoPlayer } from "expo-video";
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
+import { usePostMessage } from "../../../hooks/api/usePostMessageApi";
+import { useLocalSearchParams } from "expo-router/build/hooks";
+import { useAuthStore } from "../../../hooks/store/useAuthStore";
+import * as Crypto from "expo-crypto"
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -32,13 +36,19 @@ export default function CameraScreen() {
     const [recordingTime, setRecordingTime] = useState(0);
 
     // Media preview states
-    const [capturedMedia, setCapturedMedia] = useState<string | null>(null);
-    const [mediaType, setMediaType] = useState<"photo" | "video" | null>(null);
+    const [capturedMedia, setCapturedMedia] = useState<any>(null);
+    const [mediaType, setMediaType] = useState<"image" | "video" | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
 
     // Animation for recording indicator
     const pulseAnim = useRef(new Animated.Value(1)).current;
     const recordingTimer = useRef<NodeJS.Timeout | null>(null);
+
+    const { receiverId, chatId }: { receiverId: string, chatId: string } = useLocalSearchParams();
+    console.log({ receiverId, chatId })
+    const senderId = useAuthStore(st => st.user?._id)
+
+    const { mutate } = usePostMessage({ receiverId, chatId, senderId })
 
     useEffect(() => {
         if (isRecording) {
@@ -123,10 +133,12 @@ export default function CameraScreen() {
             const photo = await cameraRef.current.takePictureAsync({
                 quality: 0.9,
                 skipProcessing: false,
+
             });
+            console.log({ photo })
             if (photo) {
-                setCapturedMedia(photo.uri);
-                setMediaType("photo");
+                setCapturedMedia(photo);
+                setMediaType("image");
             }
         } catch (error) {
             console.error("Error taking picture:", error);
@@ -144,7 +156,7 @@ export default function CameraScreen() {
                 maxDuration: 60,
             });
             if (video) {
-                setCapturedMedia(video.uri);
+                setCapturedMedia(video);
                 setMediaType("video");
             }
         } catch (error) {
@@ -205,7 +217,23 @@ export default function CameraScreen() {
 
     const sendMedia = () => {
         console.log("Sending media:", capturedMedia);
-        router.back();
+        if (!senderId || !receiverId) return;
+        const clientMessageId = Crypto.randomUUID()
+        mutate({
+            payload: {
+                type: mediaType,
+                text: ''
+            },
+            asset: {
+                uri: capturedMedia?.uri,
+                resourceType: mediaType === "image" ? "image/jpeg" : "video/mp4",
+                fileName: `${mediaType}-${senderId}-${Date.now()}.mp4`
+            },
+            clientMessageId
+
+        });
+
+        router.back()
     };
 
     // Pinch gesture for zoom
@@ -232,14 +260,14 @@ export default function CameraScreen() {
     // Render media preview with edit options
     const renderMediaPreview = () => (
         <View style={styles.previewContainer}>
-            {mediaType === "photo" ? (
+            {mediaType === "image" ? (
                 <Image
-                    source={{ uri: capturedMedia || '' }}
+                    source={{ uri: capturedMedia?.uri || '' }}
                     style={styles.previewMedia}
                     contentFit="contain"
                 />
             ) : (
-                capturedMedia && <VideoPreview uri={capturedMedia} />
+                capturedMedia && <VideoPreview uri={capturedMedia?.uri} />
             )}
 
             <View style={styles.previewTopControls}>

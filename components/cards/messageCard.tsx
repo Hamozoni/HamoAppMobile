@@ -26,8 +26,6 @@ export default function MessageCard({ message, prevMessage }: MessageCardProps) 
     const user = useAuthStore(state => state.user);
     const isMine = message.senderId === user?._id;
 
-    console.log({ isMine, senderId: message.senderId, userId: user?._id })
-
     const showDateSeparator = !prevMessage ||
         !isSameDay(message.createdAt, prevMessage.createdAt);
 
@@ -68,9 +66,10 @@ export default function MessageCard({ message, prevMessage }: MessageCardProps) 
                     style={{
                         backgroundColor:
                             message.type === "sticker" ? "transparent" :
-                                isMine ? "#0c5679ff" : "#fff",              // ✅ color
+                                isMine ? "#2d88b3ff" : "#fff",              // ✅ color
                         borderRadius: 10,
                         padding: isMedia ? 0 : 10,
+                        overflow: "hidden",
                         minWidth: 30,
                         maxWidth: "88%",
                         // ✅ shadow for received messages

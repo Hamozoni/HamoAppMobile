@@ -12,7 +12,6 @@ import { IUser } from "../types/user.type";
 
 export function AuthBootstrap() {
     const [ready, setReady] = useState(false);
-    const [accessToken, setAccessToken] = useState<string | null>(null);
 
     const user = useAuthStore((s) => s.user);
     const setUser = useAuthStore((s) => s.setUser);
@@ -30,7 +29,7 @@ export function AuthBootstrap() {
             try {
                 await hydrate();
                 const token = await SecureStore.getItemAsync("accessToken");
-                setAccessToken(token);
+
 
                 if (!token) return; // not logged in -> falls through to login redirect
 
@@ -51,7 +50,6 @@ export function AuthBootstrap() {
                 await syncContacts();
                 loadContacts();
             } catch (e: any) {
-                console.error("Bootstrap failed:", e?.message);
                 if (e?.response?.status === 401) {
                     await SecureStore.deleteItemAsync("accessToken");
                     await SecureStore.deleteItemAsync("refreshToken");
@@ -68,10 +66,6 @@ export function AuthBootstrap() {
             cancelled = true;
         };
     }, []);
-
-    console.log("user", user);
-    console.log("accessToken", accessToken);
-    console.log("ready", ready);
 
     if (!ready) return <ActivityIndicator style={{ flex: 1 }} />;
 
