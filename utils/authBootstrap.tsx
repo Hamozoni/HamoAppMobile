@@ -50,6 +50,7 @@ export function AuthBootstrap() {
                 await syncContacts();
                 loadContacts();
             } catch (e: any) {
+                console.log("THE ERROR IS HERE", e)
                 if (e?.response?.status === 401) {
                     await SecureStore.deleteItemAsync("accessToken");
                     await SecureStore.deleteItemAsync("refreshToken");

@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView } from "react-native";
+import { Platform, ScrollView } from "react-native";
 import { ProfileInfo } from "../../../components/settings/profileInfo";
 import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";
 import ThemedViewContainer from "../../../components/themedViews/ThemedViewContainer";
@@ -7,6 +7,8 @@ import Seprater from "../../../components/ui/separator";
 import TitleForwardIconBtn from "../../../components/buttons/titleForwardIconBtn";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuthStore } from "../../../hooks/store/useAuthStore";
+import { useHeaderHeight } from "expo-router/build/react-navigation/index.js";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type IoniconsName = keyof typeof Ionicons.glyphMap;
 
@@ -39,9 +41,23 @@ const settingsData3: SettingItem[] = [
 
 const Settings = () => {
 
+    const headerHeight = useHeaderHeight();
+
+    const insets = useSafeAreaInsets();
+
+    console.log({ headerHeight, insets });
     return (
-        <ThemedSafeAreaView>
-            <ScrollView showsVerticalScrollIndicator={false}>
+        <ThemedSafeAreaView edges={["bottom"]}>
+            <ScrollView
+                style={{ flex: 1 }}
+                contentInsetAdjustmentBehavior="automatic"   // iOS: pushes content below a transparent/large-title header
+                contentContainerStyle={{
+                    paddingTop: Platform.OS === "android" ? 20 : 0,
+                    paddingBottom: 20,
+                }}
+                showsVerticalScrollIndicator={false}
+
+            >
                 <ProfileInfo />
                 <Seprater />
                 <ThemedViewContainer>

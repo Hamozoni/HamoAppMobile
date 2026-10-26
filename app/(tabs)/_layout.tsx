@@ -3,27 +3,34 @@ import { View, StyleSheet, Platform } from "react-native";
 import { Tabs, useGlobalSearchParams } from "expo-router";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AnimatedBorder from "../../components/ui/animatedBorder";
+import ThemedSafeAreaView from "../../components/themedViews/safeAreaView";
 
 const WA_GREEN = "#ffffffff";
 const WA_DARK = "#acc6f8ff";
 const INACTIVE = "#526169ff";
 const TAB_BG = "#FFFFFF";
 
-const TabBtn = (
-    { children, focused }:
-        { children: React.ReactElement, focused: boolean }
-) => {
-    return (
-        <View style={[
+
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const TAB_CONTENT_HEIGHT = 68; // room for the 56px circle + padding
+
+const TabBtn = ({ children, focused }: { children: React.ReactElement; focused: boolean }) => (
+    <View
+        style={[
             styles.centerBtn,
-            { backgroundColor: focused ? WA_DARK : WA_GREEN, transform: `${focused ? 1.1 : 1}` }
-        ]}>
-            {children}
-        </View>
-    )
-}
+            {
+                backgroundColor: focused ? WA_DARK : WA_GREEN,
+                transform: [{ scale: focused ? 1.1 : 1 }],
+            },
+        ]}
+    >
+        {children}
+    </View>
+);
 
 const RootLayout = () => {
+    const insets = useSafeAreaInsets();
 
     return (
         <Tabs
@@ -33,13 +40,14 @@ const RootLayout = () => {
                 tabBarActiveTintColor: WA_DARK,
                 tabBarInactiveTintColor: INACTIVE,
                 tabBarShowLabel: false,
+                tabBarHideOnKeyboard: true, // stops the bar riding above the Android keyboard
                 tabBarStyle: {
                     backgroundColor: TAB_BG,
                     borderTopWidth: 3,
                     borderTopColor: WA_DARK,
-                    height: Platform.OS === "ios" ? 85 : 65,
-                    paddingBottom: Platform.OS === "ios" ? 25 : 8,
-                    paddingTop: 8,
+                    height: TAB_CONTENT_HEIGHT + insets.bottom,
+                    paddingBottom: insets.bottom,
+                    paddingTop: 6,
                     elevation: 12,
                     shadowColor: "#000",
                     shadowOffset: { width: 0, height: -3 },
@@ -136,15 +144,15 @@ const styles = StyleSheet.create({
         height: 56,
         borderRadius: 28,
         justifyContent: "center",
+        alignItems: "center",
         borderWidth: 3,
         borderColor: WA_GREEN,
-        alignItems: "center",
-        marginBottom: Platform.OS === "ios" ? 10 : 20,
-        shadowColor: WA_GREEN,
+        // removed the platform-specific marginBottom hack
+        shadowColor: "#000",
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.35,
+        shadowOpacity: 0.15,
         shadowRadius: 8,
-        elevation: 8
+        elevation: 6,
     },
 });
 

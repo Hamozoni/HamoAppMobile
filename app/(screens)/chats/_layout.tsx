@@ -17,6 +17,8 @@ export default function ChatWindowLayout() {
                     ({ route }) => {
                         const { phoneNumber } = route.params as { phoneNumber: string };
                         return {
+                            headerTransparent: false,
+                            headerLargeTitle: false,
                             headerShown: true,
                             headerLeft: () => <ChatHeaderLeft />,
                             headerRight: () => <ChatHeaderRight />,

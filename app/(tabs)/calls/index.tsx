@@ -1,10 +1,11 @@
 import React from "react";
-import { Text, View, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import { Text, View, FlatList, TouchableOpacity, StyleSheet, Platform } from "react-native";
 import { CALLS } from "../../../constants/call";
 import { CallCard } from "../../../components/cards/callCard";
 import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useHeaderHeight } from "expo-router/build/react-navigation/index.js";
 
 const WA_GREEN = "#25D366";
 const PAGE_BG = "#F0F2F5";
@@ -30,9 +31,10 @@ const CALLSBTN: CallBtnItem[] = [
 
 const Calls = () => {
     const router = useRouter();
+    const headerHeight = useHeaderHeight()
 
     return (
-        <ThemedSafeAreaView >
+        <ThemedSafeAreaView edges={["top"]}>
             <FlatList
                 data={CALLS}
                 renderItem={({ item, index }) => (
@@ -46,7 +48,11 @@ const Calls = () => {
                 )}
                 keyExtractor={(item) => item.id.toString()}
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.listContent}
+                // contentContainerStyle={{
+                //     paddingTop: Platform.OS === "android" ? headerHeight : 0,
+                //     paddingBottom: 20,
+                // }}
+                contentInsetAdjustmentBehavior="automatic"
                 ListHeaderComponent={() => (
                     <View>
                         {/* ── Quick action buttons ── */}
@@ -95,10 +101,6 @@ const Calls = () => {
 };
 
 const styles = StyleSheet.create({
-    listContent: {
-        paddingBottom: 100,
-    },
-
     // ── Action buttons ───────────────────────────
     actionsCard: {
         flexDirection: "row",

@@ -7,9 +7,9 @@ export default function UpdatesLayout() {
             <Stack.Screen
                 name="index"
                 options={{
-                    headerShown: true,
+                    headerShown: false,
                     title: "Contacts",
-                    headerTransparent: true,
+                    // headerTransparent: true,
                 }} />
         </Stack>
     );

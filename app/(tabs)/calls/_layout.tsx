@@ -1,6 +1,6 @@
 import React from "react";
 import { Stack } from "expo-router";
-import { Text, TouchableOpacity } from "react-native";
+import { Platform, Text, TouchableOpacity } from "react-native";
 import { RoundedBtn } from "../../../components/buttons/roundedBtn";
 
 export default function UpdatesLayout() {
@@ -9,10 +9,11 @@ export default function UpdatesLayout() {
             <Stack.Screen
                 name="index"
                 options={{
-                    headerTransparent: true,
+                    // headerTransparent: true,
                     headerShown: true,
                     title: "Calls",
-                    headerLargeTitle: true,
+                    headerTitleAlign: "center",
+                    headerTitleStyle: { fontWeight: "bold", fontSize: 20 },
                     headerSearchBarOptions: {
                         placeholder: "Search",
                     },

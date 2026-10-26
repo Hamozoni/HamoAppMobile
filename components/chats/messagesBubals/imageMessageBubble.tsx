@@ -43,8 +43,8 @@ export default function ImageMessageBubble({ message, isMine }: ImageMessageBubb
             activeOpacity={0.9}
             onPress={() =>
                 router.push({
-                    pathname: "/chatWindow/mediaGallery" as any,
-                    params: { id: file?._id, messageId: message?._id },
+                    pathname: "chats/mediaGallery" as any,
+                    params: { messageId: message?._id, chatId: message?.chatId },
                 })
             }
         >

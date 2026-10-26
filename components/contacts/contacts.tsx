@@ -7,6 +7,7 @@ import {
     ActivityIndicator,
     TextInput,
     TouchableOpacity,
+    ScrollView,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import ContactCard from "../cards/contactCard";
@@ -68,104 +69,108 @@ export default function ContactsList({ children }: ContactsListProps) {
     const total = registered.length + unregistered.length;
 
     return (
-        <ThemedSafeAreaView>
+        <ThemedSafeAreaView edges={["top"]}>
 
-            {/* ── Search bar ── */}
-            <View style={styles.searchWrapper}>
-                <View style={styles.searchBar}>
-                    <Ionicons name="search" size={16} color={TEXT_SECONDARY} style={styles.searchIcon} />
-                    <TextInput
-                        style={styles.searchInput}
-                        placeholder="Search"
-                        placeholderTextColor={TEXT_SECONDARY}
-                        value={search}
-                        onChangeText={setSearch}
-                        returnKeyType="search"
-                        clearButtonMode="while-editing" // iOS only
-                    />
-                    {search.length > 0 && (
-                        <TouchableOpacity onPress={() => setSearch("")} hitSlop={8}>
-                            <Ionicons name="close-circle" size={17} color={TEXT_SECONDARY} />
-                        </TouchableOpacity>
-                    )}
+            <View style={{ flex: 1 }}>
+
+                <View style={styles.searchWrapper}>
+                    <View style={styles.searchBar}>
+                        <Ionicons name="search" size={16} color={TEXT_SECONDARY} style={styles.searchIcon} />
+                        <TextInput
+                            style={styles.searchInput}
+                            placeholder="Search"
+                            placeholderTextColor={TEXT_SECONDARY}
+                            value={search}
+                            onChangeText={setSearch}
+                            returnKeyType="search"
+                            clearButtonMode="while-editing" // iOS only
+                        />
+                        {search.length > 0 && (
+                            <TouchableOpacity onPress={() => setSearch("")} hitSlop={8}>
+                                <Ionicons name="close-circle" size={17} color={TEXT_SECONDARY} />
+                            </TouchableOpacity>
+                        )}
+                    </View>
                 </View>
+
+                <SectionList
+                    sections={sections}
+                    keyExtractor={(item: Contact, index) => `${item.phoneNumber}-${index}`}
+                    showsVerticalScrollIndicator={false}
+                    stickySectionHeadersEnabled
+
+                    ListHeaderComponent={
+                        <>
+                            {children ?? null}
+                            {!isSyncing && total > 0 && (
+                                <Text style={styles.totalLabel}>
+                                    {total} contact{total !== 1 ? "s" : ""}
+                                </Text>
+                            )}
+                        </>
+                    }
+
+                    ListEmptyComponent={
+                        isSyncing ? (
+                            <View style={styles.centered}>
+                                <ActivityIndicator size="large" color={WA_GREEN} />
+                                <Text style={styles.emptyLabel}>Syncing contacts…</Text>
+                            </View>
+                        ) : search.length > 0 ? (
+                            <View style={styles.centered}>
+                                <Ionicons name="search" size={44} color="#CBD5E1" />
+                                <Text style={styles.emptyTitle}>No results for "{search}"</Text>
+                                <Text style={styles.emptyLabel}>Try a different name or number</Text>
+                            </View>
+                        ) : (
+                            <View style={styles.centered}>
+                                <Ionicons name="people-outline" size={64} color="#CBD5E1" />
+                                <Text style={styles.emptyTitle}>No contacts yet</Text>
+                                <Text style={styles.emptyLabel}>
+                                    Contacts will appear here{"\n"}once your phone is synced
+                                </Text>
+                            </View>
+                        )
+                    }
+
+                    renderSectionHeader={({ section }) => (
+                        <View style={styles.sectionHeader}>
+                            <View style={[
+                                styles.sectionDot,
+                                { backgroundColor: section.type === "registered" ? WA_GREEN : TEXT_SECONDARY }
+                            ]} />
+                            <Text style={[
+                                styles.sectionTitle,
+                                { color: section.type === "registered" ? WA_DARK : TEXT_SECONDARY }
+                            ]}>
+                                {section.title}
+                            </Text>
+                            <Text style={styles.sectionCount}>{section.count}</Text>
+                        </View>
+                    )}
+
+                    renderItem={({ item, index, section }: any) => {
+                        const isFirst = index === 0;
+                        const isLast = index === section.data.length - 1;
+                        return (
+                            <View style={[
+                                styles.cardWrapper,
+                                isFirst && styles.cardFirst,
+                                isLast && styles.cardLast,
+                            ]}>
+                                <ContactCard contact={item} />
+                                {!isLast && <View style={styles.divider} />}
+                            </View>
+                        );
+                    }}
+
+                    SectionSeparatorComponent={() => <View style={styles.sectionGap} />}
+                    ItemSeparatorComponent={() => null} // handled manually above
+                    contentContainerStyle={styles.listContent}
+                />
             </View>
 
-            <SectionList
-                sections={sections}
-                keyExtractor={(item: Contact, index) => `${item.phoneNumber}-${index}`}
-                showsVerticalScrollIndicator={false}
-                stickySectionHeadersEnabled
-
-                ListHeaderComponent={
-                    <>
-                        {children ?? null}
-                        {!isSyncing && total > 0 && (
-                            <Text style={styles.totalLabel}>
-                                {total} contact{total !== 1 ? "s" : ""}
-                            </Text>
-                        )}
-                    </>
-                }
-
-                ListEmptyComponent={
-                    isSyncing ? (
-                        <View style={styles.centered}>
-                            <ActivityIndicator size="large" color={WA_GREEN} />
-                            <Text style={styles.emptyLabel}>Syncing contacts…</Text>
-                        </View>
-                    ) : search.length > 0 ? (
-                        <View style={styles.centered}>
-                            <Ionicons name="search" size={44} color="#CBD5E1" />
-                            <Text style={styles.emptyTitle}>No results for "{search}"</Text>
-                            <Text style={styles.emptyLabel}>Try a different name or number</Text>
-                        </View>
-                    ) : (
-                        <View style={styles.centered}>
-                            <Ionicons name="people-outline" size={64} color="#CBD5E1" />
-                            <Text style={styles.emptyTitle}>No contacts yet</Text>
-                            <Text style={styles.emptyLabel}>
-                                Contacts will appear here{"\n"}once your phone is synced
-                            </Text>
-                        </View>
-                    )
-                }
-
-                renderSectionHeader={({ section }) => (
-                    <View style={styles.sectionHeader}>
-                        <View style={[
-                            styles.sectionDot,
-                            { backgroundColor: section.type === "registered" ? WA_GREEN : TEXT_SECONDARY }
-                        ]} />
-                        <Text style={[
-                            styles.sectionTitle,
-                            { color: section.type === "registered" ? WA_DARK : TEXT_SECONDARY }
-                        ]}>
-                            {section.title}
-                        </Text>
-                        <Text style={styles.sectionCount}>{section.count}</Text>
-                    </View>
-                )}
-
-                renderItem={({ item, index, section }: any) => {
-                    const isFirst = index === 0;
-                    const isLast = index === section.data.length - 1;
-                    return (
-                        <View style={[
-                            styles.cardWrapper,
-                            isFirst && styles.cardFirst,
-                            isLast && styles.cardLast,
-                        ]}>
-                            <ContactCard contact={item} />
-                            {!isLast && <View style={styles.divider} />}
-                        </View>
-                    );
-                }}
-
-                SectionSeparatorComponent={() => <View style={styles.sectionGap} />}
-                ItemSeparatorComponent={() => null} // handled manually above
-                contentContainerStyle={styles.listContent}
-            />
+            {/* ── Search bar ── */}
         </ThemedSafeAreaView>
     );
 }

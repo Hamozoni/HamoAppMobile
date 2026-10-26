@@ -4,7 +4,7 @@ import React from "react";
 
 interface MediaGalleryMetaData {
     type: 'image' | 'video' | string;
-    metadata: any;
+    file: any;
 }
 
 interface MediaGalleryCardProps {
@@ -16,9 +16,9 @@ export default function MediaGalleryCard({ metaData }: MediaGalleryCardProps) {
     const CardComponent = (): React.ReactElement | null => {
         switch (metaData.type) {
             case "image":
-                return <ZoomableImage url={metaData.metadata.url} />;
+                return <ZoomableImage url={metaData.file.secureUrl} />;
             case "video":
-                return <VideoPlayer url={metaData.metadata.url} />;
+                return <VideoPlayer url={metaData.file.secureUrl} />;
             default:
                 return null;
         }

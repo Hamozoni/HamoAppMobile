@@ -1,30 +1,25 @@
 import React from "react";
-import { View, StyleSheet, Platform, StatusBar } from "react-native";
-import { SafeAreaInsetsContext, SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { StyleSheet, ViewStyle } from "react-native";
+import { SafeAreaView, Edge } from "react-native-safe-area-context";
 
-interface ThemedSafeAreaViewProps {
+interface Props {
     children: React.ReactNode;
-    style?: object;
-    paddingTop?: number
+    style?: ViewStyle;
+    edges?: Edge[];
 }
 
-export default function ThemedSafeAreaView({ children, style, paddingTop = 30 }: ThemedSafeAreaViewProps) {
-
-    const insets = useSafeAreaInsets();
+export default function ThemedSafeAreaView({
+    children,
+    style,
+    edges = ["top", "bottom"],
+}: Props) {
     return (
-        <SafeAreaProvider>
-            <SafeAreaView
-                edges={["top", "bottom"]}
-                style={[styles.container, style, { paddingTop: Platform.OS === "android" ? insets.top + paddingTop : 0 }]}>
-                {children}
-            </SafeAreaView>
-        </SafeAreaProvider>
+        <SafeAreaView edges={edges} style={[styles.container, style]}>
+            {children}
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#fff",
-    },
+    container: { flex: 1, backgroundColor: "#fff" },
 });

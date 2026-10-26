@@ -39,7 +39,7 @@ const ZoomableImage = ({ url }: ZoomableImageProps) => {
     return (
         <GestureDetector gesture={composedGesture}>
             <Animated.Image
-                source={url}
+                source={{ uri: url }}
                 style={[animatedStyle, { width, height, resizeMode: "contain" }]}
             />
         </GestureDetector>

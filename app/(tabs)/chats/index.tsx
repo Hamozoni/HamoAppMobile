@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import {
     View, Text, ScrollView, TouchableOpacity,
     StyleSheet, Dimensions, FlatList,
+    Platform,
 } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { Stack, useRouter } from "expo-router";
@@ -12,6 +13,7 @@ import { useContactsStore } from "../../../hooks/store/useContactsStore";
 import chats from "../settings/chats";
 import { useChatsStore } from "../../../hooks/store/useChatsStore";
 import { useAuthStore } from "../../../hooks/store/useAuthStore";
+import { useHeaderHeight } from "expo-router/build/react-navigation/index.js";
 
 const { width } = Dimensions.get("window");
 const WA_GREEN = "#25D366";
@@ -53,8 +55,44 @@ const Chats = () => {
         return chats;
     }, [activeFilter, chats]);
 
+    const listHeader = (
+        <>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filtersRow}>
+                {FILTERS.map(filter => {
+                    const isActive = activeFilter === filter;
+                    return (
+                        <TouchableOpacity
+                            key={filter}
+                            onPress={() => !isEdit && setActiveFilter(filter)}
+                            activeOpacity={0.7}
+                            style={[
+                                styles.filterPill,
+                                isActive && styles.filterPillActive,
+                            ]}
+                        >
+                            <Text style={[
+                                styles.filterText,
+                                isActive && styles.filterTextActive,
+                            ]}>
+                                {filter}
+                            </Text>
+                        </TouchableOpacity>
+                    );
+                })}
+            </ScrollView>
+            <View style={styles.sectionHeader}>
+                <View style={styles.sectionDot} />
+                <Text style={styles.sectionTitle}>
+                    {filteredChats.length} CONVERSATION{filteredChats.length !== 1 ? "S" : ""}
+                </Text>
+            </View>
+        </>
+    );
+
+    const headerHeight = useHeaderHeight()
+
     return (
-        <ThemedSafeAreaView>
+        <ThemedSafeAreaView edges={[]}>
             <Stack.Screen
                 options={{
                     headerLeft: () => (
@@ -79,50 +117,24 @@ const Chats = () => {
                 data={filteredChats}
                 keyExtractor={(item) => item._id}
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.listContent}
-                // refreshing={loading}
-                // onRefresh={fetchChats}
-
-                ListHeaderComponent={() => (
-                    <>
-                        {/* ── Filter pills ── */}
-                        <ScrollView
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={styles.filtersRow}
-                        >
-                            {FILTERS.map(filter => {
-                                const isActive = activeFilter === filter;
-                                return (
-                                    <TouchableOpacity
-                                        key={filter}
-                                        onPress={() => !isEdit && setActiveFilter(filter)}
-                                        activeOpacity={0.7}
-                                        style={[
-                                            styles.filterPill,
-                                            isActive && styles.filterPillActive,
-                                        ]}
-                                    >
-                                        <Text style={[
-                                            styles.filterText,
-                                            isActive && styles.filterTextActive,
-                                        ]}>
-                                            {filter}
-                                        </Text>
-                                    </TouchableOpacity>
-                                );
-                            })}
-                        </ScrollView>
-
-                        {/* ── Section label ── */}
-                        <View style={styles.sectionHeader}>
-                            <View style={styles.sectionDot} />
-                            <Text style={styles.sectionTitle}>
-                                {filteredChats.length} CONVERSATION{filteredChats.length !== 1 ? "S" : ""}
+                contentInsetAdjustmentBehavior="automatic"   // iOS: keeps content below a transparent/large-title header
+                contentContainerStyle={{
+                    paddingTop: Platform.OS === "android" ? headerHeight : 0,
+                    paddingBottom: 20,
+                }}
+                style={styles.flex}
+                ListHeaderComponent={listHeader}             // element, not an inline function (see below)
+                ListEmptyComponent={
+                    chats.length === 0 ? (
+                        <View style={styles.empty}>
+                            <Ionicons name="chatbubbles-outline" size={64} color="#CBD5E1" />
+                            <Text style={styles.emptyTitle}>No chats yet</Text>
+                            <Text style={styles.emptySubtitle}>
+                                Start a conversation by tapping the compose icon
                             </Text>
                         </View>
-                    </>
-                )}
+                    ) : undefined
+                }
 
                 renderItem={({ item, index }) => (
                     <View style={[
@@ -140,17 +152,6 @@ const Chats = () => {
                     </View>
                 )}
 
-                ListEmptyComponent={
-                    !chats ? (
-                        <View style={styles.empty}>
-                            <Ionicons name="chatbubbles-outline" size={64} color="#CBD5E1" />
-                            <Text style={styles.emptyTitle}>No chats yet</Text>
-                            <Text style={styles.emptySubtitle}>
-                                Start a conversation by tapping the compose icon
-                            </Text>
-                        </View>
-                    ) : null
-                }
             />
 
             {/* ── Edit action bar ── */}
@@ -187,12 +188,18 @@ const Chats = () => {
                 </Animated.View>
             )}
         </ThemedSafeAreaView>
+
     );
 };
 
 const styles = StyleSheet.create({
-    listContent: {
-        paddingBottom: 100,
+    flex: { flex: 1 },         // removed flex: 1
+    editBar: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,                                   // instead of width from Dimensions
+        height: 72
     },
     headerBtn: {
         fontSize: 18,

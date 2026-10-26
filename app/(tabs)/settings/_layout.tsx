@@ -9,7 +9,8 @@ export default function SettingLayout() {
                 name="index"
                 options={{
                     headerShown: true,
-                    headerTransparent: true,
+                    // headerTransparent: true,
+                    headerLargeTitleShadowVisible: false,
                     title: "Settings",
                     headerLargeTitle: true,
                     headerSearchBarOptions: {

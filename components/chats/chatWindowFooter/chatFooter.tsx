@@ -113,7 +113,7 @@ export default function ChatFooter({ currentChatId }: { currentChatId: string | 
 
     return (
 
-        <View style={{ ...styles.wrapper, height: isAttachment ? keyboardHeight + 15 : 70 }}>
+        <View style={{ ...styles.wrapper }}>
 
             {
                 isAudioRecorder ? (

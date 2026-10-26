@@ -1,6 +1,8 @@
 import React from "react";
 import { Stack } from "expo-router";
 import { useRouter } from "expo-router";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";
 
 export default function ChatLayout() {
     const router = useRouter();
@@ -9,10 +11,12 @@ export default function ChatLayout() {
         <Stack >
             <Stack.Screen
                 name="index"
+
                 options={{
                     title: "Chats",
-                    headerTransparent: true,
                     headerLargeTitle: true,
+                    // headerShown: true,
+                    headerTransparent: true,
                     // headerSearchBarOptions: {
                     //     placeholder: "Search",
                     // }
