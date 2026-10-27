@@ -7,6 +7,7 @@ export interface IDevice {
     deviceName: string;
     lastActive: Date;
     publicKey?: string;
+    isPrimary: boolean;
     model?: any
 };
 

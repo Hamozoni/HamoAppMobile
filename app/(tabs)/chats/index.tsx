@@ -145,7 +145,7 @@ const Chats = () => {
                         <ChatCard
                             chat={item as any}
                             isSelected={selectedIds.has(item._id)}
-                            contact={registered.find(e => e?._id === item.participants.find((e: any) => e._id !== user?._id)?._id) as any}
+                            contact={registered.find(e => e?._id === item?.participants?.find((e: any) => e._id !== user?._id)?._id) as any}
                             isEditMode={isEdit}
                             onSelect={() => handleSelect(item._id)}
                         />
@@ -194,13 +194,6 @@ const Chats = () => {
 
 const styles = StyleSheet.create({
     flex: { flex: 1 },         // removed flex: 1
-    editBar: {
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,                                   // instead of width from Dimensions
-        height: 72
-    },
     headerBtn: {
         fontSize: 18,
         color: WA_DARK,
@@ -287,7 +280,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         bottom: 0,
         left: 0,
-        width,
+        right: 0,                                   // instead of width from Dimensions
         height: 72,
         backgroundColor: "#ffffffee",
         borderTopWidth: StyleSheet.hairlineWidth,

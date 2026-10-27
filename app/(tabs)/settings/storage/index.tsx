@@ -108,7 +108,7 @@ const storageData: StorageCategory[] = [
 
 export default function SettingsStorage() {
     return (
-        <ThemedSafeAreaView>
+        <ThemedSafeAreaView edges={[]}>
             <ScrollView contentInsetAdjustmentBehavior="automatic" showsVerticalScrollIndicator={false}>
                 <Separator />
                 {

@@ -13,7 +13,8 @@ export const usePostMessage = ({ chatId, senderId, receiverId }: {
     receiverId: string
 }) => {
 
-    const { addMessage, replaceOptimistic, updateMessageStatus } = useMessagesStore();
+    const { replaceOptimistic, updateMessageStatus, addMessage } = useMessagesStore()
+
     const { updateChat, addNewChat } = useChatsStore();
     const { registered } = useContactsStore()
 
@@ -21,7 +22,7 @@ export const usePostMessage = ({ chatId, senderId, receiverId }: {
 
     return {
         ...useMutation({
-            mutationFn: async ({ payload, asset, clientMessageId }: any): Promise<ILocalMessage> => {
+            mutationFn: async ({ payload, asset, clientMessageId }: any): Promise<any> => {
 
                 payload.chatId = chatId;
                 payload.senderId = senderId;
@@ -30,6 +31,7 @@ export const usePostMessage = ({ chatId, senderId, receiverId }: {
                 payload.updatedAt = new Date();
 
                 const optimistic: ILocalMessage = {
+                    clientMessageId,
                     _id: clientMessageId,
                     ...payload,
                     status: 'pending',
@@ -76,29 +78,18 @@ export const usePostMessage = ({ chatId, senderId, receiverId }: {
 
                     cloudinaryData = await uploadToCloudinary(asset)
 
-                    console.log({ cloudinaryData })
-
-
                     if (!cloudinaryData) {
                         throw new Error("failed to upload media to cloudinary")
                     }
 
-
                 }
                 const { data } = await axiosInstance.post('/messages', { payload, cloudinaryData });
 
-                console.log({
-                    data
-
-                })
-
                 replaceOptimistic(data.message.chatId, clientMessageId, data.message);
                 updateMessageStatus(data.message.chatId, data.message._id, data.message.status);
-                updateChat(payload.chatId, { lastMessageStatus: data.message.status });
+                updateChat(data.message.chatId, { lastMessageStatus: data.message.status });
 
-
-
-                return data;
+                return { data };
             },
         })
     }

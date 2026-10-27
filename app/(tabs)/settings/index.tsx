@@ -47,7 +47,7 @@ const Settings = () => {
 
     console.log({ headerHeight, insets });
     return (
-        <ThemedSafeAreaView edges={["bottom"]}>
+        <ThemedSafeAreaView edges={[]}>
             <ScrollView
                 style={{ flex: 1 }}
                 contentInsetAdjustmentBehavior="automatic"   // iOS: pushes content below a transparent/large-title header

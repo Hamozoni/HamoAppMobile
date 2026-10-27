@@ -4,6 +4,7 @@ import TitleForwardIconBtn from "../../../components/buttons/titleForwardIconBtn
 import { Ionicons } from "@expo/vector-icons";
 import { View, StyleSheet } from "react-native";
 import ThemedViewContainer from "../../../components/themedViews/ThemedViewContainer";
+import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";
 
 interface ContactButton {
     title: string;
@@ -43,20 +44,23 @@ const BUTTONS: ContactButton[] = [
 
 export default function ContactsPage() {
     return (
-        <ContactsList>
-            {/* Action buttons group — same rounded card style as contact cards */}
-            <ThemedViewContainer>
-                {BUTTONS.map(({ title, iconName, id, link, selected }, index) => (
-                    <TitleForwardIconBtn
-                        key={id}
-                        title={title}
-                        iconName={iconName}
-                        link={link}
-                        selected={selected}
-                        isLast={index === BUTTONS.length - 1}
-                    />
-                ))}
-            </ThemedViewContainer>
-        </ContactsList>
+        <ThemedSafeAreaView>
+            <ContactsList>
+                {/* Action buttons group — same rounded card style as contact cards */}
+                <ThemedViewContainer style={{ marginTop: 10 }}>
+                    {BUTTONS.map(({ title, iconName, id, link, selected }, index) => (
+                        <TitleForwardIconBtn
+                            key={id}
+                            title={title}
+                            iconName={iconName}
+                            link={link}
+                            selected={selected}
+                            isLast={index === BUTTONS.length - 1}
+                        />
+                    ))}
+                </ThemedViewContainer>
+            </ContactsList>
+
+        </ThemedSafeAreaView>
     );
 }

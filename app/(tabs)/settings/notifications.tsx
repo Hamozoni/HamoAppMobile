@@ -147,7 +147,7 @@ const notificationsData2: NotificationData2Item[] = [
 
 export default function SettingsNotifications() {
     return (
-        <ThemedSafeAreaView>
+        <ThemedSafeAreaView edges={[]}>
             <ScrollView contentInsetAdjustmentBehavior="automatic" showsVerticalScrollIndicator={false}>
                 {
                     notificationsData.map((item) => (

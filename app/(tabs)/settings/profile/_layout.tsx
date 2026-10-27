@@ -9,7 +9,6 @@ export default function SettingsProfileLayout() {
                 name="index"
                 options={{
                     headerShown: true,
-                    headerTransparent: true,
                     title: "Profile",
                     headerLeft: () => (<ChevronBackBtn />),
                 }} />

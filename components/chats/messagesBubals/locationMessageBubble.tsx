@@ -19,7 +19,6 @@ interface MapApp {
 }
 
 export default function LocationMessageBubble({ message, isMine }: LocationMessageBubbleProps) {
-    console.log({ message })
     const [showPicker, setShowPicker] = useState(false);
 
     const { latitude, longitude, name } = message?.location ?? {};

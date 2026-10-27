@@ -7,8 +7,6 @@ import { IDevice } from '../types/user.type';
 export const getDeviceInfo = async (): Promise<IDevice> => {
     let deviceId: string | null = 'unknown';
 
-    console.log(Device);
-
     // 1. Correctly get the device ID based on platform
     if (Platform.OS === 'android') {
         // getAndroidId() is a synchronous function, not a property [citation:1].
@@ -23,10 +21,11 @@ export const getDeviceInfo = async (): Promise<IDevice> => {
     // 2. The 'platform' should come from Device.osName, not a hardcoded string [citation:3]
     return {
         deviceId: deviceId || 'unknown', // Handle cases where the ID is null
-        platform: Device.osName || 'unknown', // Get the OS name like "Android" or "iOS" [citation:3]
+        platform: Platform.OS || 'unknown', // Get the OS name like "Android" or "iOS" [citation:3]
         deviceName: Device.deviceName || 'unknown', // This is correct [citation:3]
         lastActive: new Date(),
         publicKey: undefined,
+        isPrimary: true,
         model: Device.modelName,
     };
 };

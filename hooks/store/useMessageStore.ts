@@ -17,34 +17,54 @@ interface MessagesState {
 export const useMessagesStore = create<MessagesState>((set) => ({
     messages: {},
 
-    addMessage: (chatId, message) =>
-        set(state => ({
-            messages: {
-                ...state.messages,
-                [chatId]: state.messages[chatId].find(m => m._id === message._id) ? state.messages[chatId] ?? [] : [message, ...(state.messages[chatId] ?? [])],
-            },
-        })),
+    addMessage: (chatId, message) => {
+        return set(state => {
+            const currentMessages = state.messages[chatId] ?? [];
+            const exists = currentMessages.some(m => m.clientMessageId === message.clientMessageId);
+            console.log("exists from add", exists);
+            if (exists) return state;
+            return {
+                messages: {
+                    ...state.messages,
+                    [chatId]: [message, ...currentMessages],
+                },
+            };
+        });
+    },
 
     // Replace optimistic message with real one from server
-    replaceOptimistic: (chatId, clientMessageId, real) =>
-        set(state => ({
-            messages: {
-                ...state.messages,
-                [chatId]: (state.messages[chatId] ?? []).map(m =>
-                    m.clientMessageId === clientMessageId ? real : m
-                ),
-            },
-        })),
+    replaceOptimistic: (chatId, clientMessageId, real) => {
+        console.log('real', real);
+        return set(state => {
+            const currentMessages = state.messages[chatId] ?? [];
+            const exists = currentMessages.some(m => m._id === real._id);
+            console.log("exists from replace", exists);
+            if (exists) return state;
+            return {
+                messages: {
+                    ...state.messages,
+                    [chatId]: currentMessages.map(m =>
+                        (m.clientMessageId === clientMessageId || m._id === clientMessageId)
+                            ? { ...real, isOptimistic: false }
+                            : m
+                    ),
+                },
+            };
+        });
+    },
 
     updateMessageStatus: (chatId, messageId, status) =>
-        set(state => ({
-            messages: {
-                ...state.messages,
-                [chatId]: (state.messages[chatId] ?? []).map(m =>
-                    m._id === messageId ? { ...m, status } : m
-                ),
-            },
-        })),
+        set(state => {
+            const currentMessages = state.messages[chatId] ?? [];
+            return {
+                messages: {
+                    ...state.messages,
+                    [chatId]: currentMessages.map(m =>
+                        m._id === messageId ? { ...m, status } : m
+                    ),
+                },
+            };
+        }),
 
     setMessages: (chatId, messages) =>
         set(state => ({
@@ -60,14 +80,17 @@ export const useMessagesStore = create<MessagesState>((set) => ({
         })),
 
     deleteMessage: (chatId, messageId) =>
-        set(state => ({
-            messages: {
-                ...state.messages,
-                [chatId]: (state.messages[chatId] ?? []).map(m =>
-                    m._id === messageId ? { ...m, isDeleted: true } : m
-                ),
-            },
-        })),
+        set(state => {
+            const currentMessages = state.messages[chatId] ?? [];
+            return {
+                messages: {
+                    ...state.messages,
+                    [chatId]: currentMessages.map(m =>
+                        m._id === messageId ? { ...m, isDeleted: true } : m
+                    ),
+                },
+            };
+        }),
 
     clearChat: (chatId) =>
         set(state => ({

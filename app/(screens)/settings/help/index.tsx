@@ -61,7 +61,7 @@ const HELPDATA: HelpSection[] = [
 
 export default function SettingsHelp() {
     return (
-        <ThemedSafeAreaView>
+        <ThemedSafeAreaView edges={[]}>
             <ScrollView contentInsetAdjustmentBehavior="automatic" showsVerticalScrollIndicator={false}>
                 <View style={{ alignItems: "center", marginVertical: 20, justifyContent: "center" }}>
                     <Image

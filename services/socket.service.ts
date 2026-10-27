@@ -1,185 +1,68 @@
 import { io, Socket } from "socket.io-client";
-import * as SecureStore from "expo-secure-store";
-import { NewMessageData, SendMessagePayload } from "../types/message.types";
 
 
-const SOCKET_URL = process.env.EXPO_PUBLIC_SOCKET_URL!;
-
-export const SOCKET_EVENTS = {
-    // Connection
-    CONNECT: "connect",
-    DISCONNECT: "disconnect",
-    CONNECT_ERROR: "connect_error",
-
-    // Chat room
-    JOIN_CHAT: "chat:join",
-    LEAVE_CHAT: "chat:leave",
-
-    // Messages
-    MESSAGE_SEND: "message:send",
-    MESSAGE_NEW: "message:new",
-    MESSAGE_DELIVERED: "message:delivered",
-    MESSAGE_READ: "message:read",
-    MESSAGE_READ_ALL: "message:read_all",
-    MESSAGE_DELETED: "message:deleted",
-    MESSAGE_EDITED: "message:edited",
-
-    // Typing
-    TYPING_START: "typing:start",
-    TYPING_STOP: "typing:stop",
-
-    // Online status
-    USER_ONLINE_STATUS: "user:online_status",
-} as const;
 
 class SocketService {
+    public socket: Socket | null = null;
 
-    private socket: Socket | null = null;
-    private reconnectAttempts = 0;
-    private maxReconnectAttempts = 5;
-
-    // ── Connect ──────────────────────────────────────
-    async connect(): Promise<void> {
-
+    // Pass the JWT token from your auth state/secure storage when connecting
+    connect(accessToken: string) {
         if (this.socket?.connected) return;
 
-        const token = await SecureStore.getItemAsync("accessToken");
+        const serverUrl = "http://172.20.10.3:3000";
+        console.log("🔌 Connecting to Socket.io server at:", serverUrl);
 
-        if (!token) {
-            console.log("⚠️ No access token — socket not connected");
-            return;
-        }
-
-        this.socket = io(SOCKET_URL, {
-            auth: { token },
-            transports: ["websocket"], // skip long-polling for React Native
+        this.socket = io(serverUrl, {
+            auth: {
+                token: accessToken, // 👈 Required by your backend middleware
+            },
+            transports: ["polling", "websocket"],
+            autoConnect: true,
             reconnection: true,
-            reconnectionAttempts: this.maxReconnectAttempts,
+            reconnectionAttempts: 5,
             reconnectionDelay: 1000,
-            reconnectionDelayMax: 5000,
-            timeout: 10000,
         });
 
-        this.setupListeners();
+        this.socket.on("connect", () => {
+            console.log("🟢 Connected to Socket.io server:", this.socket?.id);
+        });
+
+        this.socket.on("disconnect", (reason) => {
+            console.log("🔴 Disconnected from server:", reason);
+        });
+
+        this.socket.on("connect_error", (error) => {
+            // If you see "Authentication token required" or "Authentication failed", check your token here
+            console.log("⚠️ Connection Error:", error.message);
+        });
     }
 
-    // ── Disconnect ───────────────────────────────────
-    disconnect(): void {
+    disconnect() {
         if (this.socket) {
             this.socket.disconnect();
             this.socket = null;
-            console.log("🔌 Socket disconnected");
         }
     }
 
-    // ── Reconnect with new token (after refresh) ─────
-    async reconnect(): Promise<void> {
-        this.disconnect();
-        await this.connect();
-    }
-
-    // ── Core listeners ───────────────────────────────
-    private setupListeners(): void {
-        if (!this.socket) return;
-
-        this.socket.on(SOCKET_EVENTS.CONNECT, () => {
-            console.log("✅ Socket connected:", this.socket?.id);
-            this.reconnectAttempts = 0;
-        });
-
-        this.socket.on(SOCKET_EVENTS.DISCONNECT, (reason) => {
-            console.log("❌ Socket disconnected:", reason);
-
-            // Auto reconnect unless intentional
-            if (reason === "io server disconnect") {
-                this.connect();
+    emit(event: string, data: any, callback?: Function) {
+        if (this.socket?.connected) {
+            if (callback) {
+                this.socket.emit(event, data, callback);
+            } else {
+                this.socket.emit(event, data);
             }
-        });
-
-        this.socket.on(SOCKET_EVENTS.CONNECT_ERROR, (error) => {
-            console.error("🔴 Socket connection error:", error.message);
-            this.reconnectAttempts++;
-
-            if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-                console.error("🔴 Max reconnection attempts reached");
-            }
-        });
-    }
-
-    // ── Emit ─────────────────────────────────────────
-    emit(event: string, data?: any): void {
-        if (!this.socket?.connected) {
-            console.warn(`⚠️ Socket not connected — cannot emit ${event}`);
-            return;
+        } else {
+            console.warn("⚠️ Socket not connected. Cannot emit event:", event);
         }
-        this.socket.emit(event, data);
     }
 
-    // ── Listen ───────────────────────────────────────
-    on(event: string, callback: (...args: any[]) => void): void {
+    on(event: string, callback: (data: any) => void) {
         this.socket?.on(event, callback);
     }
 
-    off(event: string, callback?: (...args: any[]) => void): void {
-        this.socket?.off(event, callback);
-    }
-
-    // ── Chat room ────────────────────────────────────
-    joinChat(chatId: string): void {
-        this.emit(SOCKET_EVENTS.JOIN_CHAT, chatId);
-    }
-
-    leaveChat(chatId: string): void {
-        this.emit(SOCKET_EVENTS.LEAVE_CHAT, chatId);
-    }
-
-    // ── Typing ───────────────────────────────────────
-    startTyping(chatId: string): void {
-        this.emit(SOCKET_EVENTS.TYPING_START, { chatId });
-    }
-
-    stopTyping(chatId: string): void {
-        this.emit(SOCKET_EVENTS.TYPING_STOP, { chatId });
-    }
-
-    // ── Status ───────────────────────────────────────
-    isConnected(): boolean {
-        return this.socket?.connected ?? false;
-    }
-
-    getSocketId(): string | undefined {
-        return this.socket?.id;
-    }
-
-    sendMessage(payload: SendMessagePayload): void {
-        this.emit(SOCKET_EVENTS.MESSAGE_SEND, payload);
-    }
-
-    onNewMessage(callback: (data: NewMessageData) => void): void {
-        this.on(SOCKET_EVENTS.MESSAGE_NEW, callback);
-    }
-
-    offNewMessage(): void {
-        this.off(SOCKET_EVENTS.MESSAGE_NEW);
-    }
-
-    onMessageDelivered(callback: (data: any) => void): void {
-        this.on(SOCKET_EVENTS.MESSAGE_DELIVERED, callback);
-    }
-
-    offMessageDelivered(): void {
-        this.off(SOCKET_EVENTS.MESSAGE_DELIVERED);
-    }
-
-    onMessageRead(callback: (data: any) => void): void {
-        this.on(SOCKET_EVENTS.MESSAGE_READ, callback);
-    }
-
-    offMessageRead(): void {
-        this.off(SOCKET_EVENTS.MESSAGE_READ);
+    off(event: string) {
+        this.socket?.off(event);
     }
 }
 
-// Singleton — one instance across the whole app
-// export const socketService = new SocketService();
-// export default socketService;
+export const socketService = new SocketService();

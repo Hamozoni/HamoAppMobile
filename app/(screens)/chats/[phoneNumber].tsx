@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { useLocalSearchParams } from "expo-router";
-import { ActivityIndicator, FlatList, Platform, SafeAreaView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 
 import ChatFooter from "../../../components/chats/chatWindowFooter/chatFooter";
@@ -10,28 +10,30 @@ import { usePendingStore } from "../../../hooks/store/usePendingStore";
 import { useGetmessages } from "../../../hooks/api/useGetMessagesApi";
 import { useChatsStore } from "../../../hooks/store/useChatsStore";
 import { useMessagesStore } from "../../../hooks/store/useMessageStore";
-import { useHeaderHeight } from "expo-router/build/react-navigation/index.js";
 
 export default function ChatDetails() {
     const { contactId } = useLocalSearchParams<{ contactId: string }>();
 
     const chats = useChatsStore((s) => s.chats);
-    const currentChatId = chats?.find((chat) =>
-        chat?.participants?.some((p) => p?._id === contactId)
-    )?._id;
+    const chatIdRef = useRef<string | undefined>(undefined);
+    const found = chats?.find((c) => c?.participants?.some((p) => p?._id === contactId))?._id;
+    if (found) chatIdRef.current = found;
+    const currentChatId = found ?? chatIdRef.current;
 
     const { isLoading } = useGetmessages(currentChatId);
-    const messages = useMessagesStore((s) => s.messages[currentChatId || contactId])?.reverse() ?? [];
+    const messages = useMessagesStore((s) => s.messages[currentChatId || contactId]) ?? [];
     const flatListRef = useRef<FlatList>(null);
+
 
     const { pendingLocation, clearPendingLocation } = usePendingStore();
 
-    // useEffect(() => {
-    //     if (!pendingLocation) return;
-    //     clearPendingLocation();
-    // }, [pendingLocation]);
 
-    if (isLoading) {
+    useEffect(() => {
+        if (!pendingLocation) return;
+        clearPendingLocation();
+    }, [pendingLocation]);
+
+    if (isLoading && messages.length === 0) {
         return (
             <View style={styles.center}>
                 <ActivityIndicator />
@@ -39,8 +41,6 @@ export default function ChatDetails() {
         );
     };
 
-    const headerHeight = useHeaderHeight();
-    const overlapsHeader = Platform.OS === "ios";
 
     return (
         <ThemedSafeAreaView edges={[]}>
@@ -52,7 +52,7 @@ export default function ChatDetails() {
                 <FlatList
                     ref={flatListRef}
                     data={messages}
-                    inverted
+                    inverted={true}
                     keyExtractor={(item) => item.clientMessageId ?? item._id}
                     renderItem={({ item, index }) => (
                         <MessageCard message={item} prevMessage={messages[index + 1]} />
@@ -60,9 +60,10 @@ export default function ChatDetails() {
                     style={styles.flex}
                     contentContainerStyle={styles.listContent}
                     contentInsetAdjustmentBehavior="automatic"
+                    keyboardDismissMode="on-drag"        // instead of "interactive"
+                    removeClippedSubviews={false}
                     keyboardShouldPersistTaps="handled"
-                // keyboardDismissMode="interactive"
-                // showsVerticalScrollIndicator={false}
+                    showsVerticalScrollIndicator={false}
                 />
                 <ChatFooter currentChatId={currentChatId || contactId} />
             </KeyboardAvoidingView>

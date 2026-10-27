@@ -98,7 +98,6 @@ export default function ContactsList({ children }: ContactsListProps) {
                     keyExtractor={(item: Contact, index) => `${item.phoneNumber}-${index}`}
                     showsVerticalScrollIndicator={false}
                     stickySectionHeadersEnabled
-
                     ListHeaderComponent={
                         <>
                             {children ?? null}
@@ -167,6 +166,7 @@ export default function ContactsList({ children }: ContactsListProps) {
                     SectionSeparatorComponent={() => <View style={styles.sectionGap} />}
                     ItemSeparatorComponent={() => null} // handled manually above
                     contentContainerStyle={styles.listContent}
+                    contentInsetAdjustmentBehavior="automatic"
                 />
             </View>
 

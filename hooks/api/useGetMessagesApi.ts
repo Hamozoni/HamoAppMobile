@@ -17,8 +17,6 @@ export const useGetmessages = (chatId: string | undefined) => {
         queryFn: async ({ queryKey }): Promise<ILocalMessage[]> => {
             const [, id] = queryKey;
             const { data } = await axiosInstance.get(`/messages/${id}`);
-
-            console.log("✅ Messages fetched:", data.messages.length);
             setMessages(data?.chat?._id, data.messages);
             resetUnread(data?.chat?._id)
             return data.messages;

@@ -34,7 +34,6 @@ const RootLayout = () => {
 
     return (
         <Tabs
-            initialRouteName="chats"
             screenOptions={{
                 headerShown: false,
                 tabBarActiveTintColor: WA_DARK,

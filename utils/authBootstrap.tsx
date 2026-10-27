@@ -9,6 +9,7 @@ import { syncContacts } from "../db/services/syncContacts.service";
 import { runMigrations } from "../db/runMigration";
 import { axiosInstance } from "../lib/axios.config";
 import { IUser } from "../types/user.type";
+import { socketService } from "../services/socket.service";
 
 export function AuthBootstrap() {
     const [ready, setReady] = useState(false);
@@ -32,6 +33,7 @@ export function AuthBootstrap() {
 
 
                 if (!token) return; // not logged in -> falls through to login redirect
+                socketService.connect(token);
 
                 // Validate session / get fresh profile
                 if (!useAuthStore.getState().user) {

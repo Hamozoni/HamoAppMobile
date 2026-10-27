@@ -9,7 +9,6 @@ export default function SettingsListsLayout() {
             <Stack.Screen
                 name="index"
                 options={{
-                    headerTransparent: true,
                     title: "Lists",
                     headerLeft: () => (<ChevronBackBtn />),
                     headerRight: () => (

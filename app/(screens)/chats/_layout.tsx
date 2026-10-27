@@ -77,7 +77,7 @@ export default function ChatWindowLayout() {
             <Stack.Screen
                 name="contacts"
                 options={{
-                    headerTransparent: true,
+                    // headerTransparent: true,
                     title: "New Chat",
                     headerShown: true,
                     headerLeft: () => <ChevronBackBtn />,

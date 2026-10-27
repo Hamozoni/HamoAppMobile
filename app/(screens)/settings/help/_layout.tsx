@@ -19,7 +19,6 @@ export default function SettingsHelpLayout() {
                             </Text>
                         </View>
                     ),
-                    headerTransparent: true,
                     headerLeft: () => (<ChevronBackBtn />)
                 }}
             />

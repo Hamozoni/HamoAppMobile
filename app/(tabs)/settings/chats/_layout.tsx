@@ -9,7 +9,6 @@ export default function SettingsChatsLayout() {
                 name="index"
                 options={{
                     headerShown: true,
-                    headerTransparent: true,
                     title: "Chats",
                     headerLeft: () => (<ChevronBackBtn />)
                 }}

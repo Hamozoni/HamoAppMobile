@@ -62,8 +62,8 @@ const CHATSSETTINGS2: SettingsItem[] = [
 
 export default function SettingsChats() {
     return (
-        <ThemedSafeAreaView>
-            <ScrollView showsVerticalScrollIndicator={false}>
+        <ThemedSafeAreaView edges={[]}>
+            <ScrollView showsVerticalScrollIndicator={false} contentInsetAdjustmentBehavior="automatic">
                 <Separator />
                 {
                     CHATSSETTINGS.map((item) => (

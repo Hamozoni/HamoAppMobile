@@ -114,7 +114,7 @@ const PRIVACY2: PrivacyItem[] = [
 
 export default function SettingsPrivacy() {
     return (
-        <ThemedSafeAreaView>
+        <ThemedSafeAreaView edges={[]}>
             <ScrollView contentInsetAdjustmentBehavior="automatic" showsVerticalScrollIndicator={false}>
                 <Separator />
                 <ThemedViewContainer>

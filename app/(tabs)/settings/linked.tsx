@@ -6,7 +6,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function SettingsLinkedDevices() {
     return (
-        <ThemedSafeAreaView>
+        <ThemedSafeAreaView >
             <View style={{ flex: 1, justifyContent: "space-between", padding: 20 }}>
                 <View style={{ justifyContent: "center", alignItems: "center" }}>
                     <Image

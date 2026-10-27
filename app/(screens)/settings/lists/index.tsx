@@ -46,9 +46,9 @@ export default function SettingsLists() {
     };
 
     return (
-        <ThemedSafeAreaView>
-            <ScrollView>
-                <ThemedViewContainer paddingVertical={20}>
+        <ThemedSafeAreaView edges={['top']}>
+            <ScrollView contentInsetAdjustmentBehavior="automatic">
+                <ThemedViewContainer paddingVertical={20} style={{ marginTop: 20, padding: 20 }}>
                     <View style={{ flexDirection: "row-reverse", justifyContent: "center", alignItems: "center", gap: 5, paddingVertical: 30, }}>
                         <HeaderBtns >
                             <MaterialCommunityIcons name="hospital" size={48} color="#14bd14ff" />
@@ -62,7 +62,7 @@ export default function SettingsLists() {
                     </View>
                     <Text
                         style={{
-                            fontSize: 18, color: "#808080ff", textAlign: "center", marginBottom: 20
+                            fontSize: 16, color: "#808080ff", textAlign: "center", marginBottom: 20
                         }}>Any list you create becomes a filter at the top of your Chats tab</Text>
                     <TouchableOpacity style={styles.createListBtn}>
                         <Ionicons name="add" color="#055a05ff" size={22} />

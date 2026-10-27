@@ -33,8 +33,8 @@ export default function Profile() {
         { subTitle: "Phone", title: user?.phoneNumber, _id: "phone", link: '/settings/profile/phone', iconName: 'call-outline' },
     ];
     return (
-        <ThemedSafeAreaView>
-            <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <ThemedSafeAreaView edges={[]}>
+            <ScrollView contentInsetAdjustmentBehavior="automatic" showsVerticalScrollIndicator={false}>
                 <View style={{ alignItems: "center", marginVertical: 20 }}>
                     <TouchableOpacity style={{ alignItems: "center", marginBottom: 10 }}>
                         <View style={{ justifyContent: "center", alignItems: 'center', paddingTop: 40, marginBottom: 20 }}>

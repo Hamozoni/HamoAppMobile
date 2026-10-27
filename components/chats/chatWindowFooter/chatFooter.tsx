@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
     TextInput, TouchableOpacity, View,
-    Keyboard, StyleSheet, Platform, Image,
-    KeyboardAvoidingView,
+    Keyboard, StyleSheet, Platform, Image
 } from "react-native";
 import { Ionicons, FontAwesome6, Entypo } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -13,6 +12,8 @@ import { useAuthStore } from "../../../hooks/store/useAuthStore";
 import { usePostMessage } from "../../../hooks/api/usePostMessageApi";
 
 import * as Crypto from "expo-crypto";
+import { KeyboardEvents } from "react-native-keyboard-controller";
+
 
 const WA_GREEN = "#25D366";
 
@@ -24,15 +25,15 @@ export default function ChatFooter({ currentChatId }: { currentChatId: string | 
     const [text, setText] = useState("");
     const [asset, setAsset] = useState<any>(null);
     const [assetType, setAssetType] = useState<MessageType>("image");
-    const textInputRef = useRef<TextInput>(null);
+    const textInputRef = useRef<React.ElementRef<typeof TextInput>>(null);
     const router = useRouter();
-    const { user } = useAuthStore()
+    const { user } = useAuthStore();
 
     const { contactId } = useLocalSearchParams<{
         contactId: string
     }>();
 
-    const { mutate, error } = usePostMessage({
+    const { data, mutate, error } = usePostMessage({
         chatId: currentChatId,
         senderId: user?._id,
         receiverId: contactId,
@@ -41,14 +42,14 @@ export default function ChatFooter({ currentChatId }: { currentChatId: string | 
 
 
     useEffect(() => {
-        const show = Keyboard.addListener("keyboardDidShow", e => {
-            setKeyboardHeight(e.endCoordinates.height);
+        const sub = KeyboardEvents.addListener("keyboardDidShow", (e) => {
+            setKeyboardHeight(e.height);
         });
-        return () => show.remove();
+        return () => sub.remove();
     }, []);
 
     const toggleAttachment = () => {
-        if (isAttachment) {
+        if (isAttachment && textInputRef.current) {
             textInputRef.current?.focus();
             setTimeout(() => setIsAttachment(false), 200);
         } else {
@@ -113,7 +114,10 @@ export default function ChatFooter({ currentChatId }: { currentChatId: string | 
 
     return (
 
-        <View style={{ ...styles.wrapper }}>
+        <View style={[
+            styles.wrapper,
+            { height: isAttachment ? 320 : isAudioRecorder ? 150 : 70 }
+        ]}>
 
             {
                 isAudioRecorder ? (
@@ -210,6 +214,7 @@ const styles = StyleSheet.create({
         borderTopWidth: StyleSheet.hairlineWidth,
         borderTopColor: "#E5E7EB",
         paddingBottom: Platform.OS === "ios" ? 24 : 8,
+
     },
     previewRow: {
         paddingHorizontal: 16,

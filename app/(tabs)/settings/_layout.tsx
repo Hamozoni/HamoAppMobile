@@ -15,6 +15,7 @@ export default function SettingLayout() {
                     headerLargeTitle: true,
                     headerSearchBarOptions: {
                         placeholder: "Search",
+
                     }
                 }} />
             <Stack.Screen
@@ -27,7 +28,6 @@ export default function SettingLayout() {
                 name="linked"
                 options={{
                     headerShown: true,
-                    headerTransparent: true,
                     title: "Linked Devices",
                     headerLeft: () => (<ChevronBackBtn />)
                 }}
@@ -36,7 +36,6 @@ export default function SettingLayout() {
                 name="account"
                 options={{
                     headerShown: true,
-                    headerTransparent: true,
                     title: "Account",
                     headerLeft: () => (<ChevronBackBtn />)
                 }}
@@ -60,7 +59,6 @@ export default function SettingLayout() {
                 options={{
                     headerShown: true,
                     title: "Notifications",
-                    headerTransparent: true,
                     headerLeft: () => (<ChevronBackBtn />)
                 }}
             />
@@ -74,12 +72,8 @@ export default function SettingLayout() {
                 name="invite"
                 options={{
                     headerShown: true,
-                    headerTransparent: true,
                     title: "Invite a friend",
                     headerLeft: () => (<ChevronBackBtn />),
-                    headerSearchBarOptions: {
-                        placeholder: 'Search'
-                    }
                 }}
             />
         </Stack>

@@ -1,5 +1,4 @@
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import { useLocalSearchParams } from "expo-router/build/hooks"
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useContactsStore } from "../../../../hooks/store/useContactsStore";
 import ThemedSafeAreaView from "../../../../components/themedViews/safeAreaView";
@@ -10,6 +9,7 @@ import { useAuthStore } from "../../../../hooks/store/useAuthStore";
 import Avatar from "../../../../components/ui/avatar";
 import AnimatedBorder from "../../../../components/ui/animatedBorder";
 import { useChatsStore } from "../../../../hooks/store/useChatsStore";
+import { useLocalSearchParams } from "expo-router";
 
 interface ProfileButton {
     id: any;
@@ -115,8 +115,8 @@ export default function Profile() {
     )?.participants?.find(e => e.phoneNumber === phoneNumber)
 
     return (
-        <ThemedSafeAreaView paddingTop={0}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+        <ThemedSafeAreaView edges={["top"]}>
+            <ScrollView contentInsetAdjustmentBehavior="automatic" showsVerticalScrollIndicator={false}>
                 <Separator />
                 <ThemedViewContainer>
                     <View style={{ justifyContent: "center", alignItems: 'center', paddingTop: 40, marginBottom: 20 }}>

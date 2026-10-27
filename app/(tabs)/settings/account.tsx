@@ -54,9 +54,10 @@ const settingsLists: AccountItem[] = [
 
 export default function SettingsAccount() {
     return (
-        <ThemedSafeAreaView>
-            <ScrollView>
-                <ThemedViewContainer>
+        <ThemedSafeAreaView edges={[]}>
+            <ScrollView contentInsetAdjustmentBehavior="automatic">
+                <Seprater />
+                <ThemedViewContainer >
                     {
                         accountLists.map((item, index, array) => (
                             <TitleForwardIconBtn
