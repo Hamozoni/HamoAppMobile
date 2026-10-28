@@ -33,17 +33,20 @@ export default function ChatDetails() {
         if (!pendingLocation) return;
         clearPendingLocation();
     }, [pendingLocation]);
+    const socket = socketService.socket;
 
-    socketService.on("receive:message", (data) => {
-        console.log("🔴socket", data);
-    })
     useEffect(() => {
-        if (!currentChatId) return;
-        socketService.emit(SOCKET_EVENTS.JOIN_CHAT, { chatId: currentChatId });
+        if (!socket || !currentChatId) return;
+
+        socket.on("receive:message", (data) => {
+            console.log("🔴socket", data);
+        })
+        socket.emit(SOCKET_EVENTS.JOIN_CHAT, { chatId: currentChatId });
         return () => {
             socketService.off(SOCKET_EVENTS.JOIN_CHAT);
+            socket.off("receive:message");
         }
-    }, [currentChatId]);
+    }, []);
 
     if (isLoading && messages.length === 0) {
         return (
