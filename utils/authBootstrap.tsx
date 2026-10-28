@@ -33,7 +33,6 @@ export function AuthBootstrap() {
 
 
                 if (!token) return; // not logged in -> falls through to login redirect
-                socketService.connect(token);
 
                 // Validate session / get fresh profile
                 if (!useAuthStore.getState().user) {
@@ -43,7 +42,7 @@ export function AuthBootstrap() {
                 }
 
                 await runMigrations();
-
+                socketService.connect(token);
                 const { data: chatData } = await axiosInstance.get("/chats");
                 if (cancelled) return;
                 setChats(chatData.chats);
@@ -68,6 +67,7 @@ export function AuthBootstrap() {
         return () => {
             cancelled = true;
         };
+
     }, []);
 
     if (!ready) return <ActivityIndicator style={{ flex: 1 }} />;

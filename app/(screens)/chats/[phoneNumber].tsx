@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
@@ -10,6 +10,8 @@ import { usePendingStore } from "../../../hooks/store/usePendingStore";
 import { useGetmessages } from "../../../hooks/api/useGetMessagesApi";
 import { useChatsStore } from "../../../hooks/store/useChatsStore";
 import { useMessagesStore } from "../../../hooks/store/useMessageStore";
+import { SOCKET_EVENTS, socketService } from "../../../services/socket.service";
+import { Socket } from "socket.io-client";
 
 export default function ChatDetails() {
     const { contactId } = useLocalSearchParams<{ contactId: string }>();
@@ -24,7 +26,6 @@ export default function ChatDetails() {
     const messages = useMessagesStore((s) => s.messages[currentChatId || contactId]) ?? [];
     const flatListRef = useRef<FlatList>(null);
 
-
     const { pendingLocation, clearPendingLocation } = usePendingStore();
 
 
@@ -32,6 +33,20 @@ export default function ChatDetails() {
         if (!pendingLocation) return;
         clearPendingLocation();
     }, [pendingLocation]);
+
+    useEffect(() => {
+        if (!currentChatId) return;
+        socketService.emit(SOCKET_EVENTS.JOIN_CHAT, { chatId: currentChatId });
+
+        socketService.on("receive:message", (data) => {
+            console.log("🔴socket", data);
+        })
+        return () => {
+            socketService.emit(SOCKET_EVENTS.LEAVE_CHAT, { chatId: currentChatId });
+            socketService.off(SOCKET_EVENTS.JOIN_CHAT);
+            socketService.off(currentChatId)
+        }
+    }, [currentChatId]);
 
     if (isLoading && messages.length === 0) {
         return (

@@ -21,7 +21,6 @@ export const useMessagesStore = create<MessagesState>((set) => ({
         return set(state => {
             const currentMessages = state.messages[chatId] ?? [];
             const exists = currentMessages.some(m => m.clientMessageId === message.clientMessageId);
-            console.log("exists from add", exists);
             if (exists) return state;
             return {
                 messages: {
@@ -34,7 +33,6 @@ export const useMessagesStore = create<MessagesState>((set) => ({
 
     // Replace optimistic message with real one from server
     replaceOptimistic: (chatId, clientMessageId, real) => {
-        console.log('real', real);
         return set(state => {
             const currentMessages = state.messages[chatId] ?? [];
             const exists = currentMessages.some(m => m._id === real._id);

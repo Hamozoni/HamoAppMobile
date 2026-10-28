@@ -1,9 +1,41 @@
 import { io, Socket } from "socket.io-client";
 
 
+export const SOCKET_EVENTS = {
+    // Connection
+    CONNECT: "connect",
+    DISCONNECT: "disconnect",
+
+    // Chat room
+    JOIN_CHAT: "chat:join",
+    LEAVE_CHAT: "chat:leave",
+
+    // Messages
+    MESSAGE_SEND: "message:send",
+    MESSAGE_NEW: "message:new",
+    MESSAGE_STATUS: "message:status",
+    MESSAGE_STATUS_ALL: "message:status_all",
+    MESSAGE_DELETED: "message:deleted",
+    MESSAGE_EDITED: "message:edited",
+
+    // Typing
+    TYPING_START: "typing:start",
+    TYPING_STOP: "typing:stop",
+
+
+    // Online status
+    USER_ONLINE_STATUS: "user:online_status",
+
+    // Errors
+    ERROR: "error",
+    CONNECT_ERROR: "connect_error",
+} as const;
+
+export type SOCKET_EVENT = typeof SOCKET_EVENTS[keyof typeof SOCKET_EVENTS]
 
 class SocketService {
     public socket: Socket | null = null;
+    public isSocketConnected: boolean = false;
 
     // Pass the JWT token from your auth state/secure storage when connecting
     connect(accessToken: string) {
@@ -23,17 +55,21 @@ class SocketService {
             reconnectionDelay: 1000,
         });
 
-        this.socket.on("connect", () => {
+        this.socket.on(SOCKET_EVENTS.CONNECT, () => {
+            this.isSocketConnected = true;
             console.log("🟢 Connected to Socket.io server:", this.socket?.id);
         });
 
-        this.socket.on("disconnect", (reason) => {
+        this.socket.on(SOCKET_EVENTS.DISCONNECT, (reason) => {
+            this.isSocketConnected = false;
             console.log("🔴 Disconnected from server:", reason);
         });
 
-        this.socket.on("connect_error", (error) => {
+        this.socket.on(SOCKET_EVENTS.CONNECT_ERROR, (error) => {
+            this.isSocketConnected = false;
+            this.socket = null;
             // If you see "Authentication token required" or "Authentication failed", check your token here
-            console.log("⚠️ Connection Error:", error.message);
+            console.log("⚠️ Connection Error:", error);
         });
     }
 

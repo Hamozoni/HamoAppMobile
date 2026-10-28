@@ -1,5 +1,5 @@
-import { create } from "zustand";
-// import socketService from "../../services/socket.service";
+// import { create } from "zustand";
+// import {socketService}from "../../services/socket.service";
 
 // interface SocketState {
 //     isConnected: boolean;
@@ -18,8 +18,9 @@ import { create } from "zustand";
 //     typingUsers: new Map(),
 
 //     connect: async () => {
-//         await socketService.connect();
-//         set({ isConnected: socketService.isConnected() });
+//         const token = secureStore.getString("token");
+//          socketService.connect(token);
+//         set({ isConnected: socketService.socket?.connected });
 //     },
 
 //     disconnect: () => {

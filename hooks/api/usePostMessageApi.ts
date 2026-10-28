@@ -6,6 +6,7 @@ import { useMessagesStore } from "../store/useMessageStore";
 import { useChatsStore } from "../store/useChatsStore";
 import { useContactsStore } from "../store/useContactsStore";
 import { Chat } from "../../types/components.types";
+import { SOCKET_EVENTS, socketService } from "../../services/socket.service";
 
 export const usePostMessage = ({ chatId, senderId, receiverId }: {
     chatId: string | null;
@@ -83,13 +84,18 @@ export const usePostMessage = ({ chatId, senderId, receiverId }: {
                     }
 
                 }
-                const { data } = await axiosInstance.post('/messages', { payload, cloudinaryData });
+                // const { data } = await axiosInstance.post('/messages', { payload, cloudinaryData });
 
-                replaceOptimistic(data.message.chatId, clientMessageId, data.message);
-                updateMessageStatus(data.message.chatId, data.message._id, data.message.status);
-                updateChat(data.message.chatId, { lastMessageStatus: data.message.status });
+                return socketService.emit(SOCKET_EVENTS.MESSAGE_SEND, { payload, cloudinaryData }, (data: any) => {
+                    if (data.success) {
+                        replaceOptimistic(data.message.chatId, clientMessageId, data.message);
+                        updateMessageStatus(data.message.chatId, data.message._id, data.message.status);
+                        updateChat(data.message.chatId, { lastMessageStatus: data.message.status });
+                    }
 
-                return { data };
+                    return data;
+                });
+
             },
         })
     }
