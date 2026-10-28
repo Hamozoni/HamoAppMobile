@@ -33,6 +33,7 @@ axiosInstance.interceptors.request.use(async (config: InternalAxiosRequestConfig
 
 let refreshPromise: Promise<string> | null = null;
 
+
 async function refreshAccessToken(): Promise<string> {
     const refreshToken = await SecureStore.getItemAsync("refreshToken");
     if (!refreshToken) throw new Error("No refresh token");
@@ -42,6 +43,29 @@ async function refreshAccessToken(): Promise<string> {
     await SecureStore.setItemAsync("accessToken", data.accessToken);
     await SecureStore.setItemAsync("refreshToken", data.refreshToken);
     return data.accessToken as string;
+}
+
+/** Used by axios AND the socket. Concurrent callers share one refresh request. */
+export function refreshSession(): Promise<string> {
+    refreshPromise ??= (async () => {
+        try {
+            return await refreshAccessToken();
+        } catch (e: any) {
+            const status = e?.response?.status;
+            const rejected = status === 401 || status === 403 || e?.message === "No refresh token";
+            // Only log out when the server rejected the refresh token.
+            // A network error must NOT log the user out.
+            if (rejected) {
+                await SecureStore.deleteItemAsync("accessToken");
+                await SecureStore.deleteItemAsync("refreshToken");
+                emitAuthFailed();
+            }
+            throw e;
+        } finally {
+            refreshPromise = null;
+        }
+    })();
+    return refreshPromise;
 }
 
 axiosInstance.interceptors.response.use(
@@ -55,19 +79,10 @@ axiosInstance.interceptors.response.use(
         original._retry = true;
 
         try {
-            // All concurrent 401s share one refresh call
-            refreshPromise ??= refreshAccessToken().finally(() => {
-                refreshPromise = null;
-            });
-            const newToken = await refreshPromise;
-
+            const newToken = await refreshSession();
             original.headers.Authorization = `Bearer ${newToken}`;
             return axiosInstance(original);
-        } catch (refreshError: any) {
-            console.log("REFRESH FAILED", refreshError?.config?.url, refreshError?.code, refreshError?.response?.status);
-            await SecureStore.deleteItemAsync("accessToken");
-            await SecureStore.deleteItemAsync("refreshToken");
-            emitAuthFailed();
+        } catch (refreshError) {
             return Promise.reject(refreshError);
         }
     }

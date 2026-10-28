@@ -34,17 +34,14 @@ export default function ChatDetails() {
         clearPendingLocation();
     }, [pendingLocation]);
 
+    socketService.on("receive:message", (data) => {
+        console.log("🔴socket", data);
+    })
     useEffect(() => {
         if (!currentChatId) return;
         socketService.emit(SOCKET_EVENTS.JOIN_CHAT, { chatId: currentChatId });
-
-        socketService.on("receive:message", (data) => {
-            console.log("🔴socket", data);
-        })
         return () => {
-            socketService.emit(SOCKET_EVENTS.LEAVE_CHAT, { chatId: currentChatId });
             socketService.off(SOCKET_EVENTS.JOIN_CHAT);
-            socketService.off(currentChatId)
         }
     }, [currentChatId]);
 
