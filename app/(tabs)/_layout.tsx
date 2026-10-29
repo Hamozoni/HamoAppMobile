@@ -12,6 +12,7 @@ const TAB_BG = "#FFFFFF";
 
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSocketListeners } from "../../hooks/useSocket";
 
 const TAB_CONTENT_HEIGHT = 68; // room for the 56px circle + padding
 
@@ -31,6 +32,8 @@ const TabBtn = ({ children, focused }: { children: React.ReactElement; focused: 
 
 const RootLayout = () => {
     const insets = useSafeAreaInsets();
+
+    useSocketListeners();
 
     return (
         <Tabs

@@ -9,7 +9,7 @@ export const SOCKET_EVENTS = {
     LEAVE_CHAT: "chat:leave",
     MESSAGE_SEND: "message:send",
     MESSAGE_NEW: "message:new",
-    MESSAGE_STATUS: "message:status",
+    MESSAGE_READ: "message:read",
     MESSAGE_STATUS_ALL: "message:status_all",
     MESSAGE_DELETED: "message:deleted",
     MESSAGE_EDITED: "message:edited",

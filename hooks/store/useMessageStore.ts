@@ -20,7 +20,9 @@ export const useMessagesStore = create<MessagesState>((set) => ({
     addMessage: (chatId, message) => {
         return set(state => {
             const currentMessages = state.messages[chatId] ?? [];
-            const exists = currentMessages.some(m => m.clientMessageId === message.clientMessageId);
+            const exists = currentMessages.some(m => m?._id === message?._id);
+
+            console.log(exists)
             if (exists) return state;
             return {
                 messages: {
