@@ -17,56 +17,40 @@ import { useAuthStore } from "../../../hooks/store/useAuthStore";
 export default function ChatDetails() {
     const { contactId } = useLocalSearchParams<{ contactId: string }>();
 
-    const { chats, updateLastMessage } = useChatsStore();
+    const { chats, updateLastMessage, currentChatId, setCurrentChatId } = useChatsStore();
     const { addMessage, updateMessageStatus } = useMessagesStore();
     const chatIdRef = useRef<string | undefined>(undefined);
-    const found = chats?.find((c) => c?.participants?.some((p) => p?._id === contactId))?._id;
-    if (found) chatIdRef.current = found;
-    const currentChatId = found ?? chatIdRef.current;
 
-    const { isLoading } = useGetmessages(currentChatId);
+    const found = chats?.find((c) => c?.participants?.some((p) => p?._id === contactId))?._id;
+
+    const { isLoading } = useGetmessages(found || "");
     const messages = useMessagesStore((s) => s.messages[currentChatId || contactId]) ?? [];
     const flatListRef = useRef<FlatList>(null);
 
     const { pendingLocation, clearPendingLocation } = usePendingStore();
 
-    const { user } = useAuthStore()
+
+    useEffect(() => {
+
+        if (found) setCurrentChatId(found);
+
+        socketService.emit(SOCKET_EVENTS.JOIN_CHAT, found);
+
+        return () => {
+
+            socketService.emit(SOCKET_EVENTS.LEAVE_CHAT, found);
+            socketService.off(SOCKET_EVENTS.JOIN_CHAT);
+            setCurrentChatId(null)
+        }
+
+    }, [found]);
+
     useEffect(() => {
         if (!pendingLocation) return;
         clearPendingLocation();
     }, [pendingLocation]);
-    const socket = socketService.socket;
 
-    useEffect(() => {
-        if (!socket || !currentChatId) return;
 
-        socket.on(SOCKET_EVENTS.MESSAGE_NEW, ({ message }) => {
-            console.log({ message })
-            addMessage(message.chatId, message);
-            updateLastMessage(message.chatId, {
-                lastMessageAt: message.createdAt,
-                lastMessageId: message._id,
-                lastMessageSenderId: message.senderId,
-                lastMessageStatus: message.status,
-                lastMessageText: message.text,
-                lastMessageType: message.type,
-            });
-
-            socket.emit(SOCKET_EVENTS.MESSAGE_READ, { chatId: currentChatId, messageId: message._id })
-        });
-
-        socket.on(SOCKET_EVENTS.MESSAGE_READ, ({ chatId, messageId }) => {
-            updateMessageStatus(chatId, messageId, "read")
-        });
-
-        socket.emit(SOCKET_EVENTS.JOIN_CHAT, { chatId: currentChatId });
-        return () => {
-            socketService.off(SOCKET_EVENTS.JOIN_CHAT);
-            socketService.off(SOCKET_EVENTS.MESSAGE_READ);
-            socketService.off(SOCKET_EVENTS.MESSAGE_NEW);
-            socketService.emit(SOCKET_EVENTS.LEAVE_CHAT, { chatId: currentChatId });
-        }
-    }, [contactId]);
 
     if (isLoading && messages.length === 0) {
         return (

@@ -4,6 +4,8 @@ import { Chat } from "../../types/components.types";
 
 interface ChatsState {
     chats: Chat[];
+    currentChatId: string | null;
+    setCurrentChatId: (chatId: string | null) => void;
     setChats: (chats: Chat[]) => void;
     updateChat: (chatId: string, update: Partial<Chat>) => void;
     addNewChat: (chat: Chat) => void;
@@ -14,6 +16,9 @@ interface ChatsState {
 
 export const useChatsStore = create<ChatsState>((set) => ({
     chats: [],
+
+    currentChatId: null,
+    setCurrentChatId: (chatId) => set({ currentChatId: chatId }),
 
     setChats: (chats) => set({ chats }),
 
