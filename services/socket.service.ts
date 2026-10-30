@@ -5,9 +5,14 @@ import { refreshSession } from "../lib/axios.config";
 export const SOCKET_EVENTS = {
     CONNECT: "connect",
     DISCONNECT: "disconnect",
+
     JOIN_CHAT: "chat:join",
     LEAVE_CHAT: "chat:leave",
     CHAT_NOTIFICATION: "chat:notification",
+    TYPING_START: "typing:start",
+    TYPING_STOP: "typing:stop",
+    USER_ONLINE_STATUS: "user:online_status",
+
     MESSAGE_SEND: "message:send",
     MESSAGE_NEW: "message:new",
     MESSAGE_READ: "message:read",
@@ -15,9 +20,8 @@ export const SOCKET_EVENTS = {
     MESSAGE_STATUS_ALL: "message:status_all",
     MESSAGE_DELETED: "message:deleted",
     MESSAGE_EDITED: "message:edited",
-    TYPING_START: "typing:start",
-    TYPING_STOP: "typing:stop",
-    USER_ONLINE_STATUS: "user:online_status",
+    MESSAGE_SENT_ACKNOWLEDGEMENT: "message:sent_acknowledgement",
+
     ERROR: "error",
     CONNECT_ERROR: "connect_error",
 } as const;

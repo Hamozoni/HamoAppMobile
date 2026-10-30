@@ -86,15 +86,7 @@ export const usePostMessage = ({ chatId, senderId, receiverId }: {
                 }
                 // const { data } = await axiosInstance.post('/messages', { payload, cloudinaryData });
 
-                return socketService.emit(SOCKET_EVENTS.MESSAGE_SEND, { payload, cloudinaryData }, (data: any) => {
-                    if (data.success) {
-                        replaceOptimistic(data.message.chatId, clientMessageId, data.message);
-                        updateMessageStatus(data.message.chatId, data.message._id, data.message.status);
-                        updateChat(data.message.chatId, { lastMessageStatus: data.message.status });
-                    }
-
-                    return data;
-                });
+                return socketService.emit(SOCKET_EVENTS.MESSAGE_SEND, { payload, cloudinaryData })
 
             },
         })
