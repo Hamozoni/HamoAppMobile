@@ -1,70 +1,24 @@
 import * as SQLite from "expo-sqlite";
 
-let db: SQLite.SQLiteDatabase | null = null;
+export const DB_NAME = __DEV__ ? "sudachat_dev.db" : "sudachat.db";
 
-export const getDatabase = (): SQLite.SQLiteDatabase => {
-    if (!db) {
-        const dbName = __DEV__ ? "sudachat_dev.db" : "sudachat.db";
-        db = SQLite.openDatabaseSync(dbName);
+let dbPromise: Promise<SQLite.SQLiteDatabase> | null = null;
 
-        db.execSync("PRAGMA foreign_keys = ON;");
-        db.execSync("PRAGMA journal_mode = WAL;");
-        db.execSync("PRAGMA synchronous = NORMAL;");
-        db.execSync("PRAGMA temp_store = MEMORY;");
+/** Single shared connection. If you already have a db module, keep yours and import getDb from it. */
+export function getDb(): Promise<SQLite.SQLiteDatabase> {
+    dbPromise ??= (async () => {
+        const db = await SQLite.openDatabaseAsync(DB_NAME);
+        // WAL: faster writes and readers don't block the writer. foreign_keys must be set outside a transaction.
+        await db.execAsync("PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;");
+        console.log("📁 SQLite opened:", DB_NAME);
+        return db;
+    })();
+    return dbPromise;
+}
 
-        console.log(`📁 SQLite opened: ${dbName}`);
-    }
-    return db;
-};
-
-export const executeTransaction = <T>(
-    fn: (db: SQLite.SQLiteDatabase) => T
-): T => {
-    const database = getDatabase();
-    try {
-        database.execSync("BEGIN;");
-        const result = fn(database);
-        database.execSync("COMMIT;");
-        return result;
-    } catch (e) {
-        database.execSync("ROLLBACK;");
-        throw e;
-    }
-};
-
-export const executeQuery = <T = any>(
-    sql: string,
-    params?: any[]
-): T[] => {
-    return getDatabase().getAllSync<T>(sql, params ?? []);
-};
-
-export const executeQueryFirst = <T = any>(
-    sql: string,
-    params?: any[]
-): T | null => {
-    return getDatabase().getFirstSync<T>(sql, params ?? []);
-};
-
-export const executeUpdate = (
-    sql: string,
-    params?: any[]
-) => {
-    return getDatabase().runSync(sql, params ?? []);
-};
-
-export const executeBatch = (sql: string, paramsList: readonly any[][]) => {
-
-    const db = getDatabase();
-    const stmt = db.prepareSync(sql);
-
-    try {
-        executeTransaction(() => {
-            for (const params of paramsList) {
-                stmt.executeSync(params);
-            }
-        });
-    } finally {
-        stmt.finalizeSync();
-    }
+export async function closeDb() {
+    if (!dbPromise) return;
+    const db = await dbPromise;
+    dbPromise = null;
+    await db.closeAsync();
 };

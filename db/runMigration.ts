@@ -1,41 +1,44 @@
-import { getDatabase } from "./index";
-import migration001 from "./migrations/001_init";
+import { getDb } from "./index";
+import { migrations } from "./migrations";
 
-const migrations = [migration001];
+let running: Promise<void> | null = null;
 
-export function runMigrations() {
+/** Safe to call from several places: concurrent calls share one run. */
+export function runMigrations(): Promise<void> {
+    running ??= migrate().finally(() => {
+        running = null;
+    });
+    return running;
+}
 
-    const db = getDatabase();
+async function migrate() {
+    const db = await getDb();
 
-    db.execSync(`
-        CREATE TABLE IF NOT EXISTS _migrations (
-            name TEXT PRIMARY KEY,
-            executedAt INTEGER
-        );
-    `);
+    const row = await db.getFirstAsync<{ user_version: number }>("PRAGMA user_version");
+    const current = row?.user_version ?? 0;
+    const latest = migrations[migrations.length - 1]?.version ?? 0;
 
-    for (const m of migrations) {
-        const executed = db.getFirstSync(
-            "SELECT 1 FROM _migrations WHERE name = ?",
-            [m.name]
-        );
-
-        if (!executed) {
-            console.log(`🚀 Running migration ${m.name}`);
-
-            try {
-                db.execSync("BEGIN;");
-                db.execSync(m.sql);
-                db.runSync(
-                    "INSERT INTO _migrations (name, executedAt) VALUES (?, ?)",
-                    [m.name, Date.now()]
-                );
-                db.execSync("COMMIT;");
-            } catch (e) {
-                db.execSync("ROLLBACK;");
-                console.error("❌ Migration failed:", m.name, e);
-                throw e;
-            }
-        }
+    if (current > latest) {
+        // The DB was created by a newer app version (e.g. a downgrade). Don't touch it.
+        console.warn(`DB version ${current} is newer than this app (${latest}). Skipping migrations.`);
+        return;
     }
+    if (current === latest) return;
+
+    for (const m of migrations.filter((x) => x.version > current)) {
+        console.log(`🧱 DB migration ${m.version}: ${m.name}`);
+
+        // One transaction per migration: if any statement fails, the whole migration is rolled back
+        // (including the user_version bump), so the next launch retries it cleanly.
+        await db.withExclusiveTransactionAsync(async (txn) => {
+            if (typeof m.up === "function") {
+                await m.up(txn);
+            } else {
+                for (const sql of m.up) await txn.execAsync(sql);
+            }
+            await txn.execAsync(`PRAGMA user_version = ${m.version}`);
+        });
+    }
+
+    console.log(`✅ DB at version ${latest}`);
 }
