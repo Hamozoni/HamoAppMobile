@@ -6,6 +6,7 @@ interface MessagesState {
     messages: Record<string, ILocalMessage[]>;
 
     addMessage: (chatId: string, message: ILocalMessage) => void;
+    getMessages: (chatId: string) => ILocalMessage[] | [];
     replaceOptimistic: (chatId: string, clientMessageId: string, real: ILocalMessage) => void;
     updateMessageStatus: (chatId: string, messageId: string, status: string) => void;
     setMessages: (chatId: string, messages: ILocalMessage[]) => void;
@@ -14,7 +15,7 @@ interface MessagesState {
     clearChat: (chatId: string) => void;
 }
 
-export const useMessagesStore = create<MessagesState>((set) => ({
+export const useMessagesStore = create<MessagesState>((set, get) => ({
     messages: {},
 
     addMessage: (chatId, message) => {
@@ -31,6 +32,10 @@ export const useMessagesStore = create<MessagesState>((set) => ({
                 },
             };
         });
+    },
+
+    getMessages: (chatId) => {
+        return get().messages[chatId];
     },
 
     // Replace optimistic message with real one from server

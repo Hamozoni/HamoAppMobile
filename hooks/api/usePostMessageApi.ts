@@ -86,7 +86,9 @@ export const usePostMessage = ({ chatId, senderId, receiverId }: {
                 }
                 // const { data } = await axiosInstance.post('/messages', { payload, cloudinaryData });
 
-                return socketService.emit(SOCKET_EVENTS.MESSAGE_SEND, { payload, cloudinaryData })
+                socketService.emit(SOCKET_EVENTS.MESSAGE_SEND, { payload, cloudinaryData, clientMessageId });
+
+                return { success: true, clientMessageId }
 
             },
         })

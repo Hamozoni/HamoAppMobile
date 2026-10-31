@@ -3,15 +3,12 @@ import { useEffect } from "react";
 import { socketService, SOCKET_EVENTS } from "../services/socket.service";
 import { useMessagesStore } from "../hooks/store/useMessageStore";
 import { useChatsStore } from "./store/useChatsStore";
-import { useAuthStore } from "./store/useAuthStore";
 
 export const useSocketListeners = () => {
 
     const addMessage = useMessagesStore((state) => state.addMessage);
-    const updateMessageStatus = useMessagesStore((state) => state.updateMessageStatus);
     const updateLastMessage = useChatsStore(state => state.updateLastMessage)
     const replaceOptimistic = useMessagesStore((state) => state.replaceOptimistic);
-    const user = useAuthStore((state) => state.user);
     useEffect(() => {
         const socket = socketService.socket;
         if (!socket) return;
@@ -19,7 +16,6 @@ export const useSocketListeners = () => {
         // 1. Listen for incoming messages from other users
 
         socketService.on(SOCKET_EVENTS.CHAT_NOTIFICATION, ({ message }) => {
-            console.log({ message })
             addMessage(message.chatId, message);
             updateLastMessage(message.chatId, {
                 lastMessageAt: message.createdAt,
@@ -32,7 +28,6 @@ export const useSocketListeners = () => {
         });
 
         socketService.on(SOCKET_EVENTS.MESSAGE_NEW, (message) => {
-            console.log({ message })
             addMessage(message.chatId, message);
             updateLastMessage(message.chatId, {
                 lastMessageAt: message.createdAt,
@@ -44,18 +39,18 @@ export const useSocketListeners = () => {
             });
         });
 
-        socketService.on(SOCKET_EVENTS.MESSAGE_SENT_ACKNOWLEDGEMENT, ({ message }: { message: any }) => {
-            updateMessageStatus(message.chatId, message._id, message.status)
-            updateLastMessage(message.chatId, {
-                lastMessageAt: message.createdAt,
-                lastMessageId: message._id,
-                lastMessageSenderId: message.senderId,
-                lastMessageStatus: message.status,
-                lastMessageText: message.text,
-                lastMessageType: message.type,
 
+        socketService.on(
+            SOCKET_EVENTS.MESSAGE_SENT_ACKNOWLEDGEMENT,
+            ({ message, clientMessageId }: { message: any; clientMessageId: string }) => {
+
+
+                replaceOptimistic(message.chatId, clientMessageId, message);
+                updateLastMessage(message.chatId, {
+                    lastMessageId: message._id,
+                    lastMessageStatus: message.status,
+                });
             });
-        });
 
 
 

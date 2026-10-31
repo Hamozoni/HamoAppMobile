@@ -11,33 +11,28 @@ import { useGetmessages } from "../../../hooks/api/useGetMessagesApi";
 import { useChatsStore } from "../../../hooks/store/useChatsStore";
 import { useMessagesStore } from "../../../hooks/store/useMessageStore";
 import { SOCKET_EVENTS, socketService } from "../../../services/socket.service";
-import { Socket } from "socket.io-client";
-import { useAuthStore } from "../../../hooks/store/useAuthStore";
 
 export default function ChatDetails() {
     const { contactId } = useLocalSearchParams<{ contactId: string }>();
 
-    const { chats, updateLastMessage, currentChatId, setCurrentChatId } = useChatsStore();
-    const { addMessage, updateMessageStatus } = useMessagesStore();
-    const chatIdRef = useRef<string | undefined>(undefined);
+    const { chats, currentChatId, setCurrentChatId } = useChatsStore();
 
     const found = chats?.find((c) => c?.participants?.some((p) => p?._id === contactId))?._id;
 
-    const { isLoading } = useGetmessages(found || "");
+    const { isLoading, error } = useGetmessages(found || "");
     const messages = useMessagesStore((s) => s.messages[currentChatId || contactId]) ?? [];
     const flatListRef = useRef<FlatList>(null);
 
     const { pendingLocation, clearPendingLocation } = usePendingStore();
 
 
+    console.log({ err: error?.message })
     useEffect(() => {
 
         if (found) setCurrentChatId(found);
 
         socketService.emit(SOCKET_EVENTS.JOIN_CHAT, found);
-
         return () => {
-
             socketService.emit(SOCKET_EVENTS.LEAVE_CHAT, found);
             socketService.off(SOCKET_EVENTS.JOIN_CHAT);
             setCurrentChatId(null)
@@ -72,7 +67,7 @@ export default function ChatDetails() {
                     ref={flatListRef}
                     data={messages}
                     inverted={true}
-                    keyExtractor={(item) => item.clientMessageId ?? item._id}
+                    keyExtractor={(item) => item._id}
                     renderItem={({ item, index }) => (
                         <MessageCard message={item} prevMessage={messages[index + 1]} />
                     )}
