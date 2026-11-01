@@ -5,8 +5,8 @@ import { sql } from 'drizzle-orm';
 const now = sql`(strftime('%s','now') * 1000)`;
 
 export const contacts = sqliteTable('contacts', {
-    _id: text('_id').primaryKey(),
-    phoneNumber: text('phoneNumber').unique().notNull(),
+    _id: text('_id').notNull(),
+    phoneNumber: text('phoneNumber').primaryKey().unique().notNull(),
     countryCode: text('countryCode'),
     countryISO: text('countryISO'),
     displayName: text('displayName'),
@@ -47,7 +47,7 @@ export const chats = sqliteTable('chats', {
 
 export const chatParticipants = sqliteTable('chatParticipants', {
     chatId: text('chatId').notNull().references(() => chats.clientChatId, { onDelete: 'cascade' }),
-    userId: text('userId').notNull().references(() => contacts._id, { onDelete: 'cascade' }),
+    userId: text('userId').notNull().references(() => contacts.phoneNumber, { onDelete: 'cascade' }),
     isAdmin: integer('isAdmin').notNull().default(0),
 }, (table) => ({
     pk: primaryKey({ columns: [table.chatId, table.userId] }),

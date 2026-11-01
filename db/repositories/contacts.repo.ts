@@ -20,11 +20,11 @@ export const contactsRepository = {
                 target: contacts.phoneNumber,
                 set: {
                     countryCode: sql`excluded."countryCode"`,
+                    _id: sql`excluded."_id"`,
                     countryISO: sql`excluded."countryISO"`,
                     displayName: sql`excluded."displayName"`,
                     about: sql`excluded."about"`,
                     profilePicture: sql`excluded."profilePicture"`,
-                    isRegistered: sql`excluded."isRegistered"`,
                 },
             });
     },
@@ -74,11 +74,37 @@ export const contactsRepository = {
         return db
             .select()
             .from(contacts)
-            .where(eq(contacts.isRegistered, 1));
+            .where(
+                eq(contacts.isRegistered, 1)
+            )
+    },
+
+    // Get registered contacts
+    async findUnRegistered() {
+        return db
+            .select()
+            .from(contacts)
+            .where(
+
+                eq(contacts.isRegistered, 0),
+
+            )
     },
 
     // Update contact
     async update(
+        id: string,
+        data: Partial<typeof contacts.$inferInsert>
+    ) {
+        await db
+            .update(contacts)
+            .set(data)
+            .where(eq(contacts._id, id));
+
+        return this.findById(id);
+    },
+
+    async updateMany(
         id: string,
         data: Partial<typeof contacts.$inferInsert>
     ) {

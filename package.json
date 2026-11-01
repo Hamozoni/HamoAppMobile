@@ -61,6 +61,7 @@
   "devDependencies": {
     "@types/react": "~19.3.0",
     "babel-plugin-inline-import": "^3.0.0",
+    "better-sqlite3": "^13.0.3",
     "drizzle-kit": "^0.31.11",
     "typescript": "~6.0.3"
   }

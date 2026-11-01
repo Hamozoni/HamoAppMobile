@@ -1,10 +1,10 @@
 import { create } from "zustand";
-import { getRegisteredContacts, getUnregisteredContacts } from "../../db/repositories/contacts.repo";
-import { Contact } from "../../db/types/contact.type";
+import { contactsRepository } from "../../db/repositories";
+import { contacts } from "../../db/schema";
 
 interface ContactsState {
-    registered: Contact[];
-    unregistered: Contact[];
+    registered: typeof contacts.$inferInsert[];
+    unregistered: typeof contacts.$inferInsert[];
     isSyncing: boolean;
     loadContacts: () => void;
     setIsSyncing: (val: boolean) => void;
@@ -14,12 +14,11 @@ export const useContactsStore = create<ContactsState>((set) => ({
     registered: [],
     unregistered: [],
     isSyncing: false,
-    loadContacts: () => {
-        const registered = getRegisteredContacts();
-        const registeredPhones = new Set(registered.map(c => c.phoneNumber));
-        const unregistered = getUnregisteredContacts().filter(
-            c => !registeredPhones.has(c.phoneNumber)
-        );
+    loadContacts: async () => {
+        const registered = await contactsRepository.findRegistered();
+        const unregistered = await contactsRepository.findUnRegistered();
+
+        console.log("registered", registered)
         set({ registered, unregistered });
     },
     setIsSyncing: (val) => set({ isSyncing: val }),

@@ -6,7 +6,6 @@ import { useAuthStore } from "../hooks/store/useAuthStore";
 import { useContactsStore } from "../hooks/store/useContactsStore";
 import { useChatsStore } from "../hooks/store/useChatsStore";
 import { syncContacts } from "../db/services/syncContacts.service";
-import { runMigrations } from "../db/runMigration";
 import { axiosInstance } from "../lib/axios.config";
 import { IUser } from "../types/user.type";
 import { socketService } from "../services/socket.service";
@@ -41,7 +40,6 @@ export function AuthBootstrap() {
                     setUser(data);
                 }
 
-                await runMigrations();
                 socketService.connect(token);
                 const { data: chatData } = await axiosInstance.get("/chats");
                 if (cancelled) return;

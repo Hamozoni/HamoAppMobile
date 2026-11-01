@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { socketService, SOCKET_EVENTS } from "../services/socket.service";
 import { useMessagesStore } from "../hooks/store/useMessageStore";
 import { useChatsStore } from "./store/useChatsStore";
-
 export const useSocketListeners = () => {
 
     const addMessage = useMessagesStore((state) => state.addMessage);

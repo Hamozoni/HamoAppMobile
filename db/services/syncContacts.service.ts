@@ -3,6 +3,7 @@ import { normalizePhone } from "../../utils/phoneNormalize";
 import { axiosInstance } from "../../lib/axios.config";
 import { contactsRepository } from "../repositories/contacts.repo";
 import { contacts } from "../schema";
+import { clearUserData, resetDatabase } from "../maintenance";
 
 
 export async function syncContacts(): Promise<void> {
@@ -13,7 +14,12 @@ export async function syncContacts(): Promise<void> {
     if (status !== "granted") {
         console.log("Contacts permission denied");
         return; // exit cleanly, don't crash bootstrap
-    }
+    };
+
+    await clearUserData()
+
+    await resetDatabase();
+
 
     const { data } = await Contacts.getContactsAsync({
         fields: [Contacts.Fields.PhoneNumbers],
@@ -55,6 +61,7 @@ export async function syncContacts(): Promise<void> {
         isRegistered: 1,
         displayName: phoneToDisplayName.get(u.phoneNumber) ?? u.displayName,
         profilePicture: (u as any)?.profilePicture?.secureUrl ?? null,
+        isInMycontacts: 1,
     }));
 
     // 3. Update registered ones — NOW the DB is fully consistent
