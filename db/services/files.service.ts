@@ -6,6 +6,7 @@ export const filesService = {
     // Save file metadata
     async createFile(data: {
         clientFileId?: string;
+        onwerId: string;
         type: string;
         purpose?: string;
         localUri?: string;
@@ -21,6 +22,7 @@ export const filesService = {
 
         await filesRepository.create({
             clientFileId,
+            onwerId: data.onwerId,
             type: data.type,
             purpose: data.purpose,
             localUri: data.localUri,

@@ -1,5 +1,5 @@
 
-import { eq, like, or, and } from 'drizzle-orm';
+import { eq, like, or, and, sql } from 'drizzle-orm';
 import { db } from '../index';
 import { contacts } from '../schema';
 
@@ -15,7 +15,18 @@ export const contactsRepository = {
     async createMany(data: (typeof contacts.$inferInsert)[]) {
         if (!data.length) return;
 
-        await db.insert(contacts).values(data).onConflictDoNothing();
+        await db.insert(contacts).values(data)
+            .onConflictDoUpdate({
+                target: contacts.phoneNumber,
+                set: {
+                    countryCode: sql`excluded."countryCode"`,
+                    countryISO: sql`excluded."countryISO"`,
+                    displayName: sql`excluded."displayName"`,
+                    about: sql`excluded."about"`,
+                    profilePicture: sql`excluded."profilePicture"`,
+                    isRegistered: sql`excluded."isRegistered"`,
+                },
+            });
     },
 
     // Get all contacts

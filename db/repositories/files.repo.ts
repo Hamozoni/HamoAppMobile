@@ -4,6 +4,7 @@ import { db } from '../index';
 import { files } from '../schema';
 
 export const filesRepository = {
+
     async create(data: typeof files.$inferInsert) {
         await db.insert(files).values(data);
     },

@@ -6,9 +6,9 @@ const now = sql`(strftime('%s','now') * 1000)`;
 
 export const contacts = sqliteTable('contacts', {
     _id: text('_id').primaryKey(),
-    phoneNumber: text('phoneNumber').notNull(),
-    countryCode: text('countryCode').notNull(),
-    countryISO: text('countryISO').notNull(),
+    phoneNumber: text('phoneNumber').unique().notNull(),
+    countryCode: text('countryCode'),
+    countryISO: text('countryISO'),
     displayName: text('displayName'),
     about: text('about'),
     profilePicture: text('profilePicture'),
@@ -57,6 +57,7 @@ export const chatParticipants = sqliteTable('chatParticipants', {
 export const files = sqliteTable('files', {
     clientFileId: text('clientFileId').primaryKey().notNull(),
     _id: text('_id').unique(),
+    onwerId: text('onwerId').notNull(),
     type: text('type').notNull(),
     purpose: text('purpose'),
     resourceType: text('resourceType'),

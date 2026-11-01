@@ -7,7 +7,7 @@ import {
 import { db } from '../index';
 import { chats, chatParticipants } from '../schema';
 
-import { eq } from 'drizzle-orm';
+// import { eq } from 'drizzle-orm';
 
 export const chatService = {
     // Create or get existing private chat

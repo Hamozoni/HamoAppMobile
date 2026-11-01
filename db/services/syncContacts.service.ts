@@ -1,8 +1,9 @@
 import * as Contacts from "expo-contacts/legacy";
 import { normalizePhone } from "../../utils/phoneNormalize";
-import { upsertContacts } from "../repositories/contacts.repo";
 import { axiosInstance } from "../../lib/axios.config";
-import type { Contact } from "../types/contact.type";
+import { contactsRepository } from "../repositories/contacts.repo";
+import { contacts } from "../schema";
+
 
 export async function syncContacts(): Promise<void> {
 
@@ -18,7 +19,7 @@ export async function syncContacts(): Promise<void> {
         fields: [Contacts.Fields.PhoneNumbers],
     });
 
-    const normalized: Contact[] = [];
+    const normalized: typeof contacts.$inferInsert[] = [];
 
     for (const c of data) {
         for (const p of c.phoneNumbers ?? []) {
@@ -33,30 +34,31 @@ export async function syncContacts(): Promise<void> {
                 about: null,
                 profilePicture: null,
                 isRegistered: 0,
+                isInMycontacts: 1
             });
         }
     }
 
     // 1. Save unregistered contacts first (don't load store yet)
-    upsertContacts(normalized);
+    contactsRepository.createMany(normalized);
 
     // 2. Ask backend
-    const { data: registeredFromServer } = await axiosInstance.post<Contact[]>(
+    const { data: registeredFromServer } = await axiosInstance.post<typeof contacts.$inferSelect[]>(
         "/contacts/sync",
         { phoneNumbers: normalized.map(n => n.phoneNumber) }
     );
 
     const phoneToDisplayName = new Map(normalized.map(n => [n.phoneNumber, n.displayName]));
 
-    const registeredContacts: Contact[] = registeredFromServer.map(u => ({
+    const registeredContacts: typeof contacts.$inferInsert[] = registeredFromServer.map(u => ({
         ...u,
-        isRegistered: 1 as const,
+        isRegistered: 1,
         displayName: phoneToDisplayName.get(u.phoneNumber) ?? u.displayName,
         profilePicture: (u as any)?.profilePicture?.secureUrl ?? null,
     }));
 
     // 3. Update registered ones — NOW the DB is fully consistent
-    upsertContacts(registeredContacts);
+    contactsRepository.createMany(registeredContacts);
 
     // syncContacts resolves here, THEN AuthBootstrap calls loadContacts()
 }
