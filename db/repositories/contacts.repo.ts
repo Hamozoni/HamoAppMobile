@@ -1,62 +1,93 @@
-// import { executeBatch, executeQuery, executeUpdate } from "../index";
-// import type { Contact } from "../types/contact.type";
 
-// export function upsertContacts(rows: Contact[]): void {
-//     if (rows.length === 0) return;
+import { eq, like, or, and } from 'drizzle-orm';
+import { db } from '../index';
+import { contacts } from '../schema';
 
-//     executeBatch(
-//         `INSERT OR REPLACE INTO contacts
-//             (_id, phoneNumber, about, countryCode, countryISO, displayName, isRegistered, profilePicture)
-//          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-//         rows.map(c => [
-//             c._id,
-//             c.phoneNumber,
-//             c.about ?? null,
-//             c.countryCode ?? null,
-//             c.countryISO ?? null,
-//             c.displayName,
-//             c.isRegistered ? 1 : 0,
-//             c.profilePicture ?? null,
-//         ])
-//     );
-// }
+export const contactsRepository = {
+    // Insert one contact
+    async create(data: typeof contacts.$inferInsert) {
+        await db.insert(contacts).values(data);
 
-// export function updateContact(c: Contact): void {
-//     executeUpdate(
-//         `UPDATE contacts SET
-//             _id            = ?,
-//             about          = ?,
-//             isRegistered   = ?,
-//             profilePicture = ?,
-//             displayName    = ?,
-//             countryCode    = ?,
-//             countryISO     = ?
-//          WHERE phoneNumber = ?`,
-//         [
-//             c._id,
-//             c.about ?? null,
-//             c.isRegistered ? 1 : 0,
-//             c.profilePicture ?? null,
-//             c.displayName,
-//             c.countryCode ?? null,
-//             c.countryISO ?? null,
-//             c.phoneNumber,
-//         ]
-//     );
-// }
+        return this.findById(data._id);
+    },
 
-// export function getRegisteredContacts(): Contact[] {
-//     return executeQuery<Contact>(
-//         "SELECT * FROM contacts WHERE isRegistered = 1 ORDER BY displayName"
-//     );
-// }
+    // Insert multiple contacts
+    async createMany(data: (typeof contacts.$inferInsert)[]) {
+        if (!data.length) return;
 
-// export function getUnregisteredContacts(): Contact[] {
-//     return executeQuery<Contact>(
-//         "SELECT * FROM contacts WHERE isRegistered = 0 ORDER BY displayName"
-//     );
-// }
+        await db.insert(contacts).values(data).onConflictDoNothing();
+    },
 
-// export function clearContacts(): void {
-//     executeUpdate("DELETE FROM contacts;");
-// }
+    // Get all contacts
+    async findAll() {
+        return db.select().from(contacts);
+    },
+
+    // Find contact by ID
+    async findById(id: string) {
+        const result = await db
+            .select()
+            .from(contacts)
+            .where(eq(contacts._id, id))
+            .limit(1);
+
+        return result[0] ?? null;
+    },
+
+    // Find by phone number
+    async findByPhone(phoneNumber: string) {
+        const result = await db
+            .select()
+            .from(contacts)
+            .where(eq(contacts.phoneNumber, phoneNumber))
+            .limit(1);
+
+        return result[0] ?? null;
+    },
+
+    // Search contacts
+    async search(query: string) {
+        return db
+            .select()
+            .from(contacts)
+            .where(
+                or(
+                    like(contacts.displayName, `%${query}%`),
+                    like(contacts.phoneNumber, `%${query}%`)
+                )
+            );
+    },
+
+    // Get registered contacts
+    async findRegistered() {
+        return db
+            .select()
+            .from(contacts)
+            .where(eq(contacts.isRegistered, 1));
+    },
+
+    // Update contact
+    async update(
+        id: string,
+        data: Partial<typeof contacts.$inferInsert>
+    ) {
+        await db
+            .update(contacts)
+            .set(data)
+            .where(eq(contacts._id, id));
+
+        return this.findById(id);
+    },
+
+    // Delete contact
+    async delete(id: string) {
+        return db
+            .delete(contacts)
+            .where(eq(contacts._id, id));
+    },
+
+    // Delete all contacts
+    async deleteAll() {
+        return db.delete(contacts);
+    },
+};
