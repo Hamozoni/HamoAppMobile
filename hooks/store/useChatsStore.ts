@@ -27,7 +27,7 @@ export const useChatsStore = create<ChatsState>((set) => ({
             chats: state.chats
                 .map(c => c._id === chatId ? { ...c, ...update } : c)
                 .sort((a, b) =>
-                    (new Date(b.lastMessageAt).getMilliseconds()) - (new Date(a.lastMessageAt).getMilliseconds())
+                    (new Date(a.lastMessageAt).getMilliseconds()) - (new Date(b.lastMessageAt).getMilliseconds())
                 ),
         })),
 
@@ -35,7 +35,7 @@ export const useChatsStore = create<ChatsState>((set) => ({
         set(state => ({
             chats: [chat, ...state.chats]
                 .sort((a, b) =>
-                    (new Date(b.lastMessageAt).getMilliseconds()) - (new Date(a.lastMessageAt).getMilliseconds())
+                    (new Date(a.lastMessageAt).getMilliseconds()) - (new Date(b.lastMessageAt).getMilliseconds())
                 ),
         })),
 
@@ -45,7 +45,7 @@ export const useChatsStore = create<ChatsState>((set) => ({
             chats: state.chats
                 .map(c => c._id === chatId ? { ...c, ...lastMessage } : c)
                 .sort((a, b) =>
-                    (new Date(b.lastMessageAt).getMilliseconds()) - (new Date(a.lastMessageAt).getMilliseconds())
+                    (new Date(a.lastMessageAt).getMilliseconds()) - (new Date(b.lastMessageAt).getMilliseconds())
                 ),
         })),
 

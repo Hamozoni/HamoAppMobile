@@ -21,7 +21,6 @@ export async function syncContacts(): Promise<void> {
         fields: [Contacts.Fields.PhoneNumbers],
     });
 
-    console.log("DATA", data[50]);
 
     const normalized: typeof contacts.$inferInsert[] = [];
 

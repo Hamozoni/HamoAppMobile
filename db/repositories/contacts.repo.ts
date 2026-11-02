@@ -26,6 +26,7 @@ export const contactsRepository = {
                     about: sql`excluded."about"`,
                     profilePicture: sql`excluded."profilePicture"`,
                     isRegistered: sql`excluded."isRegistered"`,
+                    isInMycontacts: sql`excluded."isInMycontacts"`,
                 },
             });
     },

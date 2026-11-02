@@ -11,6 +11,8 @@ import { IUser } from "../types/user.type";
 import { socketService } from "../services/socket.service";
 import { runMigrations } from "../db/runMigration";
 import { resetDatabase } from "../db/maintenance";
+import { Chat } from "../types/components.types";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export function AuthBootstrap() {
     const [ready, setReady] = useState(false);
@@ -35,16 +37,36 @@ export function AuthBootstrap() {
                 if (!token) return; // not logged in -> falls through to login redirect
 
                 // Validate session / get fresh profile
-                if (!useAuthStore.getState().user) {
+
+                const cachedUser = await AsyncStorage.getItem("cachedUser");
+
+                console.log("CACHED USER", cachedUser);
+
+                if (!cachedUser) {
                     const { data } = await axiosInstance.get<IUser>("/profile");
                     if (cancelled) return;
                     setUser(data);
-                }
+                    console.log("USER", data);
+                };
+                setUser(
+                    JSON.parse(cachedUser || "") as IUser
+                );
 
                 socketService.connect(token);
                 const { data: chatData } = await axiosInstance.get("/chats");
                 if (cancelled) return;
-                setChats(chatData.chats);
+
+                const formatedChats = chatData.chats.map((chat: Chat) => {
+                    return {
+                        ...chat,
+                        unreadCount: chat.unreadCount[JSON.parse(cachedUser || "")._id ?? ""] ?? 0
+                    }
+                })
+
+                setChats(formatedChats);
+
+                console.log("CHATS", formatedChats);
+                console.log("USER ID", JSON.parse(cachedUser || "")._id);
 
                 setIsSyncing(true);
                 await syncContacts();

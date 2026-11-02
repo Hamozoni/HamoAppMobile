@@ -6,7 +6,8 @@ import { useChatsStore } from "./store/useChatsStore";
 export const useSocketListeners = () => {
 
     const addMessage = useMessagesStore((state) => state.addMessage);
-    const updateLastMessage = useChatsStore(state => state.updateLastMessage)
+    const updateLastMessage = useChatsStore(state => state.updateLastMessage);
+    const incrementUnread = useChatsStore(state => state.incrementUnread);
     const replaceOptimistic = useMessagesStore((state) => state.replaceOptimistic);
     useEffect(() => {
         const socket = socketService.socket;
@@ -24,6 +25,7 @@ export const useSocketListeners = () => {
                 lastMessageText: message.text,
                 lastMessageType: message.type,
             });
+            incrementUnread(message.chatId);
         });
 
         socketService.on(SOCKET_EVENTS.MESSAGE_NEW, (message) => {

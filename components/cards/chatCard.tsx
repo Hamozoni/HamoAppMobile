@@ -86,7 +86,7 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: Ch
     const notContact: Contact | undefined = chat?.participants?.find(e => e._id !== user?._id) as any
     const contactId = notContact?._id || 0
 
-    const hasUnread = (chat.unreadCount[user?._id || 0] ?? 0) > 0;
+    const hasUnread = (chat.unreadCount ?? 0) > 0;
 
     return (
         <TouchableOpacity
@@ -129,7 +129,7 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: Ch
                     {hasUnread && (
                         <View style={styles.badge}>
                             <Text style={styles.badgeText}>
-                                {(chat.unreadCount[user?._id || 0] ?? 0) > 99 ? "99+" : chat.unreadCount[user?._id || 0]}
+                                {(chat.unreadCount ?? 0) > 99 ? "99+" : chat.unreadCount}
                             </Text>
                         </View>
                     )}
