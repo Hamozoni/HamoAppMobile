@@ -4,7 +4,7 @@ CREATE TABLE `chatParticipants` (
 	`isAdmin` integer DEFAULT 0 NOT NULL,
 	PRIMARY KEY(`chatId`, `userId`),
 	FOREIGN KEY (`chatId`) REFERENCES `chats`(`clientChatId`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`userId`) REFERENCES `contacts`(`_id`) ON UPDATE no action ON DELETE cascade
+	FOREIGN KEY (`userId`) REFERENCES `contacts`(`phoneNumber`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE INDEX `idx_participantsUser` ON `chatParticipants` (`userId`);--> statement-breakpoint
@@ -34,8 +34,8 @@ CREATE UNIQUE INDEX `chats__id_unique` ON `chats` (`_id`);--> statement-breakpoi
 CREATE INDEX `idx_chatsLastMessage` ON `chats` (`lastMessageAt`);--> statement-breakpoint
 CREATE INDEX `idx_chatsPeer` ON `chats` (`peerId`) WHERE isGroup = 0;--> statement-breakpoint
 CREATE TABLE `contacts` (
-	`_id` text PRIMARY KEY NOT NULL,
-	`phoneNumber` text NOT NULL,
+	`_id` text NOT NULL,
+	`phoneNumber` text PRIMARY KEY NOT NULL,
 	`countryCode` text,
 	`countryISO` text,
 	`displayName` text,
@@ -46,7 +46,7 @@ CREATE TABLE `contacts` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `contacts_phoneNumber_unique` ON `contacts` (`phoneNumber`);--> statement-breakpoint
-CREATE INDEX `idx_contacts_id` ON `contacts` (`_id`);--> statement-breakpoint
+CREATE INDEX `idx_contacts_phoneNumber` ON `contacts` (`phoneNumber`);--> statement-breakpoint
 CREATE INDEX `idx_contacts_isRegistered` ON `contacts` (`isRegistered`);--> statement-breakpoint
 CREATE INDEX `idx_contacts_isInMycontacts` ON `contacts` (`isInMycontacts`);--> statement-breakpoint
 CREATE TABLE `files` (

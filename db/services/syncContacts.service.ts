@@ -3,7 +3,6 @@ import { normalizePhone } from "../../utils/phoneNormalize";
 import { axiosInstance } from "../../lib/axios.config";
 import { contactsRepository } from "../repositories/contacts.repo";
 import { contacts } from "../schema";
-import { clearUserData, resetDatabase } from "../maintenance";
 
 
 export async function syncContacts(): Promise<void> {
@@ -16,18 +15,18 @@ export async function syncContacts(): Promise<void> {
         return; // exit cleanly, don't crash bootstrap
     };
 
-    await clearUserData()
-
-    await resetDatabase();
 
 
     const { data } = await Contacts.getContactsAsync({
         fields: [Contacts.Fields.PhoneNumbers],
     });
 
+    console.log("DATA", data[50]);
+
     const normalized: typeof contacts.$inferInsert[] = [];
 
     for (const c of data) {
+
         for (const p of c.phoneNumbers ?? []) {
             const phoneNumber = normalizePhone(p.number ?? "", p.countryCode ?? "SA");
             if (!phoneNumber) continue;
@@ -40,7 +39,7 @@ export async function syncContacts(): Promise<void> {
                 about: null,
                 profilePicture: null,
                 isRegistered: 0,
-                isInMycontacts: 1
+                isInMycontacts: 1,
             });
         }
     }
@@ -61,7 +60,6 @@ export async function syncContacts(): Promise<void> {
         isRegistered: 1,
         displayName: phoneToDisplayName.get(u.phoneNumber) ?? u.displayName,
         profilePicture: (u as any)?.profilePicture?.secureUrl ?? null,
-        isInMycontacts: 1,
     }));
 
     // 3. Update registered ones — NOW the DB is fully consistent

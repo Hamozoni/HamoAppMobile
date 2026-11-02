@@ -15,7 +15,7 @@ export const contacts = sqliteTable('contacts', {
     isRegistered: integer('isRegistered').notNull().default(0),
     isInMycontacts: integer('isInMycontacts').notNull().default(0),
 }, (table) => ({
-    idIdx: index('idx_contacts_id').on(table._id),
+    idIdx: index('idx_contacts_phoneNumber').on(table.phoneNumber),
     isRegIdx: index('idx_contacts_isRegistered').on(table.isRegistered),
     inContIdx: index('idx_contacts_isInMycontacts').on(table.isInMycontacts),
 }));

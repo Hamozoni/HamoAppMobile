@@ -17,8 +17,6 @@ export const useContactsStore = create<ContactsState>((set) => ({
     loadContacts: async () => {
         const registered = await contactsRepository.findRegistered();
         const unregistered = await contactsRepository.findUnRegistered();
-
-        console.log("registered", registered)
         set({ registered, unregistered });
     },
     setIsSyncing: (val) => set({ isSyncing: val }),

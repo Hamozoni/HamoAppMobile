@@ -1,5 +1,5 @@
 
-import { eq, like, or, and, sql } from 'drizzle-orm';
+import { eq, like, or, sql } from 'drizzle-orm';
 import { db } from '../index';
 import { contacts } from '../schema';
 
@@ -8,7 +8,7 @@ export const contactsRepository = {
     async create(data: typeof contacts.$inferInsert) {
         await db.insert(contacts).values(data);
 
-        return this.findById(data._id);
+        return this.findByPhoneNumber(data.phoneNumber);
     },
 
     // Insert multiple contacts
@@ -25,6 +25,7 @@ export const contactsRepository = {
                     displayName: sql`excluded."displayName"`,
                     about: sql`excluded."about"`,
                     profilePicture: sql`excluded."profilePicture"`,
+                    isRegistered: sql`excluded."isRegistered"`,
                 },
             });
     },
@@ -35,11 +36,11 @@ export const contactsRepository = {
     },
 
     // Find contact by ID
-    async findById(id: string) {
+    async findByPhoneNumber(phoneNumber: string) {
         const result = await db
             .select()
             .from(contacts)
-            .where(eq(contacts._id, id))
+            .where(eq(contacts.phoneNumber, phoneNumber))
             .limit(1);
 
         return result[0] ?? null;
@@ -101,19 +102,19 @@ export const contactsRepository = {
             .set(data)
             .where(eq(contacts._id, id));
 
-        return this.findById(id);
+        return this.findByPhoneNumber(id);
     },
 
     async updateMany(
-        id: string,
+        phoneNumber: string,
         data: Partial<typeof contacts.$inferInsert>
     ) {
         await db
             .update(contacts)
             .set(data)
-            .where(eq(contacts._id, id));
+            .where(eq(contacts.phoneNumber, phoneNumber));
 
-        return this.findById(id);
+        return this.findByPhoneNumber(phoneNumber);
     },
 
     // Delete contact

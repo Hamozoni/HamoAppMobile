@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "a4359e92-7d00-446f-adc9-384cbb108562",
+  "id": "32502153-f317-41e3-8040-99aafc46607d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "chatParticipants": {
@@ -53,15 +53,15 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "chatParticipants_userId_contacts__id_fk": {
-          "name": "chatParticipants_userId_contacts__id_fk",
+        "chatParticipants_userId_contacts_phoneNumber_fk": {
+          "name": "chatParticipants_userId_contacts_phoneNumber_fk",
           "tableFrom": "chatParticipants",
           "tableTo": "contacts",
           "columnsFrom": [
             "userId"
           ],
           "columnsTo": [
-            "_id"
+            "phoneNumber"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -260,14 +260,14 @@
         "_id": {
           "name": "_id",
           "type": "text",
-          "primaryKey": true,
+          "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "phoneNumber": {
           "name": "phoneNumber",
           "type": "text",
-          "primaryKey": false,
+          "primaryKey": true,
           "notNull": true,
           "autoincrement": false
         },
@@ -331,10 +331,10 @@
           ],
           "isUnique": true
         },
-        "idx_contacts_id": {
-          "name": "idx_contacts_id",
+        "idx_contacts_phoneNumber": {
+          "name": "idx_contacts_phoneNumber",
           "columns": [
-            "_id"
+            "phoneNumber"
           ],
           "isUnique": false
         },

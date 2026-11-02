@@ -1,1 +1,0 @@
-DROP INDEX `contacts__id_unique`;

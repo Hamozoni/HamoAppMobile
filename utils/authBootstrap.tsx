@@ -9,6 +9,8 @@ import { syncContacts } from "../db/services/syncContacts.service";
 import { axiosInstance } from "../lib/axios.config";
 import { IUser } from "../types/user.type";
 import { socketService } from "../services/socket.service";
+import { runMigrations } from "../db/runMigration";
+import { resetDatabase } from "../db/maintenance";
 
 export function AuthBootstrap() {
     const [ready, setReady] = useState(false);
@@ -29,8 +31,7 @@ export function AuthBootstrap() {
             try {
                 await hydrate();
                 const token = await SecureStore.getItemAsync("accessToken");
-
-
+                await runMigrations()
                 if (!token) return; // not logged in -> falls through to login redirect
 
                 // Validate session / get fresh profile
