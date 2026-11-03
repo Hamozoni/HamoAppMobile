@@ -8,7 +8,7 @@ export const contactsRepository = {
     async create(data: typeof contacts.$inferInsert) {
         await db.insert(contacts).values(data);
 
-        return this.findByPhoneNumber(data.phoneNumber);
+        return this.findByPhone(data.phoneNumber);
     },
 
     // Insert multiple contacts
@@ -36,16 +36,6 @@ export const contactsRepository = {
         return db.select().from(contacts);
     },
 
-    // Find contact by ID
-    async findByPhoneNumber(phoneNumber: string) {
-        const result = await db
-            .select()
-            .from(contacts)
-            .where(eq(contacts.phoneNumber, phoneNumber))
-            .limit(1);
-
-        return result[0] ?? null;
-    },
 
     // Find by phone number
     async findByPhone(phoneNumber: string) {
@@ -95,15 +85,15 @@ export const contactsRepository = {
 
     // Update contact
     async update(
-        id: string,
+        phone: string,
         data: Partial<typeof contacts.$inferInsert>
     ) {
         await db
             .update(contacts)
             .set(data)
-            .where(eq(contacts._id, id));
+            .where(eq(contacts.phoneNumber, phone));
 
-        return this.findByPhoneNumber(id);
+        return this.findByPhone(phone);
     },
 
     async updateMany(
@@ -115,7 +105,7 @@ export const contactsRepository = {
             .set(data)
             .where(eq(contacts.phoneNumber, phoneNumber));
 
-        return this.findByPhoneNumber(phoneNumber);
+        return this.findByPhone(phoneNumber);
     },
 
     // Delete contact

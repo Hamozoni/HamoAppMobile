@@ -40,6 +40,7 @@ export interface LastMessage {
 
 export interface Chat {
     _id: string;
+    clientChatId: string;
     participants?: Contact[] | any[];
     lastMessageId?: string;
     unreadCount?: any;

@@ -10,9 +10,11 @@ import { axiosInstance } from "../lib/axios.config";
 import { IUser } from "../types/user.type";
 import { socketService } from "../services/socket.service";
 import { runMigrations } from "../db/runMigration";
-import { resetDatabase } from "../db/maintenance";
 import { Chat } from "../types/components.types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Crypto from "expo-crypto";
+import { chatsRepository } from "../db/repositories";
+
 
 export function AuthBootstrap() {
     const [ready, setReady] = useState(false);
@@ -24,8 +26,7 @@ export function AuthBootstrap() {
 
     const loadContacts = useContactsStore((s) => s.loadContacts);
     const setIsSyncing = useContactsStore((s) => s.setIsSyncing);
-    const setChats = useChatsStore((s) => s.setChats);
-
+    const hydrateChtas = useChatsStore(e => e.hydrateChtas)
     useEffect(() => {
         let cancelled = false;
 
@@ -40,18 +41,15 @@ export function AuthBootstrap() {
 
                 const cachedUser = await AsyncStorage.getItem("cachedUser");
 
-                console.log("CACHED USER", cachedUser);
-
                 if (!cachedUser) {
                     const { data } = await axiosInstance.get<IUser>("/profile");
                     if (cancelled) return;
                     setUser(data);
                     console.log("USER", data);
                 };
-                setUser(
-                    JSON.parse(cachedUser || "") as IUser
-                );
 
+                hydrate();
+                hydrateChtas()
                 socketService.connect(token);
                 const { data: chatData } = await axiosInstance.get("/chats");
                 if (cancelled) return;
@@ -59,14 +57,18 @@ export function AuthBootstrap() {
                 const formatedChats = chatData.chats.map((chat: Chat) => {
                     return {
                         ...chat,
+                        clientChatId: Crypto.randomUUID(),
+                        createdAt: new Date(chat?.createdAt ?? 0).getMilliseconds(),
+                        updatedAt: new Date(chat?.updatedAt ?? 0).getMilliseconds(),
                         unreadCount: chat.unreadCount[JSON.parse(cachedUser || "")._id ?? ""] ?? 0
                     }
-                })
+                });
 
-                setChats(formatedChats);
+                await chatsRepository.createMany(formatedChats)
 
-                console.log("CHATS", formatedChats);
-                console.log("USER ID", JSON.parse(cachedUser || "")._id);
+
+
+                hydrateChtas();
 
                 setIsSyncing(true);
                 await syncContacts();

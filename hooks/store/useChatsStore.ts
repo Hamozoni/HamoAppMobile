@@ -1,15 +1,18 @@
 import { create } from "zustand";
 import { Chat } from "../../types/components.types";
+import { chatsRepository } from "../../db/repositories";
+import { chats } from "../../db/schema";
 
 
 interface ChatsState {
-    chats: Chat[];
+    chats: typeof chats.$inferInsert[] | [];
     currentChatId: string | null;
     setCurrentChatId: (chatId: string | null) => void;
-    setChats: (chats: Chat[]) => void;
-    updateChat: (chatId: string, update: Partial<Chat>) => void;
-    addNewChat: (chat: Chat) => void;
-    updateLastMessage: (chatId: string, lastMessage: Partial<Chat>) => void;
+    setChats: (chs: typeof chats.$inferInsert[] | []) => void;
+    hydrateChtas: () => void;
+    updateChat: (chatId: string, update: Partial<typeof chats.$inferInsert>) => void;
+    addNewChat: (chat: typeof chats.$inferInsert) => void;
+    updateLastMessage: (chatId: string, lastMessage: Partial<typeof chats.$inferInsert>) => void;
     incrementUnread: (chatId: string) => void;
     resetUnread: (chatId: string | undefined) => void;
 }
@@ -22,12 +25,20 @@ export const useChatsStore = create<ChatsState>((set) => ({
 
     setChats: (chats) => set({ chats }),
 
+    hydrateChtas: async () => {
+
+        const cachedChats = await chatsRepository.findAll();
+
+        set({ chats: cachedChats })
+
+    },
+
     updateChat: (chatId, update) =>
         set(state => ({
             chats: state.chats
                 .map(c => c._id === chatId ? { ...c, ...update } : c)
                 .sort((a, b) =>
-                    (new Date(a.lastMessageAt).getMilliseconds()) - (new Date(b.lastMessageAt).getMilliseconds())
+                    ((a.lastMessageAt ?? 0) - (b.lastMessageAt ?? 0))
                 ),
         })),
 
@@ -35,7 +46,7 @@ export const useChatsStore = create<ChatsState>((set) => ({
         set(state => ({
             chats: [chat, ...state.chats]
                 .sort((a, b) =>
-                    (new Date(a.lastMessageAt).getMilliseconds()) - (new Date(b.lastMessageAt).getMilliseconds())
+                    ((a.lastMessageAt ?? 0) - (b.lastMessageAt ?? 0))
                 ),
         })),
 
@@ -45,7 +56,7 @@ export const useChatsStore = create<ChatsState>((set) => ({
             chats: state.chats
                 .map(c => c._id === chatId ? { ...c, ...lastMessage } : c)
                 .sort((a, b) =>
-                    (new Date(a.lastMessageAt).getMilliseconds()) - (new Date(b.lastMessageAt).getMilliseconds())
+                    ((a.lastMessageAt ?? 0) - (b.lastMessageAt ?? 0))
                 ),
         })),
 
@@ -53,7 +64,7 @@ export const useChatsStore = create<ChatsState>((set) => ({
         set(state => ({
             chats: state.chats.map(c =>
                 c._id === chatId
-                    ? { ...c, unreadCount: c.unreadCount + 1 }
+                    ? { ...c, unreadCount: (c.unreadCount ?? 0) + 1 }
                     : c
             ),
         })),

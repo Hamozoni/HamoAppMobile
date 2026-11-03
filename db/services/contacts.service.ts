@@ -18,8 +18,8 @@ export const contactsService = {
         return contactsRepository.search(query.trim());
     },
 
-    async getContact(id: string) {
-        return contactsRepository.findById(id);
+    async getContact(phoneNumber: string) {
+        return contactsRepository.findByPhone(phoneNumber);
     },
 
     async saveContact(data: {
@@ -29,16 +29,16 @@ export const contactsService = {
         countryISO: string;
         displayName?: string;
     }) {
-        const existing = await contactsRepository.findById(data._id);
+        const existing = await contactsRepository.findByPhone(data.phoneNumber);
 
         if (existing) {
-            return contactsRepository.update(data._id, data);
+            return contactsRepository.update(data.phoneNumber, data);
         }
 
         return contactsRepository.create(data);
     },
 
-    async deleteContact(id: string) {
-        return contactsRepository.delete(id);
+    async deleteContact(phoneNumber: string) {
+        return contactsRepository.delete(phoneNumber);
     },
 };

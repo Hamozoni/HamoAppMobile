@@ -1,5 +1,5 @@
 
-import { eq, desc, and } from 'drizzle-orm';
+import { eq, desc, and, sql } from 'drizzle-orm';
 import { db } from '../index';
 import { chats, chatParticipants, messages } from '../schema';
 
@@ -10,6 +10,27 @@ export const chatsRepository = {
 
         return this.findById(data.clientChatId);
     },
+
+    // Insert multiple chats
+    async createMany(data: (typeof chats.$inferInsert)[]) {
+        if (!data.length) return;
+
+        await db.insert(chats).values(data)
+            .onConflictDoUpdate({
+                target: chats.clientChatId,
+                set: {
+                    _id: sql`excluded."_id"`,
+                    lastMessageAt: sql`excluded."lastMessageAt"`,
+                    unreadCount: sql`excluded."unreadCount"`,
+                    lastMessageId: sql`excluded."lastMessageId"`,
+                    lastMessageStatus: sql`excluded."lastMessageStatus"`,
+                    lastMessageType: sql`excluded."lastMessageType"`,
+                    lastMessageText: sql`excluded."lastMessageText"`,
+                },
+            });
+    },
+
+
 
     // Get chat by ID
     async findById(id: string) {

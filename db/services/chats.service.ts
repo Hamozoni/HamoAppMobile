@@ -16,7 +16,7 @@ export const chatService = {
 
         if (existing) return existing;
 
-        const contact = await contactsRepository.findById(peerId);
+        const contact = await contactsRepository.findByPhone(peerId);
 
         if (!contact) {
             throw new Error('Contact not found');
