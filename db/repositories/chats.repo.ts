@@ -12,7 +12,7 @@ import type { NewChat } from '../schema';
 
 export type ParticipantInput = {
     userId: string; // contacts._id
-    isAdmin?: boolean;
+    role?: string;
 };
 
 export type CreateChatInput = {
@@ -46,7 +46,7 @@ export async function createChat(data: CreateChatInput) {
                     data.participants.map((participant) => ({
                         chatId: chat.clientChatId,
                         userId: participant.userId,
-                        isAdmin: participant.isAdmin ? 1 : 0,
+                        role: participant.role,
                     }))
                 );
         }
@@ -81,7 +81,7 @@ export async function createManyChats(data: CreateChatInput[]) {
                 ...item.participants.map((participant) => ({
                     chatId: chat.clientChatId,
                     userId: participant.userId,
-                    isAdmin: participant.isAdmin ? 1 : 0,
+                    role: participant.role,
                 }))
             );
         }
@@ -142,7 +142,7 @@ export async function upsertChat(data: CreateChatInput) {
                     data.participants.map((participant) => ({
                         chatId: chat.clientChatId,
                         userId: participant.userId,
-                        isAdmin: participant.isAdmin ? 1 : 0,
+                        role: participant.role,
                     }))
                 );
         }
@@ -179,7 +179,7 @@ export async function getChatById(clientChatId: string) {
             .filter((p) => p.contact !== null)
             .map((p) => ({
                 ...p.contact!,
-                isAdmin: p.isAdmin,
+                role: p.role,
                 joinedAt: p.joinedAt,
                 leftAt: p.leftAt,
             })),
@@ -214,7 +214,7 @@ export async function getChatByServerId(serverId: string) {
             .filter((p) => p.contact !== null)
             .map((p) => ({
                 ...p.contact!,
-                isAdmin: p.isAdmin,
+                role: p.role,
                 joinedAt: p.joinedAt,
                 leftAt: p.leftAt,
             })),
@@ -250,7 +250,7 @@ export async function getAllChats() {
             .filter((p) => p.contact !== null)
             .map((p) => ({
                 ...p.contact!,
-                isAdmin: p.isAdmin,
+                role: p.role,
                 joinedAt: p.joinedAt,
                 leftAt: p.leftAt,
             })),
@@ -285,7 +285,7 @@ export async function getChatsByType(isGroup: boolean) {
             .filter((p) => p.contact !== null)
             .map((p) => ({
                 ...p.contact!,
-                isAdmin: p.isAdmin,
+                role: p.role,
                 joinedAt: p.joinedAt,
                 leftAt: p.leftAt,
             })),

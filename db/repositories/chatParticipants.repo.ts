@@ -19,7 +19,7 @@ export async function addParticipant(
         .values({
             chatId,
             userId: participant.userId,
-            isAdmin: participant.isAdmin ? 1 : 0,
+            role: participant.role,
         })
         .onConflictDoNothing()
         .returning();
@@ -51,7 +51,7 @@ export async function addParticipants(
                     chunk.map((participant) => ({
                         chatId,
                         userId: participant.userId,
-                        isAdmin: participant.isAdmin ? 1 : 0,
+                        role: participant.role,
                     }))
                 )
                 .onConflictDoNothing()
@@ -72,7 +72,7 @@ export async function getChatParticipants(chatId: string) {
     const result = await db
         .select({
             contact: contacts,
-            isAdmin: chatParticipants.isAdmin,
+            role: chatParticipants.role,
             joinedAt: chatParticipants.joinedAt,
             leftAt: chatParticipants.leftAt,
         })
@@ -85,7 +85,7 @@ export async function getChatParticipants(chatId: string) {
 
     return result.map((p) => ({
         ...p.contact,
-        isAdmin: p.isAdmin,
+        role: p.role,
         joinedAt: p.joinedAt,
         leftAt: p.leftAt,
     }));
@@ -128,12 +128,12 @@ export async function removeAllParticipants(chatId: string) {
 export async function setParticipantAdmin(
     chatId: string,
     userId: string,
-    isAdmin: boolean
+    role: string
 ) {
     const [result] = await db
         .update(chatParticipants)
         .set({
-            isAdmin: isAdmin ? 1 : 0,
+            role: role,
         })
         .where(
             and(

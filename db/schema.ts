@@ -204,9 +204,9 @@ export const chatParticipants = sqliteTable(
                 onDelete: 'cascade',
             }),
 
-        isAdmin: integer('isAdmin')
+        role: text('role')
             .notNull()
-            .default(0),
+            .default('member'),
 
         joinedAt: integer('joinedAt')
             .notNull()
