@@ -13,7 +13,7 @@ import { runMigrations } from "../db/runMigration";
 import { Chat } from "../types/components.types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Crypto from "expo-crypto";
-import { chatsRepository } from "../db/repositories";
+
 
 
 export function AuthBootstrap() {
@@ -54,17 +54,17 @@ export function AuthBootstrap() {
                 const { data: chatData } = await axiosInstance.get("/chats");
                 if (cancelled) return;
 
-                const formatedChats = chatData.chats.map((chat: Chat) => {
-                    return {
-                        ...chat,
-                        clientChatId: Crypto.randomUUID(),
-                        createdAt: new Date(chat?.createdAt ?? 0).getMilliseconds(),
-                        updatedAt: new Date(chat?.updatedAt ?? 0).getMilliseconds(),
-                        unreadCount: chat.unreadCount[JSON.parse(cachedUser || "")._id ?? ""] ?? 0
-                    }
-                });
+                // const formatedChats = chatData.chats.map((chat: Chat) => {
+                //     return {
+                //         ...chat,
+                //         clientChatId: Crypto.randomUUID(),
+                //         createdAt: new Date(chat?.createdAt ?? 0).getMilliseconds(),
+                //         updatedAt: new Date(chat?.updatedAt ?? 0).getMilliseconds(),
+                //         unreadCount: chat.unreadCount[JSON.parse(cachedUser || "")._id ?? ""] ?? 0
+                //     }
+                // });
 
-                await chatsRepository.createMany(formatedChats)
+                // await chatsRepository.createMany(formatedChats)
 
 
 

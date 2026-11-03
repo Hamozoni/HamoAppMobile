@@ -1,8 +1,8 @@
 import * as Contacts from "expo-contacts/legacy";
 import { normalizePhone } from "../../utils/phoneNormalize";
 import { axiosInstance } from "../../lib/axios.config";
-import { contactsRepository } from "../repositories/contacts.repo";
 import { contacts } from "../schema";
+import { upsertManyContacts } from "../repositories";
 
 
 export async function syncContacts(): Promise<void> {
@@ -43,8 +43,7 @@ export async function syncContacts(): Promise<void> {
         }
     }
 
-    // 1. Save unregistered contacts first (don't load store yet)
-    contactsRepository.createMany(normalized);
+
 
     // 2. Ask backend
     const { data: registeredFromServer } = await axiosInstance.post<typeof contacts.$inferSelect[]>(
@@ -61,8 +60,11 @@ export async function syncContacts(): Promise<void> {
         profilePicture: (u as any)?.profilePicture?.secureUrl ?? null,
     }));
 
+
+    const nonRegistered = normalized.filter(n => !registeredContacts.some(r => r.phoneNumber === n.phoneNumber));
+
     // 3. Update registered ones — NOW the DB is fully consistent
-    contactsRepository.createMany(registeredContacts);
+    await upsertManyContacts([...registeredContacts, ...nonRegistered]);
 
     // syncContacts resolves here, THEN AuthBootstrap calls loadContacts()
 }

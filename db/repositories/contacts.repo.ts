@@ -1,122 +1,141 @@
 
-import { eq, like, or, sql } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
+
 import { db } from '../index';
 import { contacts } from '../schema';
 
-export const contactsRepository = {
-    // Insert one contact
-    async create(data: typeof contacts.$inferInsert) {
-        await db.insert(contacts).values(data);
+import type { NewContact } from '../schema';
 
-        return this.findByPhone(data.phoneNumber);
-    },
+// ============================================
+// INSERT ONE CONTACT
+// ============================================
 
-    // Insert multiple contacts
-    async createMany(data: (typeof contacts.$inferInsert)[]) {
-        if (!data.length) return;
+export async function createContact(data: NewContact) {
+    const [contact] = await db
+        .insert(contacts)
+        .values(data)
+        .returning();
 
-        await db.insert(contacts).values(data)
+    return contact;
+}
+
+// ============================================
+// INSERT MANY CONTACTS
+// ============================================
+
+export async function createManyContacts(data: NewContact[]) {
+    if (data.length === 0) return [];
+
+    return db
+        .insert(contacts)
+        .values(data)
+        .returning();
+}
+
+// ============================================
+// UPSERT ONE CONTACT
+// ============================================
+
+export async function upsertContact(data: NewContact) {
+    const [contact] = await db
+        .insert(contacts)
+        .values(data)
+        .onConflictDoUpdate({
+            target: contacts._id,
+            set: {
+                phoneNumber: data.phoneNumber,
+                countryCode: data.countryCode,
+                countryISO: data.countryISO,
+                displayName: data.displayName,
+                about: data.about,
+                profilePicture: data.profilePicture,
+                isRegistered: data.isRegistered,
+                isInMycontacts: data.isInMycontacts,
+            },
+        })
+        .returning();
+
+    return contact;
+}
+
+// ============================================
+// UPSERT MANY CONTACTS
+// ============================================
+
+export async function upsertManyContacts(data: NewContact[]) {
+    if (data.length === 0) return [];
+
+    const chunkSize = 50;
+    const result = [];
+
+    for (let i = 0; i < data.length; i += chunkSize) {
+        const chunk = data.slice(i, i + chunkSize);
+
+        const inserted = await db
+            .insert(contacts)
+            .values(chunk)
             .onConflictDoUpdate({
-                target: contacts.phoneNumber,
+                target: contacts._id,
                 set: {
-                    countryCode: sql`excluded."countryCode"`,
-                    _id: sql`excluded."_id"`,
-                    countryISO: sql`excluded."countryISO"`,
-                    displayName: sql`excluded."displayName"`,
-                    about: sql`excluded."about"`,
-                    profilePicture: sql`excluded."profilePicture"`,
-                    isRegistered: sql`excluded."isRegistered"`,
-                    isInMycontacts: sql`excluded."isInMycontacts"`,
+                    phoneNumber: sql`excluded.phoneNumber`,
+                    countryCode: sql`excluded.countryCode`,
+                    countryISO: sql`excluded.countryISO`,
+                    displayName: sql`excluded.displayName`,
+                    about: sql`excluded.about`,
+                    profilePicture: sql`excluded.profilePicture`,
+                    isRegistered: sql`excluded.isRegistered`,
+                    isInMycontacts: sql`excluded.isInMycontacts`,
                 },
-            });
-    },
+            })
+            .returning();
 
-    // Get all contacts
-    async findAll() {
-        return db.select().from(contacts);
-    },
+        result.push(...inserted);
+    }
 
+    return result;
+}
 
-    // Find by phone number
-    async findByPhone(phoneNumber: string) {
-        const result = await db
-            .select()
-            .from(contacts)
-            .where(eq(contacts.phoneNumber, phoneNumber))
-            .limit(1);
+// ============================================
+// GET CONTACT BY SERVER ID
+// ============================================
 
-        return result[0] ?? null;
-    },
+export async function getContactById(id: string) {
+    return db.query.contacts.findFirst({
+        where: (contacts, { eq }) =>
+            eq(contacts._id, id),
+    });
+}
 
-    // Search contacts
-    async search(query: string) {
-        return db
-            .select()
-            .from(contacts)
-            .where(
-                or(
-                    like(contacts.displayName, `%${query}%`),
-                    like(contacts.phoneNumber, `%${query}%`)
-                )
-            );
-    },
+// ============================================
+// GET CONTACT BY PHONE NUMBER
+// ============================================
 
-    // Get registered contacts
-    async findRegistered() {
-        return db
-            .select()
-            .from(contacts)
-            .where(
-                eq(contacts.isRegistered, 1)
-            )
-    },
+export async function getContactByPhone(phoneNumber: string) {
+    return db.query.contacts.findFirst({
+        where: (contacts, { eq }) =>
+            eq(contacts.phoneNumber, phoneNumber),
+    });
+}
 
-    // Get registered contacts
-    async findUnRegistered() {
-        return db
-            .select()
-            .from(contacts)
-            .where(
+// ============================================
+// GET ALL CONTACTS
+// ============================================
 
-                eq(contacts.isRegistered, 0),
+export async function getAllContacts() {
+    return db.query.contacts.findMany({
+        orderBy: (contacts, { asc }) => [
+            asc(contacts.displayName),
+        ],
+    });
+}
 
-            )
-    },
+// ============================================
+// DELETE CONTACT
+// ============================================
 
-    // Update contact
-    async update(
-        phone: string,
-        data: Partial<typeof contacts.$inferInsert>
-    ) {
-        await db
-            .update(contacts)
-            .set(data)
-            .where(eq(contacts.phoneNumber, phone));
-
-        return this.findByPhone(phone);
-    },
-
-    async updateMany(
-        phoneNumber: string,
-        data: Partial<typeof contacts.$inferInsert>
-    ) {
-        await db
-            .update(contacts)
-            .set(data)
-            .where(eq(contacts.phoneNumber, phoneNumber));
-
-        return this.findByPhone(phoneNumber);
-    },
-
-    // Delete contact
-    async delete(id: string) {
-        return db
-            .delete(contacts)
-            .where(eq(contacts._id, id));
-    },
-
-    // Delete all contacts
-    async deleteAll() {
-        return db.delete(contacts);
-    },
-};
+export async function deleteContact(id: string) {
+    return db
+        .delete(contacts)
+        .where(sql`${contacts._id} = ${id}`)
+        .returning();
+}

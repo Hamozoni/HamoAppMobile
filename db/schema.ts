@@ -1,58 +1,228 @@
-import { sqliteTable, text, integer, real, index, primaryKey } from 'drizzle-orm/sqlite-core';
-import { sql } from 'drizzle-orm';
+// import { sqliteTable, text, integer, real, index, primaryKey } from 'drizzle-orm/sqlite-core';
+// import { sql } from 'drizzle-orm';
 
-// Helper for default timestamp (epoch ms)
-const now = sql`(strftime('%s','now') * 1000)`;
+// // Helper for default timestamp (epoch ms)
+// const now = sql`(strftime('%s','now') * 1000)`;
 
-export const contacts = sqliteTable('contacts', {
-    _id: text('_id').notNull(),
-    phoneNumber: text('phoneNumber').primaryKey().unique().notNull(),
-    countryCode: text('countryCode'),
-    countryISO: text('countryISO'),
-    displayName: text('displayName'),
-    about: text('about'),
-    profilePicture: text('profilePicture'),
-    isRegistered: integer('isRegistered').notNull().default(0),
-    isInMycontacts: integer('isInMycontacts').notNull().default(0),
-}, (table) => ({
-    idIdx: index('idx_contacts_phoneNumber').on(table.phoneNumber),
-    isRegIdx: index('idx_contacts_isRegistered').on(table.isRegistered),
-    inContIdx: index('idx_contacts_isInMycontacts').on(table.isInMycontacts),
-}));
+// export const contacts = sqliteTable('contacts', {
+//     _id: text('_id').notNull(),
+//     phoneNumber: text('phoneNumber').primaryKey().unique().notNull(),
+//     countryCode: text('countryCode'),
+//     countryISO: text('countryISO'),
+//     displayName: text('displayName'),
+//     about: text('about'),
+//     profilePicture: text('profilePicture'),
+//     isRegistered: integer('isRegistered').notNull().default(0),
+//     isInMycontacts: integer('isInMycontacts').notNull().default(0),
+// }, (table) => ({
+//     idIdx: index('idx_contacts_phoneNumber').on(table.phoneNumber),
+//     isRegIdx: index('idx_contacts_isRegistered').on(table.isRegistered),
+//     inContIdx: index('idx_contacts_isInMycontacts').on(table.isInMycontacts),
+// }));
 
-export const chats = sqliteTable('chats', {
-    clientChatId: text('clientChatId').primaryKey().notNull(),
-    _id: text('_id').unique(),
-    isGroup: integer('isGroup').notNull().default(0),
-    peerId: text('peerId'),
-    groupName: text('groupName'),
-    groupAvatar: text('groupAvatar'),
-    lastMessageId: text('lastMessageId'),
-    lastMessageText: text('lastMessageText'),
-    lastMessageType: text('lastMessageType').notNull().default('text'),
-    lastMessageAt: integer('lastMessageAt'),
-    lastMessageSenderId: text('lastMessageSenderId'),
-    lastMessageStatus: text('lastMessageStatus').notNull().default('sent'),
-    unreadCount: integer('unreadCount').notNull().default(0),
-    isPinned: integer('isPinned').notNull().default(0),
-    isArchived: integer('isArchived').notNull().default(0),
-    isMuted: integer('isMuted').notNull().default(0),
-    mutedUntil: integer('mutedUntil'),
-    createdAt: integer('createdAt').notNull().default(now),
-    updatedAt: integer('updatedAt').notNull().default(now),
-}, (table) => ({
-    lastMsgIdx: index('idx_chatsLastMessage').on(table.lastMessageAt),
-    peerIdx: index('idx_chatsPeer').on(table.peerId).where(sql`isGroup = 0`),
-}));
+// export const chats = sqliteTable('chats', {
+//     clientChatId: text('clientChatId').primaryKey().notNull(),
+//     _id: text('_id').unique(),
+//     isGroup: integer('isGroup').notNull().default(0),
+//     peerId: text('peerId'),
+//     groupName: text('groupName'),
+//     groupAvatar: text('groupAvatar'),
+//     lastMessageId: text('lastMessageId'),
+//     lastMessageText: text('lastMessageText'),
+//     lastMessageType: text('lastMessageType').notNull().default('text'),
+//     lastMessageAt: integer('lastMessageAt'),
+//     lastMessageSenderId: text('lastMessageSenderId'),
+//     lastMessageStatus: text('lastMessageStatus').notNull().default('sent'),
+//     unreadCount: integer('unreadCount').notNull().default(0),
+//     isPinned: integer('isPinned').notNull().default(0),
+//     isArchived: integer('isArchived').notNull().default(0),
+//     isMuted: integer('isMuted').notNull().default(0),
+//     mutedUntil: integer('mutedUntil'),
+//     createdAt: integer('createdAt').notNull().default(now),
+//     updatedAt: integer('updatedAt').notNull().default(now),
+// }, (table) => ({
+//     lastMsgIdx: index('idx_chatsLastMessage').on(table.lastMessageAt),
+//     peerIdx: index('idx_chatsPeer').on(table.peerId).where(sql`isGroup = 0`),
+// }));
 
-export const chatParticipants = sqliteTable('chatParticipants', {
-    chatId: text('chatId').notNull().references(() => chats.clientChatId, { onDelete: 'cascade' }),
-    userId: text('userId').notNull().references(() => contacts.phoneNumber, { onDelete: 'cascade' }),
-    isAdmin: integer('isAdmin').notNull().default(0),
-}, (table) => ({
-    pk: primaryKey({ columns: [table.chatId, table.userId] }),
-    userIdx: index('idx_participantsUser').on(table.userId),
-}));
+// export const chatParticipants = sqliteTable('chatParticipants', {
+//     chatId: text('chatId').notNull().references(() => chats.clientChatId, { onDelete: 'cascade' }),
+//     userId: text('userId').notNull().references(() => contacts.phoneNumber, { onDelete: 'cascade' }),
+//     isAdmin: integer('isAdmin').notNull().default(0),
+// }, (table) => ({
+//     pk: primaryKey({ columns: [table.chatId, table.userId] }),
+//     userIdx: index('idx_participantsUser').on(table.userId),
+// }));
+
+
+
+
+
+import {
+    sqliteTable,
+    text,
+    integer,
+    index,
+    primaryKey,
+} from 'drizzle-orm/sqlite-core';
+
+import { relations, sql } from 'drizzle-orm';
+
+
+// ============================================
+// HELPERS
+// ============================================
+
+const now = sql`(strftime('%s', 'now') * 1000)`;
+
+// ============================================
+// CONTACTS
+// ============================================
+
+export const contacts = sqliteTable(
+    'contacts',
+    {
+        // Server-generated MongoDB ObjectId
+        _id: text('_id').primaryKey().notNull(),
+        phoneNumber: text('phoneNumber').notNull().unique(),
+        countryCode: text('countryCode'),
+        countryISO: text('countryISO'),
+        displayName: text('displayName'),
+        about: text('about'),
+        profilePicture: text('profilePicture'),
+        isRegistered: integer('isRegistered').notNull().default(0),
+        isInMycontacts: integer('isInMycontacts').notNull().default(0),
+    },
+    (table) => ({
+        phoneIdx: index('idx_contacts_phoneNumber')
+            .on(table.phoneNumber),
+
+        isRegIdx: index('idx_contacts_isRegistered')
+            .on(table.isRegistered),
+
+        inContIdx: index('idx_contacts_isInMycontacts')
+            .on(table.isInMycontacts),
+    })
+);
+
+// ============================================
+// CHATS
+// ============================================
+
+export const chats = sqliteTable(
+    'chats',
+    {
+        clientChatId: text('clientChatId').primaryKey().notNull(),
+        _id: text('_id').unique(),
+        isGroup: integer('isGroup').notNull().default(0),
+        peerId: text('peerId').references(() => contacts._id, {
+            onDelete: 'set null',
+        }),
+
+        groupName: text('groupName'),
+        groupAvatar: text('groupAvatar'),
+
+        // Last message information
+        lastMessageId: text('lastMessageId'),
+        lastMessageText: text('lastMessageText'),
+
+        lastMessageType: text('lastMessageType')
+            .notNull()
+            .default('text'),
+
+        lastMessageAt: integer('lastMessageAt'),
+        lastMessageSenderId: text('lastMessageSenderId'),
+
+        lastMessageStatus: text('lastMessageStatus')
+            .notNull()
+            .default('sent'),
+
+        // Chat settings
+        unreadCount: integer('unreadCount')
+            .notNull()
+            .default(0),
+
+        isPinned: integer('isPinned')
+            .notNull()
+            .default(0),
+
+        isArchived: integer('isArchived')
+            .notNull()
+            .default(0),
+
+        isMuted: integer('isMuted')
+            .notNull()
+            .default(0),
+
+        mutedUntil: integer('mutedUntil'),
+
+        createdAt: integer('createdAt')
+            .notNull()
+            .default(now),
+
+        updatedAt: integer('updatedAt')
+            .notNull()
+            .default(now),
+    },
+    (table) => ({
+        serverIdIdx: index('idx_chats_serverId')
+            .on(table._id),
+
+        lastMsgIdx: index('idx_chatsLastMessage')
+            .on(table.lastMessageAt),
+
+        peerIdx: index('idx_chatsPeer')
+            .on(table.peerId)
+            .where(sql`${table.isGroup} = 0`),
+
+        pinnedIdx: index('idx_chatsPinned')
+            .on(table.isPinned),
+
+        archivedIdx: index('idx_chatsArchived')
+            .on(table.isArchived),
+    })
+);
+
+// ============================================
+// CHAT PARTICIPANTS
+// ============================================
+
+export const chatParticipants = sqliteTable(
+    'chatParticipants',
+    {
+        chatId: text('chatId')
+            .notNull()
+            .references(() => chats.clientChatId, {
+                onDelete: 'cascade',
+            }),
+
+        // Server-generated user ID
+        // References contacts._id
+        userId: text('userId')
+            .notNull()
+            .references(() => contacts._id, {
+                onDelete: 'cascade',
+            }),
+
+        isAdmin: integer('isAdmin')
+            .notNull()
+            .default(0),
+
+        joinedAt: integer('joinedAt')
+            .notNull()
+            .default(now),
+
+        leftAt: integer('leftAt'),
+    },
+    (table) => ({
+        pk: primaryKey({
+            columns: [table.chatId, table.userId],
+        }),
+
+        userIdx: index('idx_participantsUser')
+            .on(table.userId),
+    })
+);
 
 export const files = sqliteTable('files', {
     clientFileId: text('clientFileId').primaryKey().notNull(),
@@ -68,7 +238,7 @@ export const files = sqliteTable('files', {
     format: text('format'),
     width: integer('width'),
     height: integer('height'),
-    duration: real('duration'),
+    duration: integer('duration'),
     pages: integer('pages'),
     metadata: text('metadata'),
     localUri: text('localUri'),
@@ -92,8 +262,8 @@ export const messages = sqliteTable('messages', {
     text: text('text'),
     fileId: text('fileId').references(() => files.clientFileId),
     localFileUri: text('localFileUri'),
-    latitude: real('latitude'),
-    longitude: real('longitude'),
+    latitude: text('latitude'),
+    longitude: text('longitude'),
     locationName: text('locationName'),
     link: text('link'),
     replyToId: text('replyToId'),
@@ -127,3 +297,58 @@ export const syncState = sqliteTable('sync_state', {
     key: text('key').primaryKey().notNull(),
     value: text('value'),
 });
+// ============================================
+// RELATIONS
+// ============================================
+
+export const contactsRelations = relations(
+    contacts,
+    ({ many }) => ({
+        chatParticipants: many(chatParticipants),
+
+        chats: many(chats),
+    })
+);
+
+export const chatsRelations = relations(
+    chats,
+    ({ many, one }) => ({
+        participants: many(chatParticipants),
+
+        peer: one(contacts, {
+            fields: [chats.peerId],
+            references: [contacts._id],
+        }),
+    })
+);
+
+export const chatParticipantsRelations = relations(
+    chatParticipants,
+    ({ one }) => ({
+        chat: one(chats, {
+            fields: [chatParticipants.chatId],
+            references: [chats.clientChatId],
+        }),
+
+        contact: one(contacts, {
+            fields: [chatParticipants.userId],
+            references: [contacts._id],
+        }),
+    })
+);
+
+// ============================================
+// TYPES
+// ============================================
+
+export type Contact = typeof contacts.$inferSelect;
+export type NewContact = typeof contacts.$inferInsert;
+
+export type Chat = typeof chats.$inferSelect;
+export type NewChat = typeof chats.$inferInsert;
+
+export type ChatParticipant =
+    typeof chatParticipants.$inferSelect;
+
+export type NewChatParticipant =
+    typeof chatParticipants.$inferInsert;
