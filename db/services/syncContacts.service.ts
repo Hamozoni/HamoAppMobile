@@ -1,7 +1,7 @@
 import * as Contacts from "expo-contacts/legacy";
 import { normalizePhone } from "../../utils/phoneNormalize";
 import { axiosInstance } from "../../lib/axios.config";
-import { contacts } from "../schema";
+import { Contact, contacts } from "../schema";
 import { upsertManyContacts } from "../repositories";
 
 
@@ -22,7 +22,7 @@ export async function syncContacts(): Promise<void> {
     });
 
 
-    const normalized: typeof contacts.$inferInsert[] = [];
+    const normalized: Contact[] = [];
 
     for (const c of data) {
 
@@ -53,7 +53,7 @@ export async function syncContacts(): Promise<void> {
 
     const phoneToDisplayName = new Map(normalized.map(n => [n.phoneNumber, n.displayName]));
 
-    const registeredContacts: typeof contacts.$inferInsert[] = registeredFromServer.map(u => ({
+    const registeredContacts: Contact[] = registeredFromServer.map(u => ({
         ...u,
         isRegistered: 1,
         displayName: phoneToDisplayName.get(u.phoneNumber) ?? u.displayName,
@@ -61,10 +61,9 @@ export async function syncContacts(): Promise<void> {
     }));
 
 
-    const nonRegistered = normalized.filter(n => !registeredContacts.some(r => r.phoneNumber === n.phoneNumber));
 
     // 3. Update registered ones — NOW the DB is fully consistent
-    await upsertManyContacts([...registeredContacts, ...nonRegistered]);
+    await upsertManyContacts(registeredContacts);
 
     // syncContacts resolves here, THEN AuthBootstrap calls loadContacts()
 }

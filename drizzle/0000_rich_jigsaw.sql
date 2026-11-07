@@ -1,10 +1,12 @@
 CREATE TABLE `chatParticipants` (
 	`chatId` text NOT NULL,
 	`userId` text NOT NULL,
-	`isAdmin` integer DEFAULT 0 NOT NULL,
+	`role` text DEFAULT 'member' NOT NULL,
+	`joinedAt` integer DEFAULT (strftime('%s', 'now') * 1000) NOT NULL,
+	`leftAt` integer,
 	PRIMARY KEY(`chatId`, `userId`),
 	FOREIGN KEY (`chatId`) REFERENCES `chats`(`clientChatId`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`userId`) REFERENCES `contacts`(`phoneNumber`) ON UPDATE no action ON DELETE cascade
+	FOREIGN KEY (`userId`) REFERENCES `contacts`(`_id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE INDEX `idx_participantsUser` ON `chatParticipants` (`userId`);--> statement-breakpoint
@@ -26,16 +28,20 @@ CREATE TABLE `chats` (
 	`isArchived` integer DEFAULT 0 NOT NULL,
 	`isMuted` integer DEFAULT 0 NOT NULL,
 	`mutedUntil` integer,
-	`createdAt` integer DEFAULT (strftime('%s','now') * 1000) NOT NULL,
-	`updatedAt` integer DEFAULT (strftime('%s','now') * 1000) NOT NULL
+	`createdAt` integer DEFAULT (strftime('%s', 'now') * 1000) NOT NULL,
+	`updatedAt` integer DEFAULT (strftime('%s', 'now') * 1000) NOT NULL,
+	FOREIGN KEY (`peerId`) REFERENCES `contacts`(`_id`) ON UPDATE no action ON DELETE set null
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `chats__id_unique` ON `chats` (`_id`);--> statement-breakpoint
+CREATE INDEX `idx_chats_serverId` ON `chats` (`_id`);--> statement-breakpoint
 CREATE INDEX `idx_chatsLastMessage` ON `chats` (`lastMessageAt`);--> statement-breakpoint
-CREATE INDEX `idx_chatsPeer` ON `chats` (`peerId`) WHERE isGroup = 0;--> statement-breakpoint
+CREATE INDEX `idx_chatsPeer` ON `chats` (`peerId`) WHERE "chats"."isGroup" = 0;--> statement-breakpoint
+CREATE INDEX `idx_chatsPinned` ON `chats` (`isPinned`);--> statement-breakpoint
+CREATE INDEX `idx_chatsArchived` ON `chats` (`isArchived`);--> statement-breakpoint
 CREATE TABLE `contacts` (
-	`_id` text NOT NULL,
-	`phoneNumber` text PRIMARY KEY NOT NULL,
+	`_id` text PRIMARY KEY NOT NULL,
+	`phoneNumber` text NOT NULL,
 	`countryCode` text,
 	`countryISO` text,
 	`displayName` text,
@@ -63,7 +69,7 @@ CREATE TABLE `files` (
 	`format` text,
 	`width` integer,
 	`height` integer,
-	`duration` real,
+	`duration` integer,
 	`pages` integer,
 	`metadata` text,
 	`localUri` text,
@@ -71,7 +77,7 @@ CREATE TABLE `files` (
 	`downloaded` integer DEFAULT 0 NOT NULL,
 	`downloadedAt` integer,
 	`expiresAt` integer,
-	`createdAt` integer DEFAULT (strftime('%s','now') * 1000) NOT NULL
+	`createdAt` integer DEFAULT (strftime('%s', 'now') * 1000) NOT NULL
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `files__id_unique` ON `files` (`_id`);--> statement-breakpoint
@@ -87,8 +93,8 @@ CREATE TABLE `messages` (
 	`text` text,
 	`fileId` text,
 	`localFileUri` text,
-	`latitude` real,
-	`longitude` real,
+	`latitude` text,
+	`longitude` text,
 	`locationName` text,
 	`link` text,
 	`replyToId` text,
@@ -117,7 +123,7 @@ CREATE TABLE `outbox` (
 	`attempts` integer DEFAULT 0 NOT NULL,
 	`lastError` text,
 	`nextAttemptAt` integer,
-	`createdAt` integer DEFAULT (strftime('%s','now') * 1000) NOT NULL,
+	`createdAt` integer DEFAULT (strftime('%s', 'now') * 1000) NOT NULL,
 	FOREIGN KEY (`chatId`) REFERENCES `chats`(`clientChatId`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint

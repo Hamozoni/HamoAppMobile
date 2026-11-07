@@ -13,6 +13,7 @@ import { runMigrations } from "../db/runMigration";
 import { Chat } from "../types/components.types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Crypto from "expo-crypto";
+import { clearUserData, resetDatabase } from "../db/maintenance";
 
 
 
@@ -26,7 +27,7 @@ export function AuthBootstrap() {
 
     const loadContacts = useContactsStore((s) => s.loadContacts);
     const setIsSyncing = useContactsStore((s) => s.setIsSyncing);
-    const hydrateChtas = useChatsStore(e => e.hydrateChtas)
+    // const hydrateChtas = useChatsStore(e => e.hydrateChtas)
     useEffect(() => {
         let cancelled = false;
 
@@ -49,7 +50,7 @@ export function AuthBootstrap() {
                 };
 
                 hydrate();
-                hydrateChtas()
+                // hydrateChtas()
                 socketService.connect(token);
                 const { data: chatData } = await axiosInstance.get("/chats");
                 if (cancelled) return;
@@ -68,7 +69,7 @@ export function AuthBootstrap() {
 
 
 
-                hydrateChtas();
+                // hydrateChtas();
 
                 setIsSyncing(true);
                 await syncContacts();

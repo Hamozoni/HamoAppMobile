@@ -1,5 +1,5 @@
 
-import { sql } from 'drizzle-orm';
+import { and, sql } from 'drizzle-orm';
 
 import { db } from '../index';
 import { contacts } from '../schema';
@@ -103,6 +103,20 @@ export async function getContactById(id: string) {
     return db.query.contacts.findFirst({
         where: (contacts, { eq }) =>
             eq(contacts._id, id),
+    });
+};
+
+export async function getUnRegisteredContacts() {
+    return db.query.contacts.findMany({
+        where: (contacts, { eq }) =>
+            and(eq(contacts.isRegistered, 0), eq(contacts.isInMycontacts, 1)),
+    });
+};
+
+export async function getRegisteredContacts() {
+    return db.query.contacts.findMany({
+        where: (contacts, { eq }) =>
+            and(eq(contacts.isRegistered, 1), eq(contacts.isInMycontacts, 1)),
     });
 }
 

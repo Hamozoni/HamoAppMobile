@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { contactsRepository } from "../../db/repositories";
+import { getRegisteredContacts, getUnRegisteredContacts } from "../../db/repositories";
 import { contacts } from "../../db/schema";
 
 interface ContactsState {
@@ -15,8 +15,8 @@ export const useContactsStore = create<ContactsState>((set) => ({
     unregistered: [],
     isSyncing: false,
     loadContacts: async () => {
-        const registered = await contactsRepository.findRegistered();
-        const unregistered = await contactsRepository.findUnRegistered();
+        const registered = await getRegisteredContacts();
+        const unregistered = await getUnRegisteredContacts();
         set({ registered, unregistered });
     },
     setIsSyncing: (val) => set({ isSyncing: val }),

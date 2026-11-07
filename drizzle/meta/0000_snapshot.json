@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "32502153-f317-41e3-8040-99aafc46607d",
+  "id": "6a7cfb64-1e61-45cf-8c7d-0ac1bca48877",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "chatParticipants": {
@@ -21,13 +21,28 @@
           "notNull": true,
           "autoincrement": false
         },
-        "isAdmin": {
-          "name": "isAdmin",
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'member'"
+        },
+        "joinedAt": {
+          "name": "joinedAt",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": 0
+          "default": "(strftime('%s', 'now') * 1000)"
+        },
+        "leftAt": {
+          "name": "leftAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {
@@ -53,15 +68,15 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "chatParticipants_userId_contacts_phoneNumber_fk": {
-          "name": "chatParticipants_userId_contacts_phoneNumber_fk",
+        "chatParticipants_userId_contacts__id_fk": {
+          "name": "chatParticipants_userId_contacts__id_fk",
           "tableFrom": "chatParticipants",
           "tableTo": "contacts",
           "columnsFrom": [
             "userId"
           ],
           "columnsTo": [
-            "phoneNumber"
+            "_id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -214,7 +229,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(strftime('%s','now') * 1000)"
+          "default": "(strftime('%s', 'now') * 1000)"
         },
         "updatedAt": {
           "name": "updatedAt",
@@ -222,7 +237,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(strftime('%s','now') * 1000)"
+          "default": "(strftime('%s', 'now') * 1000)"
         }
       },
       "indexes": {
@@ -232,6 +247,13 @@
             "_id"
           ],
           "isUnique": true
+        },
+        "idx_chats_serverId": {
+          "name": "idx_chats_serverId",
+          "columns": [
+            "_id"
+          ],
+          "isUnique": false
         },
         "idx_chatsLastMessage": {
           "name": "idx_chatsLastMessage",
@@ -246,10 +268,38 @@
             "peerId"
           ],
           "isUnique": false,
-          "where": "isGroup = 0"
+          "where": "\"chats\".\"isGroup\" = 0"
+        },
+        "idx_chatsPinned": {
+          "name": "idx_chatsPinned",
+          "columns": [
+            "isPinned"
+          ],
+          "isUnique": false
+        },
+        "idx_chatsArchived": {
+          "name": "idx_chatsArchived",
+          "columns": [
+            "isArchived"
+          ],
+          "isUnique": false
         }
       },
-      "foreignKeys": {},
+      "foreignKeys": {
+        "chats_peerId_contacts__id_fk": {
+          "name": "chats_peerId_contacts__id_fk",
+          "tableFrom": "chats",
+          "tableTo": "contacts",
+          "columnsFrom": [
+            "peerId"
+          ],
+          "columnsTo": [
+            "_id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
@@ -260,14 +310,14 @@
         "_id": {
           "name": "_id",
           "type": "text",
-          "primaryKey": false,
+          "primaryKey": true,
           "notNull": true,
           "autoincrement": false
         },
         "phoneNumber": {
           "name": "phoneNumber",
           "type": "text",
-          "primaryKey": true,
+          "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
@@ -454,7 +504,7 @@
         },
         "duration": {
           "name": "duration",
-          "type": "real",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -515,7 +565,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(strftime('%s','now') * 1000)"
+          "default": "(strftime('%s', 'now') * 1000)"
         }
       },
       "indexes": {
@@ -616,14 +666,14 @@
         },
         "latitude": {
           "name": "latitude",
-          "type": "real",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
         "longitude": {
           "name": "longitude",
-          "type": "real",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -838,7 +888,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(strftime('%s','now') * 1000)"
+          "default": "(strftime('%s', 'now') * 1000)"
         }
       },
       "indexes": {},
