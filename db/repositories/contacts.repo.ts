@@ -109,14 +109,14 @@ export async function getContactById(id: string) {
 export async function getUnRegisteredContacts() {
     return db.query.contacts.findMany({
         where: (contacts, { eq }) =>
-            and(eq(contacts.isRegistered, 0), eq(contacts.isInMycontacts, 1)),
+            eq(contacts.isRegistered, 0)
     });
 };
 
 export async function getRegisteredContacts() {
     return db.query.contacts.findMany({
         where: (contacts, { eq }) =>
-            and(eq(contacts.isRegistered, 1), eq(contacts.isInMycontacts, 1)),
+            eq(contacts.isRegistered, 1)
     });
 }
 

@@ -35,6 +35,8 @@ export function AuthBootstrap() {
             try {
                 await hydrate();
                 const token = await SecureStore.getItemAsync("accessToken");
+                clearUserData()
+                await resetDatabase()
                 await runMigrations()
                 if (!token) return; // not logged in -> falls through to login redirect
 
@@ -54,6 +56,8 @@ export function AuthBootstrap() {
                 socketService.connect(token);
                 const { data: chatData } = await axiosInstance.get("/chats");
                 if (cancelled) return;
+
+                console.log("CHATS DATA", chatData.chats[0].participants);
 
                 // const formatedChats = chatData.chats.map((chat: Chat) => {
                 //     return {

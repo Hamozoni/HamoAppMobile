@@ -28,7 +28,7 @@ export async function syncContacts(): Promise<void> {
 
         for (const p of c.phoneNumbers ?? []) {
             const phoneNumber = normalizePhone(p.number ?? "", p.countryCode ?? "SA");
-            if (!phoneNumber) continue;
+            if (!phoneNumber || normalized.some(n => n.phoneNumber === phoneNumber)) continue;
             normalized.push({
                 _id: c.id ?? phoneNumber,
                 phoneNumber,
@@ -61,9 +61,13 @@ export async function syncContacts(): Promise<void> {
     }));
 
 
-
-    // 3. Update registered ones — NOW the DB is fully consistent
-    await upsertManyContacts(registeredContacts);
-
-    // syncContacts resolves here, THEN AuthBootstrap calls loadContacts()
+    const allContacts: Contact[] = normalized.flatMap((c) => {
+        const registeredContact = registeredContacts.find(r => r.phoneNumber === c.phoneNumber);
+        if (!!registeredContact) {
+            return registeredContact
+        } else {
+            return c;
+        }
+    })
+    await upsertManyContacts(allContacts)
 }
