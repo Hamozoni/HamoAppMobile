@@ -2,58 +2,55 @@
 import { eq, desc, and, sql } from 'drizzle-orm';
 
 import { db } from '../index';
-import { chats, chatParticipants } from '../schema';
+import { chats, chatParticipants, contacts } from '../schema';
 
-import type { NewChat } from '../schema';
+import type { Contact, NewChat } from '../schema';
+import { getContactById } from './contacts.repo';
 
 // ============================================
 // TYPES
 // ============================================
 
-export type ParticipantInput = {
-    userId: string; // contacts._id
-    role?: string;
-};
 
 export type CreateChatInput = {
     chat: NewChat;
-    participants: ParticipantInput[];
+    participants: any[];
 };
 
 export type ChatWithParticipants = {
     chat: NewChat;
-    participants: ParticipantInput[];
+    participants: any[];
 };
 
 // ============================================
 // INSERT ONE CHAT WITH PARTICIPANTS
 // ============================================
 
-export async function createChat(data: CreateChatInput) {
-    return db.transaction(async (tx) => {
+// export async function createChat(data: CreateChatInput) {
+//     return db.transaction(async (tx) => {
 
-        // Insert chat
-        const [chat] = await tx
-            .insert(chats)
-            .values(data.chat)
-            .returning();
+//         // Insert chat
+//         const [chat] = await tx
+//             .insert(chats)
+//             .values(data.chat)
+//             .returning();
 
-        // Insert participants
-        if (data.participants.length > 0) {
-            await tx
-                .insert(chatParticipants)
-                .values(
-                    data.participants.map((participant) => ({
-                        chatId: chat.clientChatId,
-                        userId: participant.userId,
-                        role: participant.role,
-                    }))
-                );
-        }
+//         // Insert participants
+//         if (data.participants.length > 0) {
+//             await tx
+//                 .insert(chatParticipants)
+//                 .values(
+//                     data.participants.map((participant) => ({
+//                         chatId: chat.clientChatId,
+//                         userId: participant.userId,
+//                         role: participant.role,
+//                     }))
+//                 );
+//         }
 
-        return chat;
-    });
-}
+//         return chat;
+//     });
+// }
 
 // ============================================
 // INSERT MANY CHATS WITH PARTICIPANTS
@@ -77,25 +74,42 @@ export async function createManyChats(data: CreateChatInput[]) {
             createdChats.push(chat);
 
             // Collect participants
+
             allParticipants.push(
-                ...item.participants.map((participant) => ({
-                    chatId: chat.clientChatId,
-                    userId: participant.userId,
-                    role: participant.role,
-                }))
+                ...item.participants.map(async (participant) => {
+                    const findContact = await getContactById(participant._id);
+                    if (!findContact) {
+
+                        await tx
+                            .insert(contacts)
+                            .values({
+                                _id: participant._id,
+                                phoneNumber: participant.phoneNumber,
+                                countryCode: participant.countryCode,
+                                countryISO: participant.countryISO,
+                                displayName: participant.displayName,
+                                about: participant.about,
+                                profilePicture: participant.profilePicture,
+                                isRegistered: 1,
+                                isInMycontacts: 0,
+                            })
+                    }
+                    await tx
+                        .insert(chatParticipants)
+                        .values({
+                            chatId: chat.clientChatId,
+                            userId: participant._id,
+                            role: participant.role,
+                        });
+                    return {
+                        chatId: chat.clientChatId,
+                        userId: participant._id,
+                        role: participant.role,
+                    }
+                })
             );
         }
 
-        // Bulk insert participants in chunks
-        const chunkSize = 100;
-
-        for (let i = 0; i < allParticipants.length; i += chunkSize) {
-            const chunk = allParticipants.slice(i, i + chunkSize);
-
-            await tx
-                .insert(chatParticipants)
-                .values(chunk);
-        }
 
         return createdChats;
     });
