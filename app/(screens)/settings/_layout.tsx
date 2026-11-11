@@ -13,6 +13,12 @@ export default function SettingsLayout() {
                 }}
             />
             <Stack.Screen
+                name="setup-profile"
+                options={{
+                    headerShown: false
+                }}
+            />
+            <Stack.Screen
                 name="broadcasts"
                 options={{
                     headerShown: false,

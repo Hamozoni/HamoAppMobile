@@ -28,7 +28,7 @@ export const SOCKET_EVENTS = {
 
 export type SOCKET_EVENT = typeof SOCKET_EVENTS[keyof typeof SOCKET_EVENTS];
 
-const SERVER_URL = "http://172.20.10.3:3000";
+const SERVER_URL = "http://172.20.10.3:5500";
 const MAX_AUTH_RETRIES = 2;
 
 class SocketService {

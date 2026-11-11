@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Redirect } from "expo-router";
+import { Redirect, useLocalSearchParams, useRouter, usePathname } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { ActivityIndicator } from "react-native";
 import { useAuthStore } from "../hooks/store/useAuthStore";
@@ -25,20 +25,29 @@ export function AuthBootstrap() {
     const hydrate = useAuthStore((s) => s.hydrate);
     const clearUser = useAuthStore((s) => s.clearUser);
 
+    const routerPathName = usePathname();
+
+    const router = useRouter()
+
+
     const loadContacts = useContactsStore((s) => s.loadContacts);
     const setIsSyncing = useContactsStore((s) => s.setIsSyncing);
     // const hydrateChtas = useChatsStore(e => e.hydrateChtas)
     useEffect(() => {
+        console.log("Router", routerPathName);
         let cancelled = false;
 
         async function bootstrap() {
             try {
+                setReady(false);
                 await hydrate();
                 const token = await SecureStore.getItemAsync("accessToken");
                 clearUserData()
                 await resetDatabase()
                 await runMigrations()
-                if (!token) return; // not logged in -> falls through to login redirect
+                if (!token) {
+                    return;
+                }; // not logged in -> falls through to login redirect
 
                 // Validate session / get fresh profile
 
@@ -48,7 +57,6 @@ export function AuthBootstrap() {
                     const { data } = await axiosInstance.get<IUser>("/profile");
                     if (cancelled) return;
                     setUser(data);
-                    console.log("USER", data);
                 };
 
                 hydrate();
@@ -57,7 +65,7 @@ export function AuthBootstrap() {
                 const { data: chatData } = await axiosInstance.get("/chats");
                 if (cancelled) return;
 
-                console.log("CHATS DATA", chatData.chats[0].participants);
+                console.log("CHATS DATA", chatData);
 
                 // const formatedChats = chatData.chats.map((chat: Chat) => {
                 //     return {
@@ -100,5 +108,6 @@ export function AuthBootstrap() {
 
     if (!ready) return <ActivityIndicator style={{ flex: 1 }} />;
 
-    return <Redirect href={user ? "/(tabs)/chats" : "/(auth)/login"} />;
+    return <Redirect href={!user ? "/login" : routerPathName !== "/settings/setup-profile" ? "(tabs)/" : ''} />
+
 };

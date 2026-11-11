@@ -7,12 +7,11 @@ import {
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { Stack, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { ChatCard } from "../../../components/cards/chatCard";
-import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";
-import { useContactsStore } from "../../../hooks/store/useContactsStore";
-import chats from "../settings/chats";
-import { useChatsStore } from "../../../hooks/store/useChatsStore";
-import { useAuthStore } from "../../../hooks/store/useAuthStore";
+import { ChatCard } from "../../components/cards/chatCard";
+import ThemedSafeAreaView from "../../components/themedViews/safeAreaView";
+import { useContactsStore } from "../../hooks/store/useContactsStore";
+import { useChatsStore } from "../../hooks/store/useChatsStore";
+import { useAuthStore } from "../../hooks/store/useAuthStore";
 import { useHeaderHeight } from "expo-router/build/react-navigation/index.js";
 
 const { width } = Dimensions.get("window");

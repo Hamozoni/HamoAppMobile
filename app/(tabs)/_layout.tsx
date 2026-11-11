@@ -38,6 +38,7 @@ const RootLayout = () => {
     return (
         <Tabs
             screenOptions={{
+
                 headerShown: false,
                 tabBarActiveTintColor: WA_DARK,
                 tabBarInactiveTintColor: INACTIVE,
@@ -92,8 +93,10 @@ const RootLayout = () => {
 
             {/* Chats — center FAB style */}
             <Tabs.Screen
-                name="chats"
+                name="index"
                 options={{
+                    title: "chats",
+                    headerShown: true,
                     tabBarIcon: ({ focused }) => (
                         <TabBtn focused={focused}>
                             <Ionicons

@@ -9,7 +9,7 @@ declare module "axios" {
 }
 
 // One source of truth for both the main instance and the refresh call
-export const API_URL = "http://172.20.10.3:3000/api";
+export const API_URL = "http://172.20.10.3:5500/api";
 
 export const axiosInstance: AxiosInstance = axios.create({
     baseURL: API_URL,

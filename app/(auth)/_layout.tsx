@@ -1,11 +1,20 @@
 import React from "react";
-import { Slot } from "expo-router";
+import { Slot, Stack } from "expo-router";
 import { View } from "react-native";
 
 export default function RootLayout() {
     return (
-        <View style={{ flex: 1 }}>
-            <Slot />
-        </View>
+        <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen
+                name="login"
+                options={{
+                    headerShown: false,
+                }} />
+            <Stack.Screen
+                name="verify"
+                options={{
+                    headerShown: false,
+                }} />
+        </Stack>
     );
 }

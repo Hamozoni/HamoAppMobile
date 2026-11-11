@@ -15,13 +15,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 
-import ThemedSafeAreaView from '../../components/themedViews/safeAreaView';
-import Separator from '../../components/ui/separator';
-import { SetupProfileImage } from '../../components/profile/setupProfileImage';
-import { useCloudinaryUpload } from '../../hooks/api/useCloudinaryUplaod';
-import { useUpdateProfile } from '../../hooks/api/useProfileApi';
-import { AuthBootstrap } from '../../utils/authBootstrap';
-import { useAuthStore } from '../../hooks/store/useAuthStore';
+import ThemedSafeAreaView from '../../../components/themedViews/safeAreaView';
+import Separator from '../../../components/ui/separator';
+import { SetupProfileImage } from '../../../components/profile/setupProfileImage';
+import { useCloudinaryUpload } from '../../../hooks/api/useCloudinaryUplaod';
+import { useUpdateProfile } from '../../../hooks/api/useProfileApi';
+import { AuthBootstrap } from '../../../utils/authBootstrap';
+import { useAuthStore } from '../../../hooks/store/useAuthStore';
 
 interface FormErrors {
     displayName?: string;
@@ -38,7 +38,7 @@ export default function SetupProfile() {
     const [selectedImageAsset, setSelectedImageAsset] = useState<ImagePicker.ImagePickerAsset | null>(null);
     const [errors, setErrors] = useState<FormErrors>({});
 
-    const { mutateAsync: uploadToCloudinary, isPending: isUploadingImage, progress } = useCloudinaryUpload('/cloudinary/profile_signature');
+    const { mutateAsync: uploadToCloudinary, isPending: isUploadingImage } = useCloudinaryUpload('/cloudinary/profile_signature');
     const { mutateAsync: postUpdateProfile, isPending: isUpdatingProfile } = useUpdateProfile();
 
     const isSubmitting = isUploadingImage || isUpdatingProfile;
@@ -72,18 +72,18 @@ export default function SetupProfile() {
             const profileResponse = await postUpdateProfile({
                 displayName: displayName.trim(),
                 about: about.trim(),
-                cloudinaryData,
+                cloudinaryData: cloudinaryData as any,
             });
             console.log("profileResponse>>>", profileResponse)
             await setUser(profileResponse);
-            router.replace('/(tabs)/chats');
+            router.replace('/');
         } catch (err: any) {
             Alert.alert('Update Failed', err?.message || 'Unable to update profile. Please try again.');
         }
     };
 
     const handleSkip = () => {
-        router.replace('/(tabs)/chats');
+        router.replace('/');
     };
 
     return (
@@ -114,14 +114,14 @@ export default function SetupProfile() {
                         isUploading={isSubmitting}
                     />
 
-                    {isUploadingImage && (
+                    {/* {isUploadingImage && (
                         <View style={styles.progressContainer}>
                             <Text style={styles.progressText}>Uploading photo: {progress}%</Text>
                             <View style={styles.barBackground}>
                                 <View style={[styles.barFill, { width: `${progress}%` }]} />
                             </View>
                         </View>
-                    )}
+                    )} */}
 
                     <Separator />
 
@@ -259,101 +259,3 @@ const styles = StyleSheet.create({
         borderRadius: 4,
     },
 });
-
-
-// const styles = StyleSheet.create({
-//     container: {
-//         flex: 1,
-//     },
-//     scrollContent: {
-//         flex: 1,
-//     },
-//     inputLabel: {
-//         fontSize: 14,
-//         fontWeight: "600",
-//         color: "#444",
-//         marginBottom: 8,
-//         paddingHorizontal: 15,
-//     },
-//     inputContainer: {
-//         flexDirection: "row",
-//         alignItems: "center",
-//         backgroundColor: "#fcfcfcff",
-//         borderRadius: 12,
-//         borderWidth: 1,
-//         borderColor: "#e0e0e0",
-//         borderStyle: "dashed",
-//         paddingHorizontal: 14,
-//         gap: 10,
-//     },
-//     inputError: {
-//         borderColor: "#ff4444",
-//     },
-//     textInput: {
-//         flex: 1,
-//         paddingVertical: 14,
-//         fontSize: 16,
-//         color: "#1a1a1a",
-//     },
-//     bioContainer: {
-//         backgroundColor: "#fafafaff",
-//         borderRadius: 12,
-//         borderWidth: 1,
-//         borderColor: "#e0e0e0",
-//         paddingHorizontal: 14,
-//         borderStyle: "dashed",
-//         paddingTop: 10,
-//     },
-//     bioInput: {
-//         fontSize: 16,
-//         color: "#1a1a1a",
-//         minHeight: 80,
-//     },
-//     charCount: {
-//         textAlign: "right",
-//         fontSize: 12,
-//         color: "#888",
-//         marginTop: 6,
-//         paddingHorizontal: 15,
-//     },
-//     errorText: {
-//         color: "#ff4444",
-//         fontSize: 13,
-//         marginTop: 6,
-//         marginLeft: 4,
-//     },
-//     continueButton: {
-//         flexDirection: "row",
-//         backgroundColor: "#259cd3",
-//         paddingVertical: 12,
-//         borderRadius: 12,
-//         justifyContent: "center",
-//         alignItems: "center",
-//         gap: 8,
-//         // marginBottom: 15,
-//         shadowColor: "#259cd3",
-//         shadowOffset: { width: 0, height: 4 },
-//         shadowOpacity: 0.3,
-//         shadowRadius: 8,
-//         elevation: 5,
-//     },
-//     continueButtonDisabled: {
-//         backgroundColor: "#b8cbe0",
-//         shadowOpacity: 0,
-//         elevation: 0,
-//     },
-//     continueButtonText: {
-//         color: "#fff",
-//         fontSize: 18,
-//         fontWeight: "600",
-//     },
-//     skipButton: {
-//         paddingVertical: 20,
-//         paddingHorizontal: 15,
-//     },
-//     skipButtonText: {
-//         fontSize: 16,
-//         color: "#2b82d3ff",
-//         fontWeight: "500",
-//     },
-// });

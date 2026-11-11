@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, JSX } from "react";
+import { useState, useRef, useEffect, JSX, ReactElement, ReactHTMLElement } from "react";
 import {
     View,
     Text,
@@ -41,7 +41,7 @@ export default function Verify(): JSX.Element {
     const [resendTimer, setResendTimer] = useState<number>(RESEND_TIMER);
     const [canResend, setCanResend] = useState<boolean>(false);
 
-    const inputRefs = useRef<TextInput[]>([]);
+    const inputRefs = useRef<any[]>([]);
     const { mutateAsync, isPending: isLoading } = useVerifyOtp()
     // Countdown timer for resend
     useEffect(() => {
@@ -111,7 +111,7 @@ export default function Verify(): JSX.Element {
             await SecureStore.setItemAsync("refreshToken", data.refreshToken);
             await setUser(data?.user as any);
             // Navigate to profile setup
-            router.replace("/(auth)/setup-profile");
+            router.replace("/(screens)/settings/setup-profile");
         } catch (err) {
             console.log(err);
             setError("Invalid verification code. Please try again.");
