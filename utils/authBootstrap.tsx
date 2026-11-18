@@ -10,10 +10,10 @@ import { axiosInstance } from "../lib/axios.config";
 import { IUser } from "../types/user.type";
 import { socketService } from "../services/socket.service";
 import { runMigrations } from "../db/runMigration";
-import { Chat } from "../types/components.types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Crypto from "expo-crypto";
 import { clearUserData, resetDatabase } from "../db/maintenance";
+import { Chat } from "../db/schema";
 
 
 
@@ -65,17 +65,18 @@ export function AuthBootstrap() {
                 const { data: chatData } = await axiosInstance.get("/chats");
                 if (cancelled) return;
 
-                console.log("CHATS DATA", chatData);
+                const finalData = chatData.chats.map((chat: Chat) => {
 
-                // const formatedChats = chatData.chats.map((chat: Chat) => {
-                //     return {
-                //         ...chat,
-                //         clientChatId: Crypto.randomUUID(),
-                //         createdAt: new Date(chat?.createdAt ?? 0).getMilliseconds(),
-                //         updatedAt: new Date(chat?.updatedAt ?? 0).getMilliseconds(),
-                //         unreadCount: chat.unreadCount[JSON.parse(cachedUser || "")._id ?? ""] ?? 0
-                //     }
-                // });
+                    return {
+                        ...chat,
+                        clientChatId: Crypto.randomUUID(),
+                        participants: chatData.participants.filter((participant: any) => participant.chatId === chat._id)
+
+                    }
+                })
+                console.log("finalData", finalData[1]);
+                console.log("participants", chatData.participants);
+
 
                 // await chatsRepository.createMany(formatedChats)
 
@@ -107,6 +108,7 @@ export function AuthBootstrap() {
     }, []);
 
     if (!ready) return <ActivityIndicator style={{ flex: 1 }} />;
+
 
     return <Redirect href={!user ? "/login" : routerPathName !== "/settings/setup-profile" ? "(tabs)/" : ''} />
 
