@@ -76,20 +76,15 @@ export async function createManyChats(data: CreateChatInput[]) {
             // Collect participants
 
             allParticipants.push(
-                ...item.participants.map(async (participant) => {
-                    const findContact = await getContactById(participant._id);
+                ...item.participants.map(async ({ user, role, joinedAt }) => {
+                    const findContact = await getContactById(user._id);
                     if (!findContact) {
 
                         await tx
                             .insert(contacts)
                             .values({
-                                _id: participant._id,
-                                phoneNumber: participant.phoneNumber,
-                                countryCode: participant.countryCode,
-                                countryISO: participant.countryISO,
-                                displayName: participant.displayName,
-                                about: participant.about,
-                                profilePicture: participant.profilePicture,
+                                ...user,
+                                profilePicture: user.profilePicture ? user.profilePicture?.secureUrl : null,
                                 isRegistered: 1,
                                 isInMycontacts: 0,
                             })
@@ -98,13 +93,15 @@ export async function createManyChats(data: CreateChatInput[]) {
                         .insert(chatParticipants)
                         .values({
                             chatId: chat.clientChatId,
-                            userId: participant._id,
-                            role: participant.role,
+                            userId: user._id,
+                            role,
+                            joinedAt,
                         });
                     return {
                         chatId: chat.clientChatId,
-                        userId: participant._id,
-                        role: participant.role,
+                        userId: user._id,
+                        role,
+                        joinedAt,
                     }
                 })
             );

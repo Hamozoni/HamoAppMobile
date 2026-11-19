@@ -14,6 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Crypto from "expo-crypto";
 import { clearUserData, resetDatabase } from "../db/maintenance";
 import { Chat } from "../db/schema";
+import { createManyChats } from "../db/repositories";
 
 
 
@@ -32,7 +33,7 @@ export function AuthBootstrap() {
 
     const loadContacts = useContactsStore((s) => s.loadContacts);
     const setIsSyncing = useContactsStore((s) => s.setIsSyncing);
-    // const hydrateChtas = useChatsStore(e => e.hydrateChtas)
+    const hydrateChtas = useChatsStore(e => e.hydrateChtas)
     useEffect(() => {
         console.log("Router", routerPathName);
         let cancelled = false;
@@ -79,11 +80,11 @@ export function AuthBootstrap() {
                 console.log("finalData", finalData);
 
 
-                // await chatsRepository.createMany(formatedChats)
+                await createManyChats(finalData);
 
 
 
-                // hydrateChtas();
+                hydrateChtas();
 
                 setIsSyncing(true);
                 await syncContacts();

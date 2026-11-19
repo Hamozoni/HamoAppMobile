@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { chats } from "../../db/schema";
+import { getAllChats } from "../../db/repositories";
 
 
 interface ChatsState {
@@ -7,7 +8,7 @@ interface ChatsState {
     currentChatId: string | null;
     setCurrentChatId: (chatId: string | null) => void;
     setChats: (chs: typeof chats.$inferInsert[] | []) => void;
-    // hydrateChtas: () => void;
+    hydrateChtas: () => void;
     updateChat: (chatId: string, update: Partial<typeof chats.$inferInsert>) => void;
     addNewChat: (chat: typeof chats.$inferInsert) => void;
     updateLastMessage: (chatId: string, lastMessage: Partial<typeof chats.$inferInsert>) => void;
@@ -23,13 +24,13 @@ export const useChatsStore = create<ChatsState>((set) => ({
 
     setChats: (chats) => set({ chats }),
 
-    // hydrateChtas: async () => {
+    hydrateChtas: async () => {
 
-    //     const cachedChats = await chatsRepository.findAll();
+        const cachedChats = await getAllChats();
 
-    //     set({ chats: cachedChats })
+        set({ chats: cachedChats })
 
-    // },
+    },
 
     updateChat: (chatId, update) =>
         set(state => ({
