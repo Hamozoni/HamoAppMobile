@@ -68,14 +68,15 @@ export function AuthBootstrap() {
                 const finalData = chatData.chats.map((chat: Chat) => {
 
                     return {
-                        ...chat,
-                        clientChatId: Crypto.randomUUID(),
+                        chat: {
+                            ...chat,
+                            clientChatId: Crypto.randomUUID(),
+                        },
                         participants: chatData.participants.filter((participant: any) => participant.chatId === chat._id)
 
                     }
                 })
-                console.log("finalData", finalData[1]);
-                console.log("participants", chatData.participants);
+                console.log("finalData", finalData);
 
 
                 // await chatsRepository.createMany(formatedChats)

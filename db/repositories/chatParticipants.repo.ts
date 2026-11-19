@@ -4,7 +4,6 @@ import { eq, and } from 'drizzle-orm';
 import { db } from '../index';
 import { chatParticipants, contacts } from '../schema';
 
-import type { ParticipantInput } from './chats.repo';
 
 // ============================================
 // ADD ONE PARTICIPANT
@@ -12,7 +11,7 @@ import type { ParticipantInput } from './chats.repo';
 
 export async function addParticipant(
     chatId: string,
-    participant: ParticipantInput
+    participant: any
 ) {
     const [result] = await db
         .insert(chatParticipants)
@@ -33,7 +32,7 @@ export async function addParticipant(
 
 export async function addParticipants(
     chatId: string,
-    participants: ParticipantInput[]
+    participants: any[]
 ) {
     if (participants.length === 0) return [];
 
