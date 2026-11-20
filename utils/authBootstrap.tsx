@@ -77,14 +77,14 @@ export function AuthBootstrap() {
 
                     }
                 })
-                console.log("finalData", finalData[0].participants[0].user);
+                console.log("finalData", finalData[0]);
 
 
                 await createManyChats(finalData);
 
 
 
-                hydrateChtas();
+                await hydrateChtas();
 
                 setIsSyncing(true);
                 await syncContacts();

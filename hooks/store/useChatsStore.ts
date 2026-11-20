@@ -1,10 +1,11 @@
 import { create } from "zustand";
 import { chats } from "../../db/schema";
-import { getAllChats } from "../../db/repositories";
+import { getAllChats, getChatByServerId } from "../../db/repositories";
+import { getChatParticipants, getParticipant } from "../../db/repositories/chatParticipants.repo";
 
 
 interface ChatsState {
-    chats: typeof chats.$inferInsert[] | [];
+    chats: typeof chats.$inferInsert[] | any[];
     currentChatId: string | null;
     setCurrentChatId: (chatId: string | null) => void;
     setChats: (chs: typeof chats.$inferInsert[] | []) => void;
@@ -28,7 +29,7 @@ export const useChatsStore = create<ChatsState>((set) => ({
 
         const cachedChats = await getAllChats();
 
-        console.log("cachedChats", cachedChats[0].participants)
+        console.log({ cachedChats })
 
         set({ chats: cachedChats })
 

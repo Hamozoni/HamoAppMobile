@@ -6,6 +6,7 @@ import { chats, chatParticipants, contacts } from '../schema';
 
 import type { Contact, NewChat } from '../schema';
 import { getContactById } from './contacts.repo';
+import { getChatParticipants } from './chatParticipants.repo';
 
 // ============================================
 // TYPES
@@ -77,36 +78,43 @@ export async function createManyChats(data: CreateChatInput[]) {
 
             allParticipants.push(
                 ...item.participants.map(async ({ user, role, joinedAt }) => {
+
+                    console.log({ user, role, joinedAt })
                     const findContact = await getContactById(user._id);
                     if (!findContact) {
 
-                        await tx
+                        const contact = await tx
                             .insert(contacts)
                             .values({
                                 ...user,
                                 profilePicture: user.profilePicture ? user.profilePicture?.secureUrl : null,
                                 isRegistered: 1,
                                 isInMycontacts: 0,
-                            })
-                    }
-                    await tx
+                            }).returning();
+
+                        console.log({ contact })
+                    };
+
+                    console.log({ findContact })
+                    const chatParticipant = await tx
                         .insert(chatParticipants)
                         .values({
                             chatId: chat.clientChatId,
                             userId: user._id,
                             role,
                             joinedAt,
-                        });
+                        }).returning()
+                    console.log({ chatParticipant })
                     return {
                         chatId: chat.clientChatId,
                         userId: user._id,
                         role,
                         joinedAt,
                     }
+
                 })
             );
-        }
-
+        };
 
         return createdChats;
     });
@@ -237,35 +245,18 @@ export async function getChatByServerId(serverId: string) {
 // ============================================
 
 export async function getAllChats() {
-    const result = await db.query.chats.findMany({
-        with: {
-            peer: true,
+    const result = await db.query.chats.findMany();
 
-            participants: {
-                with: {
-                    contact: true,
-                },
-            },
-        },
+    const chats: any = []
+    for (const item of result) {
 
-        orderBy: [
-            desc(chats.lastMessageAt),
-            desc(chats.createdAt),
-        ],
-    });
+        const chat = await getChatByServerId(item._id ?? "")
 
-    return result.map((chat) => ({
-        ...chat,
+        chats.push(chat)
+    }
 
-        participants: chat.participants
-            .filter((p) => p.contact !== null)
-            .map((p) => ({
-                ...p.contact!,
-                role: p.role,
-                joinedAt: p.joinedAt,
-                leftAt: p.leftAt,
-            })),
-    }));
+
+    return chats
 }
 
 // ============================================
