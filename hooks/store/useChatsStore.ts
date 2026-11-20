@@ -28,6 +28,8 @@ export const useChatsStore = create<ChatsState>((set) => ({
 
         const cachedChats = await getAllChats();
 
+        console.log("cachedChats", cachedChats[0].participants)
+
         set({ chats: cachedChats })
 
     },

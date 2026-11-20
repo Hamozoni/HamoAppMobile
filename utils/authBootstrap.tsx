@@ -77,7 +77,7 @@ export function AuthBootstrap() {
 
                     }
                 })
-                console.log("finalData", finalData);
+                console.log("finalData", finalData[0].participants[0].user);
 
 
                 await createManyChats(finalData);
