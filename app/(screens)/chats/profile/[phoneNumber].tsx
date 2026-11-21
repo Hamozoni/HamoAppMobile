@@ -9,7 +9,7 @@ import { useAuthStore } from "../../../../hooks/store/useAuthStore";
 import Avatar from "../../../../components/ui/avatar";
 import AnimatedBorder from "../../../../components/ui/animatedBorder";
 import { useChatsStore } from "../../../../hooks/store/useChatsStore";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, useRoute } from "expo-router";
 
 interface ProfileButton {
     id: any;
@@ -99,13 +99,15 @@ const profileSetting: ProfileButton[] = [
 
 export default function Profile() {
 
-    const { phoneNumber } = useLocalSearchParams<{ phoneNumber: string }>();
+    const { phoneNumber } = useLocalSearchParams();
     const { registered } = useContactsStore();
     const user = useAuthStore(state => state.user);
 
     const findContact = () => {
         return registered?.find(e => e.phoneNumber === phoneNumber)
     };
+
+    console.log({ findContact: findContact(), phoneNumber })
 
     const chats = useChatsStore((state) => state.chats);
 
@@ -122,7 +124,7 @@ export default function Profile() {
                     <View style={{ justifyContent: "center", alignItems: 'center', paddingTop: 40, marginBottom: 20 }}>
                         <AnimatedBorder>
                             <Avatar
-                                profilePicture={contact?.profilePicture?.secureUrl}
+                                profilePicture={contact?.profilePicture}
                                 displayName={findContact()?.displayName || contact?.phoneNumber}
                                 width={150} height={150} />
                         </AnimatedBorder>

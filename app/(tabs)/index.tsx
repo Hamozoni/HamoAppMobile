@@ -29,11 +29,9 @@ const Chats = () => {
     const [isEdit, setIsEdit] = useState(false);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
-    const user = useAuthStore().user
-
     const { chats } = useChatsStore();
 
-    const registered = useContactsStore(state => state.registered);
+    // const registered = useContactsStore(state => state.registered);
 
     const handleEdit = () => {
         setIsEdit(prev => !prev);
@@ -49,7 +47,7 @@ const Chats = () => {
     };
 
     const filteredChats = useMemo(() => {
-        if (activeFilter === "Unread") return chats.filter(c => c.unreadCount > 0);
+        if (activeFilter === "Unread") return chats.filter(c => c?.unreadCount ?? 0 > 0);
         if (activeFilter === "Groups") return chats.filter(c => c.isGroup);
         return chats;
     }, [activeFilter, chats]);
@@ -114,7 +112,7 @@ const Chats = () => {
 
             <FlatList
                 data={filteredChats}
-                keyExtractor={(item) => item._id}
+                keyExtractor={(item) => item._id ?? ""}
                 showsVerticalScrollIndicator={false}
                 contentInsetAdjustmentBehavior="automatic"   // iOS: keeps content below a transparent/large-title header
                 contentContainerStyle={{
@@ -143,10 +141,9 @@ const Chats = () => {
                     ]}>
                         <ChatCard
                             chat={item as any}
-                            isSelected={selectedIds.has(item._id)}
-                            contact={registered.find(e => e?._id === item?.participants?.find((e: any) => e._id !== user?._id)?._id) as any}
+                            isSelected={selectedIds.has(item?._id ?? "")}
                             isEditMode={isEdit}
-                            onSelect={() => handleSelect(item._id)}
+                            onSelect={() => handleSelect(item?._id ?? "")}
                         />
                     </View>
                 )}

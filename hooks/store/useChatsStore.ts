@@ -1,18 +1,18 @@
 import { create } from "zustand";
-import { chats } from "../../db/schema";
+import { Chat, ChatParticipant, chats, ChatWithParticipants, Contact } from "../../db/schema";
 import { getAllChats, getChatByServerId } from "../../db/repositories";
 import { getChatParticipants, getParticipant } from "../../db/repositories/chatParticipants.repo";
 
 
 interface ChatsState {
-    chats: typeof chats.$inferInsert[] | any[];
-    currentChatId: string | null;
-    setCurrentChatId: (chatId: string | null) => void;
-    setChats: (chs: typeof chats.$inferInsert[] | []) => void;
+    chats: ChatWithParticipants[];
+    currentChat: ChatWithParticipants | null;
+    setCurrentChat: (chat: ChatWithParticipants | null) => void;
+    setChats: (chs: ChatWithParticipants[] | []) => void;
     hydrateChtas: () => void;
     updateChat: (chatId: string, update: Partial<typeof chats.$inferInsert>) => void;
-    addNewChat: (chat: typeof chats.$inferInsert) => void;
-    updateLastMessage: (chatId: string, lastMessage: Partial<typeof chats.$inferInsert>) => void;
+    addNewChat: (chat: ChatWithParticipants) => void;
+    updateLastMessage: (chatId: string, lastMessage: Partial<ChatWithParticipants>) => void;
     incrementUnread: (chatId: string) => void;
     resetUnread: (chatId: string | undefined) => void;
 }
@@ -20,8 +20,8 @@ interface ChatsState {
 export const useChatsStore = create<ChatsState>((set) => ({
     chats: [],
 
-    currentChatId: null,
-    setCurrentChatId: (chatId) => set({ currentChatId: chatId }),
+    currentChat: null,
+    setCurrentChat: (chat) => set({ currentChat: chat }),
 
     setChats: (chats) => set({ chats }),
 

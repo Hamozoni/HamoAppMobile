@@ -1,20 +1,22 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { Chat, Contact, MessageType } from "../../types/components.types";
+import { MessageType } from "../../types/components.types";
 import { useAuthStore } from "../../hooks/store/useAuthStore";
 import { formatMessageTime } from "../../utils";
+import Avatar from "../ui/avatar";
+import { useChatsStore } from "../../hooks/store/useChatsStore";
+import { ChatWithParticipants } from "../../db/repositories";
 
 const WA_GREEN = "#25D366";
 const TEXT_PRIMARY = "#111B21";
 const TEXT_SECONDARY = "#667781";
 
 interface ChatCardProps {
-    chat: Chat;
+    chat: any;
     isSelected?: boolean;
     isEditMode?: boolean;
     onSelect?: () => void;
-    contact: any
 }
 
 // Config for each message type
@@ -34,7 +36,7 @@ const MESSAGE_TYPE_CONFIG: {
     contact: { icon: "person-circle-outline", color: "#10B981" },
 };
 
-const MessagePreview = ({ chat }: { chat: Chat }) => {
+const MessagePreview = ({ chat }: { chat: any }) => {
     const { lastMessageType, lastMessageText, lastMessageStatus, lastMessageSenderId } = chat;
     const config = MESSAGE_TYPE_CONFIG[lastMessageType as MessageType ?? "text"];
     const isText = lastMessageType === "text";
@@ -78,22 +80,31 @@ const MessagePreview = ({ chat }: { chat: Chat }) => {
     );
 };
 
-export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: ChatCardProps) => {
+export const ChatCard = ({ chat, isSelected, isEditMode, onSelect }: ChatCardProps) => {
 
     const router = useRouter();
 
-    const user = useAuthStore().user
-    const notContact: Contact | undefined = chat?.participants?.find(e => e._id !== user?._id) as any
-    const contactId = notContact?._id || 0
+    const contact = chat?.participants[0]
+    const hasUnread = (chat?.unreadCount ?? 0) > 0;
+    const { setCurrentChat } = useChatsStore();
 
-    const hasUnread = (chat.unreadCount ?? 0) > 0;
+    const handleChat = (): void => {
+
+        if (isEditMode) {
+            onSelect?.()
+        } else {
+            setCurrentChat(chat)
+            router.push({
+                pathname: "/chats/[phoneNumber]",
+                params: { contactId: contact?._id, chatId: chat._id },
+            } as any)
+        }
+
+    }
 
     return (
         <TouchableOpacity
-            onPress={() => isEditMode ? onSelect?.() : router.push({
-                pathname: "/chats/[phoneNumber]",
-                params: { phoneNumber: notContact?.phoneNumber, contactId },
-            } as any)}
+            onPress={handleChat}
             onLongPress={onSelect}
             activeOpacity={0.6}
             style={styles.row}
@@ -107,7 +118,12 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: Ch
 
             {/* Avatar + online dot */}
             <View style={styles.avatarWrapper}>
-                <Image source={{ uri: contact?.profilePicture || notContact?.profilePicture?.secureUrl as string }} style={styles.avatar} />
+                {/* <Image source={{ uri: contact?.profilePicture }} style={styles.avatar} /> */}
+                <Avatar
+                    profilePicture={contact.profilePicture}
+                    displayName={contact.displayName}
+                    isRegistered={true}
+                />
                 {/* {chat.isOnline && <View style={styles.onlineDot} />} */}
             </View>
 
@@ -115,7 +131,7 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect, contact }: Ch
             <View style={styles.content}>
                 <View style={styles.topRow}>
                     <Text style={styles.name} numberOfLines={1}>
-                        {contact?.displayName || notContact?.phoneNumber}
+                        {contact.isInMycontacts ? contact?.displayName : contact?.phoneNumber}
                     </Text>
                     <Text style={[styles.time, hasUnread && styles.timeUnread]}>
                         {formatMessageTime(chat.lastMessageAt)}

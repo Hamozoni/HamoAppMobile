@@ -56,7 +56,7 @@ export async function syncContacts(): Promise<void> {
     const registeredContacts: Contact[] = registeredFromServer.map(u => ({
         ...u,
         isRegistered: 1,
-        displayName: phoneToDisplayName.get(u.phoneNumber) ?? u.displayName,
+        isInMycontacts: 1,
         profilePicture: (u as any)?.profilePicture?.secureUrl ?? null,
     }));
 

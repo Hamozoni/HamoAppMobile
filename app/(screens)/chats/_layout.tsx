@@ -3,8 +3,6 @@ import { Stack, useRouter } from "expo-router";
 import { TouchableOpacity, Text } from "react-native";
 import { ChatHeaderLeft, ChatHeaderRight, ChatHeaderMiddle } from "../../../components/chats/chatHeader";
 import ChevronBackBtn from "../../../components/buttons/chevronBackBtn";
-import ChatFooter from "../../../components/chats/chatWindowFooter/chatFooter";
-
 export default function ChatWindowLayout() {
 
     const router = useRouter();
@@ -13,18 +11,15 @@ export default function ChatWindowLayout() {
         <Stack >
             <Stack.Screen
                 name="[phoneNumber]"
-                options={
-                    ({ route }) => {
-                        const { phoneNumber } = route.params as { phoneNumber: string };
-                        return {
-                            headerTransparent: false,
-                            headerLargeTitle: false,
-                            headerShown: true,
-                            headerLeft: () => <ChatHeaderLeft />,
-                            headerRight: () => <ChatHeaderRight />,
-                            headerTitle: () => <ChatHeaderMiddle phoneNumber={phoneNumber} />,
-                        }
-                    }
+                options={{
+                    headerTransparent: false,
+                    headerLargeTitle: false,
+                    headerShown: true,
+                    headerLeft: () => <ChatHeaderLeft />,
+                    headerRight: () => <ChatHeaderRight />,
+                    headerTitle: () => <ChatHeaderMiddle />,
+
+                }
                 }
             />
             <Stack.Screen

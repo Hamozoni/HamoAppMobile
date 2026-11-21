@@ -13,14 +13,11 @@ import { useMessagesStore } from "../../../hooks/store/useMessageStore";
 import { SOCKET_EVENTS, socketService } from "../../../services/socket.service";
 
 export default function ChatDetails() {
-    const { contactId } = useLocalSearchParams<{ contactId: string }>();
+    const { chatId } = useLocalSearchParams<{ chatId: string; contactId: string }>();
+    const { setCurrentChat } = useChatsStore();
 
-    const { chats, currentChatId, setCurrentChatId } = useChatsStore();
-
-    const found = chats?.find((c) => c?.participants?.some((p) => p?._id === contactId))?._id;
-
-    const { isLoading, error } = useGetmessages(found || "");
-    const messages = useMessagesStore((s) => s.messages[currentChatId || contactId]) ?? [];
+    const { isLoading, error } = useGetmessages(chatId || "");
+    const messages = useMessagesStore((s) => s.messages[chatId || '']) ?? [];
     const flatListRef = useRef<FlatList>(null);
 
     const { pendingLocation, clearPendingLocation } = usePendingStore();
@@ -28,17 +25,14 @@ export default function ChatDetails() {
 
     console.log({ err: error?.message })
     useEffect(() => {
-
-        if (found) setCurrentChatId(found);
-
-        socketService.emit(SOCKET_EVENTS.JOIN_CHAT, found);
+        socketService.emit(SOCKET_EVENTS.JOIN_CHAT, chatId);
         return () => {
-            socketService.emit(SOCKET_EVENTS.LEAVE_CHAT, found);
+            socketService.emit(SOCKET_EVENTS.LEAVE_CHAT, chatId);
             socketService.off(SOCKET_EVENTS.JOIN_CHAT);
-            setCurrentChatId(null)
+            setCurrentChat(null)
         }
 
-    }, [found]);
+    }, [chatId]);
 
     useEffect(() => {
         if (!pendingLocation) return;
@@ -79,7 +73,7 @@ export default function ChatDetails() {
                     keyboardShouldPersistTaps="handled"
                     showsVerticalScrollIndicator={false}
                 />
-                <ChatFooter currentChatId={currentChatId || contactId} />
+                <ChatFooter />
             </KeyboardAvoidingView>
 
         </ThemedSafeAreaView>

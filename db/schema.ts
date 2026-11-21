@@ -293,3 +293,9 @@ export type ChatParticipant =
 
 export type NewChatParticipant =
     typeof chatParticipants.$inferInsert;
+
+interface ChatParticipantWithContact extends ChatParticipant, Contact { }
+
+export interface ChatWithParticipants extends Partial<Chat> {
+    participants: ChatParticipantWithContact[]
+}

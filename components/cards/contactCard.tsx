@@ -1,9 +1,9 @@
 import { Text, TouchableOpacity, View, StyleSheet, Share } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
-import { Contact } from "../../db/types/contact.type";
 import { useAuthStore } from "../../hooks/store/useAuthStore";
 import Avatar from "../ui/avatar";
+import { Contact } from "../../db/schema";
 
 const WA_GREEN = "#2585d3ff";
 const TEXT_PRIMARY = "#111B21";
@@ -52,7 +52,8 @@ const ContactCard = ({ contact }: ContactCardProps) => {
             <View style={styles.content}>
                 <View style={styles.nameRow}>
                     <Text style={styles.name} numberOfLines={1}>
-                        {contact.displayName} {user?.phoneNumber === contact.phoneNumber && ' ( You )'}
+                        {contact.isInMycontacts ? contact?.displayName : contact?.phoneNumber}
+                        {user?.phoneNumber === contact.phoneNumber && ' ( You )'}
                     </Text>
                 </View>
 

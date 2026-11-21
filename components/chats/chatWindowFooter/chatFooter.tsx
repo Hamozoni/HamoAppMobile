@@ -13,11 +13,12 @@ import { usePostMessage } from "../../../hooks/api/usePostMessageApi";
 
 import * as Crypto from "expo-crypto";
 import { KeyboardEvents } from "react-native-keyboard-controller";
+import { useChatsStore } from "../../../hooks/store/useChatsStore";
 
 
 const WA_GREEN = "#25D366";
 
-export default function ChatFooter({ currentChatId }: { currentChatId: string | null }) {
+export default function ChatFooter() {
 
     const [keyboardHeight, setKeyboardHeight] = useState(336);
     const [isAttachment, setIsAttachment] = useState(false);
@@ -28,13 +29,14 @@ export default function ChatFooter({ currentChatId }: { currentChatId: string | 
     const textInputRef = useRef<React.ElementRef<typeof TextInput>>(null);
     const router = useRouter();
     const { user } = useAuthStore();
+    const { currentChat } = useChatsStore()
 
     const { contactId } = useLocalSearchParams<{
         contactId: string
     }>();
 
     const { data, mutate, error } = usePostMessage({
-        chatId: currentChatId,
+        chatId: currentChat?._id ?? null,
         senderId: user?._id,
         receiverId: contactId,
     });
@@ -179,7 +181,7 @@ export default function ChatFooter({ currentChatId }: { currentChatId: string | 
                                         pathname: '/chats/camera',
                                         params: {
                                             receiverId: contactId,
-                                            chatId: currentChatId
+                                            chatId: currentChat?._id
                                         }
                                     })}>
                                         <Ionicons name="camera-outline" size={26} color="#76787a" />
