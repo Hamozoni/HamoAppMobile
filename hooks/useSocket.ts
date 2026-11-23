@@ -11,11 +11,18 @@ export const useSocketListeners = () => {
     const replaceOptimistic = useMessagesStore((state) => state.replaceOptimistic);
     useEffect(() => {
         const socket = socketService.socket;
+        console.log("besocket", socket?.io?._autoConnect)
+
         if (!socket) return;
+
+        console.log("socket", socket?.io?._autoConnect)
 
         // 1. Listen for incoming messages from other users
 
+
         socketService.on(SOCKET_EVENTS.CHAT_NOTIFICATION, ({ message }) => {
+
+            console.log("📥 Global Event - CHAT_NOTIFICATION:", message)
             addMessage(message.chatId, message);
             updateLastMessage(message.chatId, {
                 lastMessageAt: message.createdAt,
@@ -29,6 +36,7 @@ export const useSocketListeners = () => {
         });
 
         socketService.on(SOCKET_EVENTS.MESSAGE_NEW, (message) => {
+            console.log("📥 Global Event - MESSAGE_NEW:", message)
             addMessage(message.chatId, message);
             updateLastMessage(message.chatId, {
                 lastMessageAt: message.createdAt,
@@ -44,6 +52,8 @@ export const useSocketListeners = () => {
         socketService.on(
             SOCKET_EVENTS.MESSAGE_SENT_ACKNOWLEDGEMENT,
             ({ message, clientMessageId }: { message: any; clientMessageId: string }) => {
+
+                console.log("📥 Global Event - MESSAGE_SENT_ACKNOWLEDGEMENT:", message)
 
 
                 replaceOptimistic(message.chatId, clientMessageId, message);

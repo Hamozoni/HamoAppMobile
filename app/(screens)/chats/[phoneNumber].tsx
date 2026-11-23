@@ -21,9 +21,6 @@ export default function ChatDetails() {
     const flatListRef = useRef<FlatList>(null);
 
     const { pendingLocation, clearPendingLocation } = usePendingStore();
-
-
-    console.log({ err: error?.message })
     useEffect(() => {
         if (!chatId) return;
         socketService.emit(SOCKET_EVENTS.JOIN_CHAT, chatId);

@@ -11,7 +11,6 @@ export async function syncContacts(): Promise<void> {
     const { status } = await Contacts.requestPermissionsAsync();
 
     if (status !== "granted") {
-        console.log("Contacts permission denied");
         return; // exit cleanly, don't crash bootstrap
     };
 
@@ -34,14 +33,15 @@ export async function syncContacts(): Promise<void> {
                 phoneNumber,
                 countryCode: p.countryCode ?? null,
                 countryISO: null,
-                displayName: c.name ?? phoneNumber,
+                displayName: phoneNumber,
+                localName: c.name,
                 about: null,
                 profilePicture: null,
                 isRegistered: 0,
                 isInMycontacts: 1,
             });
         }
-    }
+    };
 
 
 
@@ -51,14 +51,16 @@ export async function syncContacts(): Promise<void> {
         { phoneNumbers: normalized.map(n => n.phoneNumber) }
     );
 
-    const phoneToDisplayName = new Map(normalized.map(n => [n.phoneNumber, n.displayName]));
+    const phoneToDisplayName = new Map(normalized.map(n => [n.phoneNumber, n.localName]));
 
     const registeredContacts: Contact[] = registeredFromServer.map(u => ({
         ...u,
+        localName: phoneToDisplayName.get(u.phoneNumber) || null,
         isRegistered: 1,
         isInMycontacts: 1,
         profilePicture: (u as any)?.profilePicture?.secureUrl ?? null,
     }));
+
 
 
     const allContacts: Contact[] = normalized.flatMap((c) => {
@@ -68,6 +70,7 @@ export async function syncContacts(): Promise<void> {
         } else {
             return c;
         }
-    })
+    });
+
     await upsertManyContacts(allContacts)
 }

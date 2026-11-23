@@ -81,6 +81,7 @@ export async function upsertManyContacts(data: NewContact[]) {
                     countryCode: sql`excluded.countryCode`,
                     countryISO: sql`excluded.countryISO`,
                     displayName: sql`excluded.displayName`,
+                    localName: sql`excluded.localName`,
                     about: sql`excluded.about`,
                     profilePicture: sql`excluded.profilePicture`,
                     isRegistered: sql`excluded.isRegistered`,

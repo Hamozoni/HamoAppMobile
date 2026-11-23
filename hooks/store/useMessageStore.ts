@@ -22,8 +22,6 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
         return set(state => {
             const currentMessages = state.messages[chatId] ?? [];
             const exists = currentMessages.some(m => m?._id === message?._id);
-
-            console.log(exists)
             if (exists) return state;
             return {
                 messages: {
@@ -43,7 +41,6 @@ export const useMessagesStore = create<MessagesState>((set, get) => ({
         return set(state => {
             const currentMessages = state.messages[chatId] ?? [];
             const exists = currentMessages.some(m => m._id === real._id);
-            console.log("exists from replace", exists);
             if (exists) return state;
             return {
                 messages: {

@@ -62,13 +62,13 @@ const ContactCard = ({ contact }: ContactCardProps) => {
             style={styles.row}
         >
             {/* Avatar */}
-            <Avatar profilePicture={contact.profilePicture} displayName={contact.displayName} isRegistered={isRegistered} />
+            <Avatar profilePicture={contact.profilePicture} displayName={contact.localName} isRegistered={isRegistered} />
 
             {/* Content */}
             <View style={styles.content}>
                 <View style={styles.nameRow}>
                     <Text style={styles.name} numberOfLines={1}>
-                        {contact.isInMycontacts ? contact?.displayName : contact?.phoneNumber}
+                        {contact.localName}
                         {user?.phoneNumber === contact.phoneNumber && ' ( You )'}
                     </Text>
                 </View>

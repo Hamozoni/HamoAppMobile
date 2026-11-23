@@ -88,6 +88,7 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect }: ChatCardPro
     const hasUnread = (chat?.unreadCount ?? 0) > 0;
     const { setCurrentChat } = useChatsStore();
 
+
     const handleChat = (): void => {
 
         if (isEditMode) {
@@ -121,7 +122,7 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect }: ChatCardPro
                 {/* <Image source={{ uri: contact?.profilePicture }} style={styles.avatar} /> */}
                 <Avatar
                     profilePicture={contact.profilePicture}
-                    displayName={contact.displayName}
+                    displayName={contact.localName}
                     isRegistered={true}
                 />
                 {/* {chat.isOnline && <View style={styles.onlineDot} />} */}
@@ -131,7 +132,7 @@ export const ChatCard = ({ chat, isSelected, isEditMode, onSelect }: ChatCardPro
             <View style={styles.content}>
                 <View style={styles.topRow}>
                     <Text style={styles.name} numberOfLines={1}>
-                        {contact.isInMycontacts ? contact?.displayName : contact?.phoneNumber}
+                        {contact.localName}
                     </Text>
                     <Text style={[styles.time, hasUnread && styles.timeUnread]}>
                         {formatMessageTime(chat.lastMessageAt)}

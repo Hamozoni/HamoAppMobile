@@ -79,7 +79,6 @@ export async function createManyChats(data: CreateChatInput[]) {
             allParticipants.push(
                 ...item.participants.map(async ({ user, role, joinedAt }) => {
 
-                    console.log({ user, role, joinedAt })
                     const findContact = await getContactById(user._id);
                     if (!findContact) {
 
@@ -87,15 +86,14 @@ export async function createManyChats(data: CreateChatInput[]) {
                             .insert(contacts)
                             .values({
                                 ...user,
+                                localName: user.phoneNumber,
                                 profilePicture: user.profilePicture ? user.profilePicture?.secureUrl : null,
                                 isRegistered: 1,
                                 isInMycontacts: 0,
                             }).returning();
 
-                        console.log({ contact })
                     };
 
-                    console.log({ findContact })
                     const chatParticipant = await tx
                         .insert(chatParticipants)
                         .values({
@@ -104,7 +102,6 @@ export async function createManyChats(data: CreateChatInput[]) {
                             role,
                             joinedAt,
                         }).returning()
-                    console.log({ chatParticipant })
                     return {
                         chatId: chat.clientChatId,
                         userId: user._id,

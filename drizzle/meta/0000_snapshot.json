@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "6a7cfb64-1e61-45cf-8c7d-0ac1bca48877",
+  "id": "8204fac1-190d-48a1-92ff-3e9215aa239f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "chatParticipants": {
@@ -337,6 +337,13 @@
         },
         "displayName": {
           "name": "displayName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "localName": {
+          "name": "localName",
           "type": "text",
           "primaryKey": false,
           "notNull": false,

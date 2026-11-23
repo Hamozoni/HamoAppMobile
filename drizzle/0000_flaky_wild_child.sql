@@ -45,6 +45,7 @@ CREATE TABLE `contacts` (
 	`countryCode` text,
 	`countryISO` text,
 	`displayName` text,
+	`localName` text,
 	`about` text,
 	`profilePicture` text,
 	`isRegistered` integer DEFAULT 0 NOT NULL,

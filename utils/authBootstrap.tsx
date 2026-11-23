@@ -28,9 +28,6 @@ export function AuthBootstrap() {
 
     const routerPathName = usePathname();
 
-    const router = useRouter()
-
-
     const loadContacts = useContactsStore((s) => s.loadContacts);
     const setIsSyncing = useContactsStore((s) => s.setIsSyncing);
     const hydrateChtas = useChatsStore(e => e.hydrateChtas)
@@ -51,6 +48,8 @@ export function AuthBootstrap() {
                 }; // not logged in -> falls through to login redirect
 
                 // Validate session / get fresh profile
+                await syncContacts();
+                loadContacts();
 
                 const cachedUser = await AsyncStorage.getItem("cachedUser");
 
@@ -59,8 +58,6 @@ export function AuthBootstrap() {
                     if (cancelled) return;
                     setUser(data);
                 };
-
-                hydrate();
                 // hydrateChtas()
                 socketService.connect(token);
                 const { data: chatData } = await axiosInstance.get("/chats");
@@ -77,18 +74,15 @@ export function AuthBootstrap() {
 
                     }
                 })
-                console.log("finalData", finalData[0]);
 
 
                 await createManyChats(finalData);
 
 
 
-                await hydrateChtas();
+                hydrateChtas();
 
                 setIsSyncing(true);
-                await syncContacts();
-                loadContacts();
             } catch (e: any) {
                 console.log("THE ERROR IS HERE", e)
                 if (e?.response?.status === 401) {

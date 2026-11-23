@@ -1,9 +1,8 @@
 import React from "react";
-import { View, StyleSheet, Platform } from "react-native";
-import { Tabs, useGlobalSearchParams } from "expo-router";
+import { View, StyleSheet } from "react-native";
+import { Tabs } from "expo-router";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import AnimatedBorder from "../../components/ui/animatedBorder";
-import ThemedSafeAreaView from "../../components/themedViews/safeAreaView";
+
 
 const WA_GREEN = "#ffffffff";
 const WA_DARK = "#acc6f8ff";
@@ -34,6 +33,7 @@ const RootLayout = () => {
     const insets = useSafeAreaInsets();
 
     useSocketListeners();
+
 
     return (
         <Tabs

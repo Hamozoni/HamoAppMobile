@@ -29,6 +29,7 @@ export const contacts = sqliteTable(
         countryCode: text('countryCode'),
         countryISO: text('countryISO'),
         displayName: text('displayName'),
+        localName: text('localName'),
         about: text('about'),
         profilePicture: text('profilePicture'),
         isRegistered: integer('isRegistered').notNull().default(0),

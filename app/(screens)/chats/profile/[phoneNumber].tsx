@@ -107,7 +107,6 @@ export default function Profile() {
         return registered?.find(e => e.phoneNumber === phoneNumber)
     };
 
-    console.log({ findContact: findContact(), phoneNumber })
 
     const chats = useChatsStore((state) => state.chats);
 
@@ -125,13 +124,13 @@ export default function Profile() {
                         <AnimatedBorder>
                             <Avatar
                                 profilePicture={contact?.profilePicture}
-                                displayName={findContact()?.displayName || contact?.phoneNumber}
+                                displayName={findContact()?.localName}
                                 width={150} height={150} />
                         </AnimatedBorder>
                     </View>
                     <View style={{ flexDirection: "column", justifyContent: "center", alignContent: "center" }}>
                         <Text style={{ fontSize: 22, fontWeight: 900, textAlign: 'center' }}>
-                            {findContact()?.displayName || contact?.displayName}
+                            {findContact()?.localName}
                             {user?.phoneNumber === contact?.phoneNumber && ' ( You )'}
                         </Text>
                         <Text style={{ fontSize: 18, textAlign: 'center', color: "gray", marginTop: 3, marginBottom: 5 }}>

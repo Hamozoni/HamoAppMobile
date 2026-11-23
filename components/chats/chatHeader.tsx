@@ -29,10 +29,10 @@ export const ChatHeaderMiddle = () => {
         <TouchableOpacity onPress={() => router.push(`chats/profile/${contact?.phoneNumber}`)} style={{ flexDirection: "row", alignItems: "center", gap: 10, flex: 1 }}>
             <Avatar
                 profilePicture={contact?.profilePicture}
-                displayName={contact?.isInMycontacts ? contact?.displayName : contact?.phoneNumber} />
+                displayName={contact?.localName} />
             <TouchableOpacity>
                 <Text style={{ fontSize: 16, fontWeight: "500" }}>
-                    {contact?.isInMycontacts ? contact?.displayName : contact?.phoneNumber}
+                    {contact?.localName}
                     {user?.phoneNumber === contact?.phoneNumber && ' ( You )'}
                 </Text>
                 <Text style={{ fontSize: 14, color: "#666" }}>on line</Text>
