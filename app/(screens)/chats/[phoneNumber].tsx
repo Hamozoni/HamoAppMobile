@@ -16,8 +16,8 @@ export default function ChatDetails() {
     const { chatId } = useLocalSearchParams<{ chatId: string; contactId: string }>();
     const { setCurrentChat } = useChatsStore();
 
-    const { isLoading, error } = useGetmessages(chatId || "");
-    const messages = useMessagesStore((s) => s.messages[chatId || '']) ?? [];
+    const { isLoading, error } = useGetmessages(chatId ?? false);
+    const messages = useMessagesStore((s) => s.messages[chatId]) ?? [];
     const flatListRef = useRef<FlatList>(null);
 
     const { pendingLocation, clearPendingLocation } = usePendingStore();
@@ -25,6 +25,7 @@ export default function ChatDetails() {
 
     console.log({ err: error?.message })
     useEffect(() => {
+        if (!chatId) return;
         socketService.emit(SOCKET_EVENTS.JOIN_CHAT, chatId);
         return () => {
             socketService.emit(SOCKET_EVENTS.LEAVE_CHAT, chatId);

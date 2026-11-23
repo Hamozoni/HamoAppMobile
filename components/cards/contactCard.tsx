@@ -4,7 +4,9 @@ import { useRouter } from "expo-router";
 import { useAuthStore } from "../../hooks/store/useAuthStore";
 import Avatar from "../ui/avatar";
 import { Contact } from "../../db/schema";
-
+import { useChatsStore } from "../../hooks/store/useChatsStore";
+import { ChatWithParticipants } from "../../db/schema";
+import * as Crypto from "expo-crypto"
 const WA_GREEN = "#2585d3ff";
 const TEXT_PRIMARY = "#111B21";
 const TEXT_SECONDARY = "#667781";
@@ -17,16 +19,30 @@ const ContactCard = ({ contact }: ContactCardProps) => {
 
     const router = useRouter();
     const isRegistered = contact.isRegistered === 1;
+    const { chats, setCurrentChat } = useChatsStore()
 
     const user = useAuthStore(state => state.user)
 
     const handlePress = () => {
         if (isRegistered) {
+            let chat: any = chats.find(c => c.participants[0]._id === contact?._id);
+            if (!chat) {
+                chat = {
+                    _id: contact._id,
+                    clientChatId: Crypto.randomUUID(),
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    participants: [contact]
+
+                }
+            }
+            setCurrentChat(chat);
+
             router.push({
                 pathname: "/chats/[phoneNumber]",
                 params: {
-                    phoneNumber: contact.phoneNumber,
-                    contactId: contact?._id
+                    contactId: contact?._id,
+                    chatId: chat?._id
                 }
             } as any);
         }
