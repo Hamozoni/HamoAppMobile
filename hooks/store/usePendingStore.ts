@@ -7,11 +7,9 @@ interface PendingStore {
         name?: string;
     } | null;
     setPendingLocation: (loc: PendingStore["pendingLocation"]) => void;
-    clearPendingLocation: () => void;
 }
 
 export const usePendingStore = create<PendingStore>((set) => ({
     pendingLocation: null,
     setPendingLocation: (loc) => set({ pendingLocation: loc }),
-    clearPendingLocation: () => set({ pendingLocation: null }),
 }));

@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
-import Slider from "@react-native-community/slider";
 import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import { Ionicons } from "@expo/vector-icons";
 import MessageStatusBubble from "./messageStatusBubble";
@@ -8,6 +6,8 @@ import { ILocalMessage } from "../../../types/message.types";
 import { formatTime } from "../../../utils/formatTime";
 import { useChatsStore } from "../../../hooks/store/useChatsStore";
 import WaveformSeekBar from "./waveformseekpar";
+import Avatar from "../../ui/avatar";
+import { useAuthStore } from "../../../hooks/store/useAuthStore";
 
 const WA_GREEN = "#25D366";
 
@@ -42,20 +42,22 @@ export default function AudioMessageBubble({ message, isMine }: AudioMessageBubb
     const trackColor = isMine ? "rgba(255,255,255,0.9)" : WA_GREEN;
     const trackBg = isMine ? "rgba(255,255,255,0.3)" : "#DFE5E7";
 
+    const { user } = useAuthStore()
+
     const { chats } = useChatsStore();
 
     const findChatById = () => {
         if (!chats) return null;
-        return chats.find(chat => chat._id === message?.chatId)?.participants?.find(e => e._id === message?.senderId)?.profilePicture?.secureUrl
+        if (isMine) user
+        return chats.find(chat => chat._id === message?.chatId)?.participants?.find(e => e._id === message?.senderId)
     };
 
     return (
         <View style={styles.container}>
             {/* Avatar */}
-            <Image
-                source={{ uri: findChatById() }}
-                style={styles.avatar}
-            />
+            <Avatar
+                profilePicture={findChatById()?.profilePicture}
+                displayName={findChatById()?.displayName} />
             <View style={styles.content}>
                 {/* Play + Slider */}
                 <View style={styles.row}>

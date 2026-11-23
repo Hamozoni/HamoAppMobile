@@ -14,6 +14,7 @@ import { usePostMessage } from "../../../hooks/api/usePostMessageApi";
 import * as Crypto from "expo-crypto";
 import { KeyboardEvents } from "react-native-keyboard-controller";
 import { useChatsStore } from "../../../hooks/store/useChatsStore";
+import { usePendingStore } from "../../../hooks/store/usePendingStore";
 
 
 const WA_GREEN = "#25D366";
@@ -29,7 +30,9 @@ export default function ChatFooter() {
     const textInputRef = useRef<React.ElementRef<typeof TextInput>>(null);
     const router = useRouter();
     const { user } = useAuthStore();
-    const { currentChat } = useChatsStore()
+    const { currentChat } = useChatsStore();
+
+    const { pendingLocation, setPendingLocation } = usePendingStore()
 
     const { contactId } = useLocalSearchParams<{
         contactId: string
@@ -85,6 +88,25 @@ export default function ChatFooter() {
         setIsAttachment(false);
     };
 
+    useEffect(() => {
+
+        if (!pendingLocation || !user) return;
+
+        const clientMessageId = Crypto.randomUUID();
+        mutate({
+            payload: {
+                location: pendingLocation,
+                type: "location",
+            },
+            asset,
+            clientMessageId
+        });
+
+        setPendingLocation(null)
+
+
+    }, [pendingLocation])
+
     // ✅ Called from AudioRecorder when send pressed
     const handleSendAudio = (uri: any) => {
         if (!user || !uri) return;
@@ -118,7 +140,7 @@ export default function ChatFooter() {
 
         <View style={[
             styles.wrapper,
-            { height: isAttachment ? 320 : isAudioRecorder ? 150 : 70 }
+            { height: isAttachment ? 320 : isAudioRecorder ? 150 : asset ? 210 : 70 }
         ]}>
 
             {

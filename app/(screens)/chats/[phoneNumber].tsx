@@ -6,7 +6,6 @@ import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import ChatFooter from "../../../components/chats/chatWindowFooter/chatFooter";
 import MessageCard from "../../../components/cards/messageCard";
 import ThemedSafeAreaView from "../../../components/themedViews/safeAreaView";
-import { usePendingStore } from "../../../hooks/store/usePendingStore";
 import { useGetmessages } from "../../../hooks/api/useGetMessagesApi";
 import { useChatsStore } from "../../../hooks/store/useChatsStore";
 import { useMessagesStore } from "../../../hooks/store/useMessageStore";
@@ -20,7 +19,6 @@ export default function ChatDetails() {
     const messages = useMessagesStore((s) => s.messages[chatId]) ?? [];
     const flatListRef = useRef<FlatList>(null);
 
-    const { pendingLocation, clearPendingLocation } = usePendingStore();
     useEffect(() => {
         if (!chatId) return;
         socketService.emit(SOCKET_EVENTS.JOIN_CHAT, chatId);
@@ -32,10 +30,6 @@ export default function ChatDetails() {
 
     }, [chatId]);
 
-    useEffect(() => {
-        if (!pendingLocation) return;
-        clearPendingLocation();
-    }, [pendingLocation]);
 
 
 
