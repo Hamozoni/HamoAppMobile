@@ -68,7 +68,7 @@ export default function MessageCard({ message, prevMessage }: MessageCardProps) 
                             message.type === "sticker" ? "transparent" :
                                 isMine ? "#2d88b3ff" : "#f8f8f8ff",              // ✅ color
                         borderRadius: 10,
-                        padding: isMedia ? 0 : 10,
+                        padding: 5,
                         overflow: "hidden",
                         minWidth: 30,
                         maxWidth: "88%",

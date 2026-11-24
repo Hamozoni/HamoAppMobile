@@ -21,14 +21,14 @@ export default function MessageStatusBubble({ message, isMine }: MessageStatusBu
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "flex-end",
-                shadowColor: "#000",
-                shadowOffset: {
-                    width: 5,
-                    height: 8,
-                },
-                shadowOpacity: 0.1,
-                shadowRadius: 10,
-                elevation: 10,
+                // shadowColor: "#000",
+                // shadowOffset: {
+                //     width: 5,
+                //     height: 8,
+                // },
+                // shadowOpacity: 0.1,
+                // shadowRadius: 10,
+                // elevation: 10,
                 gap: 5
             }}
         >

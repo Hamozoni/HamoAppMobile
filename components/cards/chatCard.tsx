@@ -23,6 +23,7 @@ interface ChatCardProps {
 const MESSAGE_TYPE_CONFIG: {
     text: { icon: any, color: string };
     audio: { icon: any, color: string };
+    document: { icon: any, color: string };
     image: { icon: any, color: string };
     video: { icon: any, color: string };
     location: { icon: any, color: string };
@@ -30,6 +31,7 @@ const MESSAGE_TYPE_CONFIG: {
 } = {
     text: { icon: "chatbubble-outline", color: TEXT_SECONDARY },
     audio: { icon: "mic-outline", color: "#8B5CF6" },
+    document: { icon: "document-outline", color: "#8B5CF6" },
     image: { icon: "image-outline", color: "#0EA5E9" },
     video: { icon: "videocam-outline", color: "#F59E0B" },
     location: { icon: "location-outline", color: "#EF4444" },
